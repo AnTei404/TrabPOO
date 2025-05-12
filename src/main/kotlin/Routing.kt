@@ -28,7 +28,7 @@ fun Application.configureRouting() {
 
         post("/exchange-money-for-chips") {
             val player = call.sessions.get<Player>()
-            val moneyToExchange = call.receiveParameters()["money"]?.toDoubleOrNull()
+            val moneyToExchange = call.receiveParameters()["money"]?.toIntOrNull() // Parse as Int
             if (player != null && moneyToExchange != null) {
                 val updatedPlayer = exchangeLogic.exchangeMoneyForChips(player, moneyToExchange)
                 if (updatedPlayer != null) {
