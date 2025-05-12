@@ -1,1 +1,1 @@
-rootProject.name = "artifact"
+rootProject.name = "poo"

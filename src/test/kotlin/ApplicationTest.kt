@@ -1,4 +1,4 @@
-package ahahahh.domain
+package trab
 
 import io.ktor.client.request.*
 import io.ktor.http.*

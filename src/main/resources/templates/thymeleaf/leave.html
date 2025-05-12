@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Shady Saloon</title>
-    <meta http-equiv="refresh" content="3;url=/" />
+    <meta charset="UTF-8">
+    <title>Leave</title>
+    <meta http-equiv="refresh" content="5;url=/static/index.html">
 </head>
 <body>
-    <h1>Thank you for coming to the Shady Saloon!</h1>
-    <p>You will be redirected shortly <span th:text="${userName}">User</span>...</p>
+<h1>Shady Saloon</h1>
+<p>Thank you for coming, <span th:text="${name}"></span>. Please come again.</p>
+<p>(You will be redirected shortly)</p>
 </body>
 </html>

@@ -1,14 +1,16 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Shady Saloon</title>
+    <meta charset="UTF-8">
+    <title>Welcome</title>
 </head>
 <body>
-<h1>Welcome to the Shady Saloon, <span th:text="${userName}">User</span></h1>
+<h1>Welcome to the Shady Saloon, <span th:text="${name}"></span>!</h1>
+<p>You currently have <span th:text="${chips}"></span> chips and $<span th:text="${money}"></span>.</p>
 <ul>
-    <li><a href="/receptionist">Talk to Receptionist</a></li>
+    <li><a href="/receptionist">Talk to the Receptionist</a></li>
     <li><a href="/games">Games</a></li>
-    <li><a href="/leave">Leave Saloon</a></li>
+    <li><a href="/leave">Leave</a></li>
 </ul>
 </body>
 </html>
