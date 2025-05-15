@@ -38,3 +38,4 @@ data class Player(
     val chips: Int = (0..500).random(),
     val money: Int = (500..1000).random()
 )
+

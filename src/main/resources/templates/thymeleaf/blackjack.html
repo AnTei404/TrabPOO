@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Blackjack</title>
+</head>
+<body>
+<h1>Welcome to the Blackjack table, <span th:text="${name}"></span>!</h1>
+
+<div>
+    <h2>Dealer's Hand</h2>
+    <ul>
+        <li th:each="card : ${gameState.dealerHand}" th:text="${card.rank} + ' of ' + ${card.suit}"></li>
+    </ul>
+    <p>Total: <span th:text="${gameState.dealerTotal}"></span></p>
+</div>
+
+<div>
+    <h2>Your Hand</h2>
+    <ul>
+        <li th:each="card : ${gameState.playerHand}" th:text="${card.rank} + ' of ' + ${card.suit}"></li>
+    </ul>
+    <p>Total: <span th:text="${gameState.playerTotal}"></span></p>
+</div>
+
+<div th:if="${!gameState.gameOver}">
+    <form action="/casino/blackjack/hit" method="post">
+        <button type="submit">Hit</button>
+    </form>
+    <form action="/casino/blackjack/stand" method="post">
+        <button type="submit">Stand</button>
+    </form>
+</div>
+
+<div th:if="${gameState.gameOver}">
+    <h2>Game Over</h2>
+    <p th:text="${gameState.gameState}"></p>
+    <form action="/casino/blackjack/restart" method="post">
+        <button type="submit">Restart Game</button>
+    </form>
+</div>
+
+<a href="/games">Back to Games</a>
+</body>
+</html>
