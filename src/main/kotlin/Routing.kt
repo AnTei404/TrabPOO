@@ -9,12 +9,37 @@ import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import io.ktor.server.thymeleaf.*
 import trab.casino.ExchangeLogic
+import trab.casino.generatePreviewCards
 
 fun Application.configureRouting() {
     val exchangeLogic = ExchangeLogic()
 
     routing {
         staticResources("/", "static")
+
+        post("/select-deck") {
+            val player = call.sessions.get<Player>()
+            val selectedDeck = call.receiveParameters()["deck"] ?: "minimalista" // Default to "minimalista"
+            if (player != null && selectedDeck in listOf("minimalista", "pixel Art", "balatro")) {
+                call.sessions.set(DeckStyle(selectedDeck))
+                val previewCards = generatePreviewCards(selectedDeck)
+                call.respond(
+                    ThymeleafContent(
+                        "receptionist",
+                        mapOf(
+                            "name" to player.name,
+                            "chips" to player.chips,
+                            "money" to player.money,
+                            "deckStyle" to selectedDeck,
+                            "previewCards" to previewCards,
+                            "successMessage" to "Deck saved successfully!"
+                        )
+                    )
+                )
+            } else {
+                call.respondText("Invalid deck selection", status = HttpStatusCode.BadRequest)
+            }
+        }
 
         post("/exchange-money-for-chips") {
             val player = call.sessions.get<Player>()
@@ -51,10 +76,11 @@ fun Application.configureRouting() {
         post("/casino/blackjack/bet") {
             val player = call.sessions.get<Player>()
             val chipsBet = call.receiveParameters()["chipsBet"]?.toIntOrNull()
+            val deckStyle = call.sessions.get<DeckStyle>()?.style ?: "minimalista" // Default to "minimalista"
             if (player != null && chipsBet != null && chipsBet > 0 && chipsBet <= player.chips) {
                 val updatedPlayer = player.copy(lastBet = chipsBet, chips = player.chips - chipsBet)
                 call.sessions.set(updatedPlayer)
-                val gameState = blackjack.startGame()
+                val gameState = blackjack.startGame(deckStyle)
                 call.respond(
                     ThymeleafContent(
                         "blackjack",
@@ -62,7 +88,8 @@ fun Application.configureRouting() {
                             "name" to player.name,
                             "gameState" to gameState,
                             "chipsBet" to chipsBet,
-                            "chips" to updatedPlayer.chips
+                            "chips" to updatedPlayer.chips,
+                            "deckStyle" to deckStyle // Pass deckStyle here
                         )
                     )
                 )
@@ -73,8 +100,9 @@ fun Application.configureRouting() {
 
         post("/casino/blackjack/hit") {
             val player = call.sessions.get<Player>()
+            val deckStyle = call.sessions.get<DeckStyle>()?.style ?: "minimalista" // Default to "minimalista"
             if (player != null) {
-                val gameState = blackjack.hit()
+                val gameState = blackjack.hit(deckStyle) // Pass deckStyle here
                 val chipsBet = player.lastBet ?: 0
                 var resultMessage = ""
                 var updatedChips = player.chips
@@ -105,8 +133,9 @@ fun Application.configureRouting() {
 
         post("/casino/blackjack/stand") {
             val player = call.sessions.get<Player>()
+            val deckStyle = call.sessions.get<DeckStyle>()?.style ?: "minimalista" // Default to "minimalista"
             if (player != null) {
-                val gameState = blackjack.stand()
+                val gameState = blackjack.stand(deckStyle) // Pass deckStyle here
                 val chipsBet = player.lastBet ?: 0
                 var resultMessage = ""
                 var updatedPlayer = player
@@ -116,7 +145,6 @@ fun Application.configureRouting() {
                         resultMessage = "You won $chipsBet chips and now have ${updatedPlayer.chips} chips."
                     }
                     "You lose!" -> {
-                        // No chips refunded
                         resultMessage = "You lost $chipsBet chips and now have ${player.chips} chips."
                     }
                     "It's a tie!" -> {
@@ -145,11 +173,12 @@ fun Application.configureRouting() {
         post("/casino/blackjack/restart") {
             val player = call.sessions.get<Player>()
             val lastBet = player?.lastBet
+            val deckStyle = call.sessions.get<DeckStyle>()?.style ?: "minimalista" // Default to "minimalista"
             if (player != null && lastBet != null) {
                 if (player.chips >= lastBet) {
                     val updatedPlayer = player.copy(chips = player.chips - lastBet)
                     call.sessions.set(updatedPlayer)
-                    val gameState = blackjack.restartGame()
+                    val gameState = blackjack.restartGame(deckStyle) // Pass deckStyle here
                     call.respond(
                         ThymeleafContent(
                             "blackjack",
@@ -162,7 +191,7 @@ fun Application.configureRouting() {
                         )
                     )
                 } else {
-                    val gameState = blackjack.restartGame()
+                    val gameState = blackjack.restartGame(deckStyle) // Pass deckStyle here
                     call.respond(
                         ThymeleafContent(
                             "blackjack",

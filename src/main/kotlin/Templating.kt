@@ -9,6 +9,7 @@ import io.ktor.server.thymeleaf.Thymeleaf
 import io.ktor.server.thymeleaf.ThymeleafContent
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver
 import trab.casino.Blackjack
+import trab.casino.generatePreviewCards
 
 val blackjack = Blackjack() // Shared instance
 
@@ -25,27 +26,45 @@ fun Application.configureTemplating() {
         static("/static") {
             resources("static")
         }
+
+        static("/Baralhos") {
+            resources("Baralhos")
+        }
+
         get("/welcome") {
             val player = call.sessions.get<Player>()
-            if (player != null) {
+            if (player == null) {
+                call.application.log.info("Player session is null")
+                call.respondRedirect("/index.html")
+            } else {
                 call.respond(
                     ThymeleafContent(
                         "welcome",
-                        mapOf("name" to player.name, "chips" to player.chips, "money" to player.money)
+                        mapOf(
+                            "name" to player.name,
+                            "chips" to player.chips,
+                            "money" to player.money
+                        )
                     )
                 )
-            } else {
-                call.respondRedirect("/index.html")
             }
         }
 
         get("/receptionist") {
             val player = call.sessions.get<Player>()
+            val deckStyle = call.sessions.get<DeckStyle>()?.style ?: "minimalista"
+            val previewCards = generatePreviewCards(deckStyle)
             if (player != null) {
                 call.respond(
                     ThymeleafContent(
                         "receptionist",
-                        mapOf("name" to player.name, "chips" to player.chips, "money" to player.money)
+                        mapOf(
+                            "name" to player.name,
+                            "chips" to player.chips,
+                            "money" to player.money,
+                            "deckStyle" to deckStyle,
+                            "previewCards" to previewCards
+                        )
                     )
                 )
             } else {

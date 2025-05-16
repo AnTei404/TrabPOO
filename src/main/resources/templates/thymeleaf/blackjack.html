@@ -3,27 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <title>Blackjack</title>
+    <style>
+        .card-container {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-start; /* Align cards to the left */
+        }
+        .card {
+            text-align: center;
+        }
+        .card img {
+            width: 100px;
+            height: auto;
+        }
+    </style>
 </head>
 <body>
 <h1>Welcome to the Blackjack table, <span th:text="${name}"></span>!</h1>
 
 <div>
     <h2>Dealer's Hand</h2>
-    <ul>
-        <li th:each="card : ${gameState.dealerHand}" th:text="${card.rank} + ' of ' + ${card.suit}"></li>
-    </ul>
+    <div class="card-container">
+        <div class="card" th:each="card, iterStat : ${gameState.dealerHand}">
+            <img th:src="${gameState.gameOver || iterStat.index == 0 ? card.imagePath : '/Baralhos/CardBack.png'}" alt="Card Image">
+            <p th:text="${gameState.gameOver || iterStat.index == 0 ? card.rank + ' of ' + card.suit : 'Hidden Card'}"></p>
+        </div>
+    </div>
     <p>Total: <span th:text="${gameState.dealerTotal}"></span></p>
 </div>
 
 <div>
     <h2>Your Hand</h2>
-    <ul>
-        <li th:each="card : ${gameState.playerHand}" th:text="${card.rank} + ' of ' + ${card.suit}"></li>
-    </ul>
+    <div class="card-container">
+        <div class="card" th:each="card : ${gameState.playerHand}">
+            <img th:src="${card.imagePath}" alt="Card Image">
+            <p th:text="${card.rank + ' of ' + card.suit}"></p>
+        </div>
+    </div>
     <p>Total: <span th:text="${gameState.playerTotal}"></span></p>
 </div>
 
-<!-- Consistent button area -->
 <div>
     <div th:if="${!gameState.gameOver}">
         <form action="/casino/blackjack/hit" method="post" style="display:inline;">
@@ -43,7 +62,6 @@
     </div>
 </div>
 
-<!-- Bet/chips info or result message below the buttons -->
 <div>
     <p th:if="${!gameState.gameOver}">
         Bet: <span th:text="${chipsBet}"></span> chips |
