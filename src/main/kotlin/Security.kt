@@ -36,6 +36,6 @@ fun Application.configureSecurity() {
 data class Player(
     val name: String,
     val chips: Int = (0..500).random(),
-    val money: Int = (500..1000).random()
+    val money: Int = (500..1000).random(),
+    val lastBet: Int? = null // Add this field
 )
-

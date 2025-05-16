@@ -67,21 +67,19 @@ fun Application.configureTemplating() {
             }
         }
 
-        get("/casino/blackjack") {
-            val player = call.sessions.get<Player>()
-            if (player != null) {
-                val gameState = blackjack.startGame()
-                call.respond(
-                    ThymeleafContent(
-                        "blackjack",
-                        mapOf(
-                            "name" to player.name,
-                            "gameState" to gameState
+        routing {
+            get("/casino/blackjack") {
+                val player = call.sessions.get<Player>()
+                if (player != null) {
+                    call.respond(
+                        ThymeleafContent(
+                            "bet",
+                            mapOf("name" to player.name, "chips" to player.chips)
                         )
                     )
-                )
-            } else {
-                call.respondRedirect("/index.html")
+                } else {
+                    call.respondRedirect("/index.html")
+                }
             }
         }
     }
