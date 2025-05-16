@@ -1,6 +1,7 @@
 package trab
 
 import io.ktor.server.application.*
+import io.ktor.server.http.content.* // Import for static and resources
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
@@ -21,6 +22,9 @@ fun Application.configureTemplating() {
     }
 
     routing {
+        static("/static") {
+            resources("static")
+        }
         get("/welcome") {
             val player = call.sessions.get<Player>()
             if (player != null) {
