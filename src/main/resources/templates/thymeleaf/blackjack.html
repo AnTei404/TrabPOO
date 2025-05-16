@@ -23,21 +23,40 @@
     <p>Total: <span th:text="${gameState.playerTotal}"></span></p>
 </div>
 
-<div th:if="${!gameState.gameOver}">
-    <form action="/casino/blackjack/hit" method="post">
-        <button type="submit">Hit</button>
-    </form>
-    <form action="/casino/blackjack/stand" method="post">
-        <button type="submit">Stand</button>
-    </form>
+<!-- Consistent button area -->
+<div>
+    <div th:if="${!gameState.gameOver}">
+        <form action="/casino/blackjack/hit" method="post" style="display:inline;">
+            <button type="submit">Hit</button>
+        </form>
+        <form action="/casino/blackjack/stand" method="post" style="display:inline;">
+            <button type="submit">Stand</button>
+        </form>
+    </div>
+    <div th:if="${gameState.gameOver}">
+        <form action="/casino/blackjack/restart" method="post" th:if="${chipsBet != null}" style="display:inline;">
+            <button type="submit" th:disabled="${chips < chipsBet}">Restart Game</button>
+        </form>
+        <form action="/casino/blackjack" method="get" style="display:inline;">
+            <button type="submit">Place a New Bet</button>
+        </form>
+    </div>
+</div>
+
+<!-- Bet/chips info or result message below the buttons -->
+<div>
+    <p th:if="${!gameState.gameOver}">
+        Bet: <span th:text="${chipsBet}"></span> chips |
+        Chips owned: <span th:text="${chips}"></span>
+    </p>
+    <p th:if="${gameState.gameOver}">
+        <span th:text="${resultMessage}"></span>
+    </p>
 </div>
 
 <div th:if="${gameState.gameOver}">
     <h2>Game Over</h2>
     <p th:text="${gameState.gameState}"></p>
-    <form action="/casino/blackjack/restart" method="post">
-        <button type="submit">Restart Game</button>
-    </form>
 </div>
 
 <a href="/games">Back to Games</a>

@@ -1,0 +1,18 @@
+<!-- src/main/resources/templates/thymeleaf/bet.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Place Your Bet</title>
+</head>
+<body>
+<h1>Blackjack - Place Your Bet, <span th:text="${name}"></span>!</h1>
+<p>You have <span th:text="${chips}"></span> chips.</p>
+<form action="/casino/blackjack/bet" method="post">
+  <label for="chipsBet">Chips to bet:</label>
+  <input type="number" id="chipsBet" name="chipsBet" min="1" th:attr="max=${chips}" required>
+  <button type="submit">Start Game</button>
+</form>
+<a href="/games">Back to Games</a>
+</body>
+</html>
