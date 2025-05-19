@@ -10,6 +10,7 @@ import io.ktor.server.thymeleaf.ThymeleafContent
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver
 import trab.casino.Blackjack
 import trab.casino.generatePreviewCards
+import kotlin.text.get
 
 val blackjack = Blackjack() // Shared instance
 
@@ -90,19 +91,41 @@ fun Application.configureTemplating() {
             }
         }
 
-        routing {
-            get("/casino/blackjack") {
-                val player = call.sessions.get<Player>()
-                if (player != null) {
-                    call.respond(
-                        ThymeleafContent(
-                            "bet",
-                            mapOf("name" to player.name, "chips" to player.chips)
+        get("/casino/blackjack") {
+            val player = call.sessions.get<Player>()
+            if (player != null) {
+                call.respond(
+                    ThymeleafContent(
+                        "bet",
+                        mapOf(
+                            "name" to player.name,
+                            "chips" to player.chips,
+                            "title" to "Blackjack - Place Your Bet",
+                            "formAction" to "/casino/blackjack/bet"
                         )
                     )
-                } else {
-                    call.respondRedirect("/index.html")
-                }
+                )
+            } else {
+                call.respondRedirect("/index.html")
+            }
+        }
+
+        get("/casino/slots") {
+            val player = call.sessions.get<Player>()
+            if (player != null) {
+                call.respond(
+                    ThymeleafContent(
+                        "bet",
+                        mapOf(
+                            "name" to player.name,
+                            "chips" to player.chips,
+                            "title" to "Slots - Place Your Bet",
+                            "formAction" to "/casino/slots/bet"
+                        )
+                    )
+                )
+            } else {
+                call.respondRedirect("/index.html")
             }
         }
     }

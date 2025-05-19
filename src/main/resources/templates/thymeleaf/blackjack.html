@@ -77,6 +77,8 @@
     <p th:text="${gameState.gameState}"></p>
 </div>
 
-<a href="/games">Back to Games</a>
+<div th:if="${gameState.gameOver}">
+    <a href="/games">Back to Games</a>
+</div>
 </body>
 </html>

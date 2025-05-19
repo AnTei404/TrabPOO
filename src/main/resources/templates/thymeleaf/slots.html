@@ -1,0 +1,82 @@
+<!-- src/main/resources/templates/thymeleaf/slots.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Slots</title>
+    <style>
+        .reels {
+            font-size: 1.5em;
+            letter-spacing: 0.5em;
+        }
+        .reels td {
+            font-size: 1.2em;
+            padding: 0.2em;
+        }
+    </style>
+</head>
+<body>
+<h1>Slots, <span th:text="${name}"></span>!</h1>
+<div>
+    <div class="reels">
+        <table>
+            <tbody th:if="${grid != null}">
+            <tr th:each="row : ${grid}">
+                <td th:each="cell : ${row}" th:text="${cell}"></td>
+            </tr>
+            </tbody>
+            <tbody th:if="${grid == null}">
+            <tr th:each="i : ${#numbers.sequence(1,3)}">
+                <td th:each="j : ${#numbers.sequence(1,3)}">❓</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h2>Payout Table</h2>
+    <table style="margin-bottom:1em; font-size:1em;">
+        <thead>
+        <tr>
+            <th>Symbol</th>
+            <th>Payout (3 in a row)</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>7️⃣</td>
+            <td>10x bet</td>
+        </tr>
+        <tr>
+            <td>🔔</td>
+            <td>5x bet</td>
+        </tr>
+        <tr>
+            <td>🍒</td>
+            <td>3x bet</td>
+        </tr>
+        <tr>
+            <td>🍊</td>
+            <td>2x bet</td>
+        </tr>
+        <tr>
+            <td>🍋</td>
+            <td>1x bet</td>
+        </tr>
+        <tr>
+            <td>💣</td>
+            <td>0x bet</td>
+        </tr>
+        </tbody>
+    </table>
+    <p th:text="${resultMessage}"></p>
+    <p>Bet: <span th:text="${chipsBet}"></span> chips | Chips owned: <span th:text="${chips}"></span></p>
+    <form action="/casino/slots/spin" method="post" style="display:inline;">
+        <button type="submit">Spin</button>
+    </form>
+    <form action="/casino/slots/change-bet" method="post" style="display:inline;">
+        <button type="submit">Change Bet</button>
+    </form>
+</div>
+<a href="/games">Back to Games</a>
+</body>
+</html>

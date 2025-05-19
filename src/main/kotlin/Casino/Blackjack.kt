@@ -49,7 +49,7 @@ class Blackjack {
             gameOver = true
             return BlackjackGameState(
                 dealerFirstCard = dealerHand.first(),
-                dealerHand = dealerHand.map { it.toCardWithImage(deckStyle) }, // Full hand revealed
+                dealerHand = dealerHand.map { it.toCardWithImage(deckStyle) },
                 playerHand = playerHand.map { it.toCardWithImage(deckStyle) },
                 playerTotal = playerTotal,
                 dealerTotal = calculateHandValue(dealerHand),
@@ -75,6 +75,7 @@ class Blackjack {
             gameOver = true
         )
 
+        // Dealer reveals second card and plays out hand
         while (calculateHandValue(dealerHand) < 17) {
             dealerHand.add(deck.cards.removeFirst())
         }
@@ -83,7 +84,14 @@ class Blackjack {
         val playerTotal = calculateHandValue(playerHand)
 
         gameOver = true
+
+        // Check for player blackjack (2 cards: Ace + 10/J/Q/K)
+        val playerHasBlackjack = playerHand.size == 2 &&
+                ((playerHand[0].rank == "Ace" && playerHand[1].rank in listOf("10", "Jack", "Queen", "King")) ||
+                        (playerHand[1].rank == "Ace" && playerHand[0].rank in listOf("10", "Jack", "Queen", "King")))
+
         val result = when {
+            playerHasBlackjack && (dealerTotal > 21 || playerTotal > dealerTotal) -> "Blackjack! You win 3x!"
             dealerTotal > 21 || playerTotal > dealerTotal -> "You win!"
             playerTotal < dealerTotal -> "You lose!"
             else -> "It's a tie!"
@@ -91,7 +99,7 @@ class Blackjack {
 
         return BlackjackGameState(
             dealerFirstCard = dealerHand.first(),
-            dealerHand = dealerHand.map { it.toCardWithImage(deckStyle) }, // Full hand revealed
+            dealerHand = dealerHand.map { it.toCardWithImage(deckStyle) },
             dealerTotal = dealerTotal,
             playerHand = playerHand.map { it.toCardWithImage(deckStyle) },
             playerTotal = playerTotal,
