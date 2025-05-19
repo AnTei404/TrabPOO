@@ -3,6 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <title>Receptionist</title>
+    <style>
+        .card-container {
+            display: flex;
+            gap: 10px;
+        }
+        .card-container img {
+            width: 100px;
+            height: auto;
+        }
+        .success-message {
+            color: green;
+        }
+    </style>
 </head>
 <body>
 <h1>Welcome to the Receptionist, <span th:text="${name}"></span>!</h1>
@@ -21,6 +34,29 @@
     <input type="number" id="chips" name="chips" min="1" required>
     <button type="submit">Exchange</button>
 </form>
+
+<h2>Pick Card Deck</h2>
+<form action="/select-deck" method="post">
+    <label for="deck">Choose a deck:</label>
+    <select id="deck" name="deck">
+        <option value="minimalista" th:attr="selected=${deckStyle == 'minimalista'}">Minimalista</option>
+        <option value="pixel Art" th:attr="selected=${deckStyle == 'pixel Art'}">Pixel Art</option>
+        <option value="balatro" th:attr="selected=${deckStyle == 'balatro'}">Balatro</option>
+    </select>
+    <button type="submit">Select</button>
+</form>
+
+<p class="success-message" th:if="${successMessage != null}" th:text="${successMessage}"></p>
+
+<h2>Deck Preview</h2>
+<div>
+    <p>Preview of the selected deck:</p>
+    <div class="card-container">
+        <img th:src="${previewCards[0].imagePath}" alt="Card Image">
+        <img th:src="${previewCards[1].imagePath}" alt="Card Image">
+        <img th:src="${previewCards[2].imagePath}" alt="Card Image">
+    </div>
+</div>
 
 <a href="/welcome">Back to Welcome</a>
 </body>

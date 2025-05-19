@@ -10,7 +10,7 @@ class Blackjack {
         deck.shuffle()
     }
 
-    fun startGame(): BlackjackGameState {
+    fun startGame(deckStyle: String): BlackjackGameState {
         resetGame()
         dealerHand.add(deck.cards.removeFirst())
         dealerHand.add(deck.cards.removeFirst())
@@ -19,15 +19,23 @@ class Blackjack {
 
         return BlackjackGameState(
             dealerFirstCard = dealerHand.first(),
-            dealerHand = listOf(dealerHand.first()), // Only show the first card
-            dealerTotal = calculateHandValue(listOf(dealerHand.first())), // Only show the value of the first card
-            playerHand = playerHand,
+            dealerHand = dealerHand.map { it.toCardWithImage(deckStyle) },
+            dealerTotal = calculateHandValue(listOf(dealerHand.first())),
+            playerHand = playerHand.map { it.toCardWithImage(deckStyle) },
             playerTotal = calculateHandValue(playerHand),
             gameOver = gameOver
         )
     }
 
-    fun hit(): BlackjackGameState {
+    fun Card.toCardWithImage(deckStyle: String): Map<String, String> {
+        return mapOf(
+            "rank" to rank,
+            "suit" to suit,
+            "imagePath" to CardMatchBlackJack(this, deckStyle)
+        )
+    }
+
+    fun hit(deckStyle: String): BlackjackGameState {
         if (gameOver) return BlackjackGameState(
             dealerFirstCard = dealerHand.firstOrNull(),
             gameState = "Game is already over. Please restart.",
@@ -41,8 +49,8 @@ class Blackjack {
             gameOver = true
             return BlackjackGameState(
                 dealerFirstCard = dealerHand.first(),
-                dealerHand = dealerHand, // Reveal full hand on game over
-                playerHand = playerHand,
+                dealerHand = dealerHand.map { it.toCardWithImage(deckStyle) },
+                playerHand = playerHand.map { it.toCardWithImage(deckStyle) },
                 playerTotal = playerTotal,
                 dealerTotal = calculateHandValue(dealerHand),
                 gameState = "Bust! You lose.",
@@ -52,21 +60,22 @@ class Blackjack {
 
         return BlackjackGameState(
             dealerFirstCard = dealerHand.first(),
-            dealerHand = listOf(dealerHand.first()), // Keep showing only the first card
-            playerHand = playerHand,
+            dealerHand = listOf(dealerHand.first()).map { it.toCardWithImage(deckStyle) },
+            playerHand = playerHand.map { it.toCardWithImage(deckStyle) },
             playerTotal = playerTotal,
-            dealerTotal = calculateHandValue(listOf(dealerHand.first())), // Only show the first card's value
+            dealerTotal = calculateHandValue(listOf(dealerHand.first())),
             gameOver = gameOver
         )
     }
 
-    fun stand(): BlackjackGameState {
+    fun stand(deckStyle: String): BlackjackGameState {
         if (gameOver) return BlackjackGameState(
             dealerFirstCard = null,
             gameState = "Game is already over. Please restart.",
             gameOver = true
         )
 
+        // Dealer reveals second card and plays out hand
         while (calculateHandValue(dealerHand) < 17) {
             dealerHand.add(deck.cards.removeFirst())
         }
@@ -75,7 +84,14 @@ class Blackjack {
         val playerTotal = calculateHandValue(playerHand)
 
         gameOver = true
+
+        // Check for player blackjack (2 cards: Ace + 10/J/Q/K)
+        val playerHasBlackjack = playerHand.size == 2 &&
+                ((playerHand[0].rank == "Ace" && playerHand[1].rank in listOf("10", "Jack", "Queen", "King")) ||
+                        (playerHand[1].rank == "Ace" && playerHand[0].rank in listOf("10", "Jack", "Queen", "King")))
+
         val result = when {
+            playerHasBlackjack && (dealerTotal > 21 || playerTotal > dealerTotal) -> "Blackjack! You win 3x!"
             dealerTotal > 21 || playerTotal > dealerTotal -> "You win!"
             playerTotal < dealerTotal -> "You lose!"
             else -> "It's a tie!"
@@ -83,26 +99,26 @@ class Blackjack {
 
         return BlackjackGameState(
             dealerFirstCard = dealerHand.first(),
-            dealerHand = dealerHand, // Reveal full hand after stand
+            dealerHand = dealerHand.map { it.toCardWithImage(deckStyle) },
             dealerTotal = dealerTotal,
-            playerHand = playerHand,
+            playerHand = playerHand.map { it.toCardWithImage(deckStyle) },
             playerTotal = playerTotal,
             gameState = result,
             gameOver = gameOver
         )
     }
 
-    fun restartGame(): BlackjackGameState {
+    fun restartGame(deckStyle: String): BlackjackGameState {
         deck.shuffle()
-        return startGame()
+        return startGame(deckStyle)
     }
 
     private fun resetGame() {
         dealerHand.clear()
         playerHand.clear()
         gameOver = false
-        deck.cards = Deck().cards // Refill the deck with a new set of cards
-        deck.shuffle() // Shuffle the new deck
+        deck.cards = Deck().cards
+        deck.shuffle()
     }
 
     private fun calculateHandValue(hand: List<Card>): Int {
