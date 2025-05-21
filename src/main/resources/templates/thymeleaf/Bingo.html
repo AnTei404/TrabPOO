@@ -1,0 +1,138 @@
+<!-- src/main/resources/templates/thymeleaf/Bingo.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Bingo</title>
+  <style>
+    .bingo-card {
+      border-collapse: collapse;
+      margin-bottom: 1em;
+      display: inline-block;
+      margin-right: 1em;
+    }
+    .bingo-card td {
+      border: 1px solid #333;
+      width: 40px;
+      height: 40px;
+      text-align: center;
+      font-size: 1.2em;
+    }
+    .marked {
+      background-color: #90ee90; /* Green for player */
+    }
+    .house-marked {
+      background-color: #ff7f7f; /* Red for house */
+    }
+    .free {
+      background-color: #f0e68c;
+    }
+    .house-label {
+      text-align: center;
+      font-weight: bold;
+      margin-bottom: 0.2em;
+    }
+    .house-cards-container {
+      display: flex;
+      gap: 1em;
+      margin-bottom: 1em;
+    }
+    .house-card-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+  </style>
+</head>
+<body>
+<h1>Bingo, <span th:text="${name}"></span>!</h1>
+<p>Chips: <span th:text="${chips}"></span> | Bet: <span th:text="${chipsBet}"></span> | Players: <span th:text="${numPlayers}"></span></p>
+
+<div th:if="${gameState != null}">
+  <h2>House Cards</h2>
+  <div class="house-cards-container">
+    <div class="house-card-wrapper" th:each="houseCard, idx : ${gameState.houseCards}">
+      <div class="house-label">House Card <span th:text="${idx.index + 1}"></span></div>
+      <table class="bingo-card">
+        <tr>
+          <th>B</th><th>I</th><th>N</th><th>G</th><th>O</th>
+        </tr>
+        <tr th:each="row, rowStat : ${houseCard.grid}">
+          <td th:each="cell, colStat : ${row}"
+              th:text="${cell.number}"
+              th:classappend="(${cell.marked} ? 'house-marked ' : '') + ((rowStat.index == 2 and colStat.index == 2) ? 'free' : '')">
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <h2>Player Card</h2>
+  <table class="bingo-card" th:if="${gameState.userCard != null}">
+    <tr>
+      <th>B</th><th>I</th><th>N</th><th>G</th><th>O</th>
+    </tr>
+    <tr th:each="row, rowStat : ${gameState.userCard.grid}">
+      <td th:each="cell, colStat : ${row}"
+          th:text="${cell.number}"
+          th:classappend="(${cell.marked} ? 'marked ' : '') + ((rowStat.index == 2 and colStat.index == 2) ? 'free' : '')">
+      </td>
+    </tr>
+  </table>
+
+  <h2>Drawn Numbers</h2>
+  <p th:text="${#lists.isEmpty(gameState.drawnNumbers) ? 'None yet' : gameState.drawnNumbers}"></p>
+
+  <h2 th:if="${gameState.lastNumber != null}">Last Number: <span th:text="${gameState.lastNumber}"></span></h2>
+
+  <div th:if="${!(gameState.userHasBingo or !#lists.isEmpty(gameState.houseWinners))}">
+    <form action="/casino/bingo/next" method="post">
+      <button type="submit">Next Number</button>
+    </form>
+  </div>
+
+  <div th:if="${gameState.tie}">
+    <h2>It's a tie! Your bet is returned.</h2>
+  </div>
+  <div th:if="${gameState.userHasBingo and !gameState.tie}">
+    <h2>🎉 BINGO! You win! 🎉</h2>
+  </div>
+  <div th:if="${!#lists.isEmpty(gameState.houseWinners) and !gameState.tie}">
+    <h2>House wins! (Card(s): <span th:text="${gameState.houseWinners}"></span>)</h2>
+  </div>
+
+  <p th:if="${resultMessage != null}" th:text="${resultMessage}"></p>
+
+  <div th:if="${gameState.userHasBingo or !#lists.isEmpty(gameState.houseWinners)}">
+    <form action="/casino/bingo/new" method="post" style="display:inline;">
+      <button type="submit">New Game</button>
+    </form>
+    <form action="/casino/bingo" method="get" style="display:inline;">
+      <button type="submit">Place another Bet</button>
+    </form>
+    <form action="/games" method="get" style="display:inline;">
+      <button type="submit">Go back to games</button>
+    </form>
+  </div>
+</div>
+
+<a href="/games">Back to Games</a>
+
+<script>
+  // Save scroll position before form submit
+  document.querySelectorAll('form').forEach(form => {
+    form.addEventListener('submit', function() {
+      sessionStorage.setItem('bingoScroll', window.scrollY);
+    });
+  });
+  // Restore scroll position on page load
+  window.addEventListener('load', function() {
+    const y = sessionStorage.getItem('bingoScroll');
+    if (y !== null) {
+      window.scrollTo(0, parseInt(y));
+      sessionStorage.removeItem('bingoScroll');
+    }
+  });
+</script>
+</body>
+</html>

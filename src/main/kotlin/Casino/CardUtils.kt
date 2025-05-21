@@ -25,9 +25,19 @@ fun generatePreviewCards(deckStyle: String): List<Map<String, String>> {
     )
 }
 
-fun CardMatchBlackJack(card: Card?, deckStyle: String, isHidden: Boolean = false): String {
+// Change this function:
+fun Card.toCardWithImage(deckStyle: String): Map<String, String> {
+    val rankShort = if (rank == "10") rank else rank.substring(0, 1)
+    return mapOf(
+        "rank" to rank,
+        "suit" to suit,
+        "imagePath" to "/Baralhos/$deckStyle/$rankShort-$suit.png"
+    )
+}
+
+fun CardMatch(card: Card?, deckStyle: String, isHidden: Boolean = false): String {
     return if (isHidden) {
-        "/Baralhos/CardBack.png" // Path to the card back image
+        "/Baralhos/CardBack.png"
     } else {
         val rankShort = if (card?.rank == "10") card.rank else card?.rank?.substring(0, 1)
         "/Baralhos/$deckStyle/$rankShort-${card?.suit}.png"

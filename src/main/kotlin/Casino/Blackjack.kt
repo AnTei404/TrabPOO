@@ -1,5 +1,7 @@
 package trab.casino
 
+import kotlin.compareTo
+
 class Blackjack {
     private val deck = Deck()
     private val dealerHand = mutableListOf<Card>()
@@ -24,14 +26,6 @@ class Blackjack {
             playerHand = playerHand.map { it.toCardWithImage(deckStyle) },
             playerTotal = calculateHandValue(playerHand),
             gameOver = gameOver
-        )
-    }
-
-    fun Card.toCardWithImage(deckStyle: String): Map<String, String> {
-        return mapOf(
-            "rank" to rank,
-            "suit" to suit,
-            "imagePath" to CardMatchBlackJack(this, deckStyle)
         )
     }
 
@@ -60,7 +54,7 @@ class Blackjack {
 
         return BlackjackGameState(
             dealerFirstCard = dealerHand.first(),
-            dealerHand = listOf(dealerHand.first()).map { it.toCardWithImage(deckStyle) },
+            dealerHand = dealerHand.map { it.toCardWithImage(deckStyle) },
             playerHand = playerHand.map { it.toCardWithImage(deckStyle) },
             playerTotal = playerTotal,
             dealerTotal = calculateHandValue(listOf(dealerHand.first())),
@@ -75,7 +69,6 @@ class Blackjack {
             gameOver = true
         )
 
-        // Dealer reveals second card and plays out hand
         while (calculateHandValue(dealerHand) < 17) {
             dealerHand.add(deck.cards.removeFirst())
         }
@@ -85,7 +78,6 @@ class Blackjack {
 
         gameOver = true
 
-        // Check for player blackjack (2 cards: Ace + 10/J/Q/K)
         val playerHasBlackjack = playerHand.size == 2 &&
                 ((playerHand[0].rank == "Ace" && playerHand[1].rank in listOf("10", "Jack", "Queen", "King")) ||
                         (playerHand[1].rank == "Ace" && playerHand[0].rank in listOf("10", "Jack", "Queen", "King")))

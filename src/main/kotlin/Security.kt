@@ -14,6 +14,7 @@ import io.ktor.server.thymeleaf.Thymeleaf
 import io.ktor.server.thymeleaf.ThymeleafContent
 import kotlinx.serialization.Serializable
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver
+import trab.casino.BingoGame
 import kotlin.random.Random
 
 fun Application.configureSecurity() {
