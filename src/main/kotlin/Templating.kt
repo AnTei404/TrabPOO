@@ -147,5 +147,24 @@ fun Application.configureTemplating() {
                 call.respondRedirect("/index.html")
             }
         }
+
+        get("/casino/higherorlower") {
+            val player = call.sessions.get<Player>()
+            if (player != null) {
+                call.respond(
+                    ThymeleafContent(
+                        "bet",
+                        mapOf(
+                            "name" to player.name,
+                            "chips" to player.chips,
+                            "title" to "Higher or Lower - Place Your Bet",
+                            "formAction" to "/casino/higherorlower/bet"
+                        )
+                    )
+                )
+            } else {
+                call.respondRedirect("/index.html")
+            }
+        }
     }
 }

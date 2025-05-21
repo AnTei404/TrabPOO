@@ -1,0 +1,59 @@
+<!-- src/main/resources/templates/thymeleaf/higherorlower.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Higher or Lower</title>
+    <style>
+        .card-container { display: flex; gap: 20px; }
+        .card img { width: 100px; }
+        .disabled-btn { opacity: 0.5; pointer-events: none; }
+    </style>
+</head>
+<body>
+<h1>Higher or Lower, <span th:text="${name}"></span>!</h1>
+<p>Chips: <span th:text="${chips}"></span> | Bet: <span th:text="${chipsBet}"></span> | Round: <span th:text="${currentRound}"></span>/<span th:text="${totalRounds}"></span> | Multiplier: <span th:text="${multiplier}"></span>x</p>
+
+<div class="card-container">
+    <div>
+        <h3>Your Card</h3>
+        <img th:src="${playerCard != null} ? ${playerCard.imagePath} : '/Baralhos/CardBack.png'" alt="Player Card">
+        <p th:text="${playerCard != null} ? ${playerCard.rank + ' of ' + playerCard.suit} : '---'"></p>
+    </div>
+    <div>
+        <h3>Dealer Card</h3>
+        <img th:src="${showDealerCard and dealerCard != null} ? ${dealerCard.imagePath} : '/Baralhos/CardBack.png'" alt="Dealer Card">
+        <p th:text="${showDealerCard and dealerCard != null} ? ${dealerCard.rank + ' of ' + dealerCard.suit} : 'Hidden'"></p>
+    </div>
+</div>
+
+<div th:if="${!gameOver}">
+    <form action="/casino/higherorlower/guess" method="post" style="display:inline;" th:if="${!showDealerCard}">
+        <button type="submit" name="guess" value="higher">Higher</button>
+        <button type="submit" name="guess" value="lower">Lower</button>
+    </form>
+    <form action="/casino/higherorlower/next" method="post" style="display:inline;" th:if="${showDealerCard and !canLeaveOrAllIn}">
+        <button type="submit">Next Round</button>
+    </form>
+    <form action="/casino/higherorlower/allin" method="post" style="display:inline;" th:if="${canLeaveOrAllIn}">
+        <button type="submit">All In</button>
+    </form>
+    <form action="/casino/higherorlower/leave" method="post" style="display:inline;" th:if="${canLeaveOrAllIn}">
+        <button type="submit">Leave with Winnings</button>
+    </form>
+</div>
+
+<div th:if="${gameOver}">
+    <h2 th:text="${result}"></h2>
+    <p th:text="${resultMessage}"></p>
+    <form action="/casino/higherorlower/restart" method="post" style="display:inline;">
+        <button type="submit">Play Again</button>
+    </form>
+    <form action="/casino/higherorlower" method="get" style="display:inline;">
+        <button type="submit">Change Bet</button>
+    </form>
+</div>
+
+<a href="/games">Back to Games</a>
+</body>
+</html>
