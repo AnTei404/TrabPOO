@@ -4,12 +4,12 @@ import kotlin.random.Random
 
 class Slots {
     private val weightedSymbols = listOf(
-        "Lemon", "Lemon", "Lemon", "Lemon", "Lemon", "Lemon", // 6
-        "Orange", "Orange", "Orange", "Orange", "Orange",      // 5
-        "Cherry", "Cherry", "Cherry", "Cherry",                // 4
-        "Mine", "Mine","Mine",                       // 2 (same as bell)
-        "Bell", "Bell",                                        // 2
-        "Seven"                                                // 1
+        "Lemon", "Lemon", "Lemon", "Lemon", "Lemon", "Lemon",
+        "Orange", "Orange", "Orange", "Orange", "Orange",
+        "Cherry", "Cherry", "Cherry", "Cherry",
+        "Mine", "Mine","Mine",
+        "Bell", "Bell",
+        "Seven"
     )
 
     private val payouts = mapOf(

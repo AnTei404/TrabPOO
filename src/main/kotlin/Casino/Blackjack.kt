@@ -75,7 +75,6 @@ class Blackjack {
             gameOver = true
         )
 
-        // Dealer reveals second card and plays out hand
         while (calculateHandValue(dealerHand) < 17) {
             dealerHand.add(deck.cards.removeFirst())
         }
@@ -85,7 +84,6 @@ class Blackjack {
 
         gameOver = true
 
-        // Check for player blackjack (2 cards: Ace + 10/J/Q/K)
         val playerHasBlackjack = playerHand.size == 2 &&
                 ((playerHand[0].rank == "Ace" && playerHand[1].rank in listOf("10", "Jack", "Queen", "King")) ||
                         (playerHand[1].rank == "Ace" && playerHand[0].rank in listOf("10", "Jack", "Queen", "King")))

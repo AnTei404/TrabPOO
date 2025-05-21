@@ -7,7 +7,7 @@ class ExchangeLogic {
         return if (moneyToExchange > 0 && player.money >= moneyToExchange) {
             player.copy(
                 money = player.money - moneyToExchange,
-                chips = player.chips + (moneyToExchange * 10) // Example: 1 money = 10 chips
+                chips = player.chips + (moneyToExchange * 10)
             )
         } else {
             null
@@ -18,7 +18,7 @@ class ExchangeLogic {
         return if (chipsToExchange > 0 && player.chips >= chipsToExchange) {
             player.copy(
                 chips = player.chips - chipsToExchange,
-                money = player.money + (chipsToExchange / 10) // Convert to Int
+                money = player.money + (chipsToExchange / 10)
             )
         } else {
             null

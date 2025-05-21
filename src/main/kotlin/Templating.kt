@@ -128,5 +128,24 @@ fun Application.configureTemplating() {
                 call.respondRedirect("/index.html")
             }
         }
+
+        get("/casino/bingo") {
+            val player = call.sessions.get<Player>()
+            if (player != null) {
+                call.respond(
+                    ThymeleafContent(
+                        "bet",
+                        mapOf(
+                            "name" to player.name,
+                            "chips" to player.chips,
+                            "title" to "Bingo - Place Your Bet",
+                            "formAction" to "/casino/bingo/bet"
+                        )
+                    )
+                )
+            } else {
+                call.respondRedirect("/index.html")
+            }
+        }
     }
 }

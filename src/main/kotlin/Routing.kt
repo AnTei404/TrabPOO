@@ -9,14 +9,19 @@ import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import io.ktor.server.thymeleaf.*
 import trab.casino.ExchangeLogic
+import io.ktor.server.thymeleaf.ThymeleafContent
+import trab.casino.BingoGame
 import trab.casino.generatePreviewCards
+import kotlin.collections.set
+import kotlin.compareTo
 import kotlin.text.get
 import kotlin.text.set
+import trab.casino.BingoGameState
 import kotlin.times
 
 fun Application.configureRouting() {
     val exchangeLogic = ExchangeLogic()
-
+    val bingoGames = mutableMapOf<String, BingoGame>() // In-memory storage for BingoGame per player
     routing {
         staticResources("/", "static")
 
@@ -297,6 +302,120 @@ fun Application.configureRouting() {
                 )
             } else {
                 call.respondRedirect("/index.html")
+            }
+        }
+
+        post("/casino/bingo/bet") {
+            val player = call.sessions.get<Player>()
+            val chipsBet = call.receiveParameters()["chipsBet"]?.toIntOrNull()
+            if (player != null && chipsBet != null && chipsBet > 0 && chipsBet <= player.chips) {
+                val updatedPlayer = player.copy(lastBet = chipsBet, chips = player.chips - chipsBet)
+                call.sessions.set(updatedPlayer)
+                val bingoGame = BingoGame()
+                bingoGames[player.name] = bingoGame // Store in-memory
+                val gameState = BingoGameState(
+                    userCard = bingoGame.userCard,
+                    houseCards = bingoGame.houseCards,
+                    drawnNumbers = bingoGame.drawnNumbers,
+                    lastNumber = bingoGame.lastNumber,
+                    userHasBingo = bingoGame.userHasBingo(),
+                    houseWinners = bingoGame.houseWinners()
+                )
+                call.respond(
+                    ThymeleafContent(
+                        "Bingo",
+                        mapOf(
+                            "name" to updatedPlayer.name,
+                            "chipsBet" to chipsBet,
+                            "chips" to updatedPlayer.chips,
+                            "numPlayers" to 1 + bingoGame.houseCards.size,
+                            "gameState" to gameState
+                        )
+                    )
+                )
+            } else {
+                call.respondText("Invalid bet", status = HttpStatusCode.BadRequest)
+            }
+        }
+
+        post("/casino/bingo/next") {
+            val player = call.sessions.get<Player>()
+            val bingoGame = player?.name?.let { bingoGames[it] }
+            val chipsBet = player?.lastBet ?: 0
+            if (player != null && bingoGame != null) {
+                bingoGame.nextNumber()
+                val userHasBingo = bingoGame.userHasBingo()
+                val houseWinners = bingoGame.houseWinners()
+                val tie = userHasBingo && houseWinners.isNotEmpty()
+                var updatedPlayer = player
+                var resultMessage = ""
+                if (userHasBingo && !tie) {
+                    updatedPlayer = player.copy(chips = player.chips + chipsBet * 6)
+                    resultMessage = "Bingo! You win ${chipsBet * 6} chips and now have ${updatedPlayer.chips} chips."
+                } else if (tie) {
+                    updatedPlayer = player.copy(chips = player.chips + chipsBet)
+                    resultMessage = "It's a tie! Your bet is returned. You have ${updatedPlayer.chips} chips."
+                } else if (houseWinners.isNotEmpty()) {
+                    resultMessage = "House wins! You lost $chipsBet chips and now have ${player.chips} chips."
+                }
+                call.sessions.set(updatedPlayer)
+                val gameState = BingoGameState(
+                    userCard = bingoGame.userCard,
+                    houseCards = bingoGame.houseCards,
+                    drawnNumbers = bingoGame.drawnNumbers,
+                    lastNumber = bingoGame.lastNumber,
+                    userHasBingo = userHasBingo,
+                    houseWinners = houseWinners,
+                    tie = tie
+                )
+                call.respond(
+                    ThymeleafContent(
+                        "Bingo",
+                        mapOf(
+                            "name" to updatedPlayer.name,
+                            "chipsBet" to chipsBet,
+                            "chips" to updatedPlayer.chips,
+                            "numPlayers" to 1 + bingoGame.houseCards.size,
+                            "gameState" to gameState,
+                            "resultMessage" to resultMessage
+                        )
+                    )
+                )
+            } else {
+                call.respondRedirect("/casino/bingo")
+            }
+        }
+
+        post("/casino/bingo/new") {
+            val player = call.sessions.get<Player>()
+            val chipsBet = player?.lastBet ?: 0
+            if (player != null && chipsBet > 0 && player.chips >= chipsBet) {
+                val updatedPlayer = player.copy(chips = player.chips - chipsBet)
+                call.sessions.set(updatedPlayer)
+                val bingoGame = BingoGame()
+                bingoGames[player.name] = bingoGame // Store in-memory
+                val gameState = BingoGameState(
+                    userCard = bingoGame.userCard,
+                    houseCards = bingoGame.houseCards,
+                    drawnNumbers = bingoGame.drawnNumbers,
+                    lastNumber = bingoGame.lastNumber,
+                    userHasBingo = bingoGame.userHasBingo(),
+                    houseWinners = bingoGame.houseWinners()
+                )
+                call.respond(
+                    ThymeleafContent(
+                        "Bingo",
+                        mapOf(
+                            "name" to updatedPlayer.name,
+                            "chipsBet" to chipsBet,
+                            "chips" to updatedPlayer.chips,
+                            "numPlayers" to 1 + bingoGame.houseCards.size,
+                            "gameState" to gameState
+                        )
+                    )
+                )
+            } else {
+                call.respondRedirect("/casino/bingo")
             }
         }
     }

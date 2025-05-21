@@ -1,5 +1,8 @@
 package trab.casino
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class Card(val rank: String, val suit: String)
 
 class Deck {
