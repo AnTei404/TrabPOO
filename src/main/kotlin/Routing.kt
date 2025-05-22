@@ -358,18 +358,19 @@ fun Application.configureRouting() {
                 val userHasBingo = bingoGame.userHasBingo()
                 val houseWinners = bingoGame.houseWinners()
                 val tie = userHasBingo && houseWinners.isNotEmpty()
-                var updatedPlayer = player
+                var tempPlayer = player
                 var resultMessage = ""
                 if (userHasBingo && !tie) {
-                    updatedPlayer = player.copy(chips = player.chips + chipsBet * 6)
-                    resultMessage = "Bingo! You win ${chipsBet * 6} chips and now have ${updatedPlayer.chips} chips."
+                    tempPlayer = player.copy(chips = player.chips + chipsBet * 6)
+                    resultMessage = "Bingo! You win ${chipsBet * 6} chips and now have ${tempPlayer.chips} chips."
                 } else if (tie) {
-                    updatedPlayer = player.copy(chips = player.chips + chipsBet)
-                    resultMessage = "It's a tie! Your bet is returned. You have ${updatedPlayer.chips} chips."
+                    tempPlayer = player.copy(chips = player.chips + chipsBet)
+                    resultMessage = "It's a tie! Your bet is returned. You have ${tempPlayer.chips} chips."
                 } else if (houseWinners.isNotEmpty()) {
                     resultMessage = "House wins! You lost $chipsBet chips and now have ${player.chips} chips."
                 }
-                call.sessions.set(updatedPlayer)
+                val finalPlayer = tempPlayer
+                call.sessions.set(finalPlayer)
                 val gameState = BingoGameState(
                     userCard = bingoGame.userCard,
                     houseCards = bingoGame.houseCards,
@@ -383,9 +384,9 @@ fun Application.configureRouting() {
                     ThymeleafContent(
                         "Bingo",
                         mapOf(
-                            "name" to updatedPlayer.name,
+                            "name" to finalPlayer.name,
                             "chipsBet" to chipsBet,
-                            "chips" to updatedPlayer.chips,
+                            "chips" to finalPlayer.chips,
                             "numPlayers" to 1 + bingoGame.houseCards.size,
                             "gameState" to gameState,
                             "resultMessage" to resultMessage
