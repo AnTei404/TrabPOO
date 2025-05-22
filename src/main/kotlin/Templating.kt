@@ -10,7 +10,6 @@ import io.ktor.server.thymeleaf.ThymeleafContent
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver
 import trab.casino.Blackjack
 import trab.casino.generatePreviewCards
-import kotlin.text.get
 
 val blackjack = Blackjack() // Shared instance
 
@@ -28,8 +27,8 @@ fun Application.configureTemplating() {
             resources("static")
         }
 
-        static("/Baralhos") {
-            resources("Baralhos")
+        static("/static/Baralhos") {
+            resources("static/Baralhos")
         }
 
         get("/welcome") {
