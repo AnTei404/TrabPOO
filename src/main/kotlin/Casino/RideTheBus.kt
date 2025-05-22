@@ -56,9 +56,9 @@ class RideTheBusGame(deckStyle: String) {
         revealed[round] = true
         if (correct) {
             multiplier = when (round) {
-                0 -> 2
-                1 -> 3
-                2 -> 4
+                0 -> 1
+                1 -> 2
+                2 -> 3
                 3 -> 20
                 else -> multiplier
             }

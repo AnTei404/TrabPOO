@@ -1,0 +1,116 @@
+/* Retroesque style for Leave page */
+
+/* Base styles */
+body {
+    background-color: #000;
+    color: #0f0;
+    font-family: 'Courier New', monospace;
+    padding: 20px;
+    background-image: linear-gradient(to bottom, #000, #111);
+    text-shadow: 0 0 5px #0f0;
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+h1 {
+    color: #f00;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px #f00;
+    margin-bottom: 30px;
+    font-size: 3em;
+    animation: farewell-flicker 3s infinite;
+}
+
+p {
+    font-size: 1.5em;
+    margin: 15px 0;
+    line-height: 1.5;
+}
+
+p:last-child {
+    color: #999;
+    font-size: 1em;
+    margin-top: 40px;
+    animation: fade-pulse 2s infinite;
+}
+
+/* Span elements (for dynamic content) */
+span {
+    color: #ff0;
+    font-weight: bold;
+    text-shadow: 0 0 5px #ff0;
+}
+
+/* CRT screen effect */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+    background-size: 100% 4px;
+    z-index: 1000;
+    pointer-events: none;
+    opacity: 0.15;
+}
+
+/* Vignette effect */
+body::after {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    box-shadow: inset 0 0 150px rgba(0, 0, 0, 0.9);
+    pointer-events: none;
+    z-index: 999;
+}
+
+/* Farewell flicker animation */
+@keyframes farewell-flicker {
+    0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+        text-shadow: 0 0 10px #f00, 0 0 20px #f00, 0 0 30px #f00;
+        opacity: 1;
+    }
+    20%, 24%, 55% {
+        text-shadow: none;
+        opacity: 0.8;
+    }
+}
+
+/* Fade pulse animation for redirect message */
+@keyframes fade-pulse {
+    0%, 100% {
+        opacity: 0.5;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+/* Shutdown animation */
+body {
+    animation: shutdown 5s forwards;
+}
+
+@keyframes shutdown {
+    0% {
+        filter: brightness(1);
+    }
+    80% {
+        filter: brightness(1);
+    }
+    100% {
+        filter: brightness(0);
+    }
+}
