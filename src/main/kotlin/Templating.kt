@@ -23,13 +23,6 @@ fun Application.configureTemplating() {
     }
 
     routing {
-        static("/static") {
-            resources("static")
-        }
-
-        static("/static/Baralhos") {
-            resources("static/Baralhos")
-        }
 
         get("/welcome") {
             val player = call.sessions.get<Player>()

@@ -23,7 +23,7 @@ class RideTheBusGame(deckStyle: String) {
     private var result: String? = null
 
     fun getState(deckStyle: String) = RideTheBusGameState(
-        cards = cards.mapIndexed { i, c -> if (revealed[i]) c.toCardWithImage(deckStyle) else mapOf("imagePath" to "/static/Baralhos/CardBack.png") },
+        cards = cards.mapIndexed { i, c -> if (revealed[i]) c.toCardWithImage(deckStyle) else mapOf("imagePath" to "/Baralhos/CardBack.png") },
         revealed = revealed.toList(),
         currentRound = round,
         multiplier = multiplier,
