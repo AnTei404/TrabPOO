@@ -1,4 +1,4 @@
-FROM gradle:7.6.1-jdk17 AS build
+FROM gradle:8.4-jdk17 AS build
 WORKDIR /app
 COPY --chown=gradle:gradle . /app
 RUN gradle buildFatJar --no-daemon
