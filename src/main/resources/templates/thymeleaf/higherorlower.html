@@ -70,6 +70,21 @@
 </div>
 
 <script>
+    // Save scroll position before form submit
+    document.querySelectorAll('form').forEach(form => {
+        form.addEventListener('submit', function() {
+            sessionStorage.setItem('higherOrLowerScroll', window.scrollY);
+        });
+    });
+    // Restore scroll position on page load
+    window.addEventListener('load', function() {
+        const y = sessionStorage.getItem('higherOrLowerScroll');
+        if (y !== null) {
+            window.scrollTo(0, parseInt(y));
+            sessionStorage.removeItem('higherOrLowerScroll');
+        }
+    });
+
     function showRules() {
         document.getElementById('overlay').style.display = 'block';
         document.getElementById('rulesPopup').style.display = 'block';

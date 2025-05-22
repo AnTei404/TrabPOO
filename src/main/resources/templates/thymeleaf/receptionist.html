@@ -9,17 +9,19 @@
 <h1>Welcome to the Receptionist, <span th:text="${name}"></span>!</h1>
 <p>You currently have <span th:text="${chips}"></span> chips and $<span th:text="${money}"></span>.</p>
 
+<button class="rules-button" onclick="showRules()">View Game Rules</button>
+
 <h2>Exchange Money for Chips</h2>
 <form action="/exchange-money-for-chips" method="post">
     <label for="money">Enter amount of money to exchange:</label>
-    <input type="number" id="money" name="money" min="1" required>
+    <input type="number" id="money" name="money" min="1" th:max="${money}" required>
     <button type="submit">Exchange</button>
 </form>
 
 <h2>Exchange Chips for Money</h2>
 <form action="/exchange-chips-for-money" method="post">
     <label for="chips">Enter amount of chips to exchange:</label>
-    <input type="number" id="chips" name="chips" min="1" required>
+    <input type="number" id="chips" name="chips" min="1" th:max="${chips}" required>
     <button type="submit">Exchange</button>
 </form>
 
@@ -28,7 +30,7 @@
     <label for="deck">Choose a deck:</label>
     <select id="deck" name="deck">
         <option value="minimalista" th:attr="selected=${deckStyle == 'minimalista'}">Minimalista</option>
-        <option value="pixel Art" th:attr="selected=${deckStyle == 'pixel Art'}">Pixel Art</option>
+        <option value="pixel art" th:attr="selected=${deckStyle == 'pixel art'}">Pixel Art</option>
         <option value="balatro" th:attr="selected=${deckStyle == 'balatro'}">Balatro</option>
     </select>
     <button type="submit">Select</button>
@@ -47,8 +49,6 @@
 </div>
 
 <a href="/welcome">Back to Welcome</a>
-
-<button class="rules-button" onclick="showRules()">View Game Rules</button>
 
 <div class="overlay" id="overlay" onclick="hideRules()"></div>
 <div class="rules-popup" id="rulesPopup">

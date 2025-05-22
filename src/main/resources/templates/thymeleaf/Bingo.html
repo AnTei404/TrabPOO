@@ -94,12 +94,6 @@
   </div>
 </div>
 
-<div th:if="${gameState.userHasBingo or !#lists.isEmpty(gameState.houseWinners)}">
-  <form action="/games" method="get" style="display:inline;">
-    <button type="submit">Back to Games</button>
-  </form>
-</div>
-
 <script>
   // Save scroll position before form submit
   document.querySelectorAll('form').forEach(form => {

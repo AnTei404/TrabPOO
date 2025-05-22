@@ -29,3 +29,7 @@ dependencies {
     testImplementation(libs.ktor.server.test.host)
     testImplementation(libs.kotlin.test.junit)
 }
+
+tasks.withType<Jar> {
+    archiveFileName.set("poo-all.jar")
+}

@@ -42,7 +42,7 @@ fun Application.configureRouting() {
         post("/select-deck") {
             val player = call.sessions.get<Player>()
             val selectedDeck = call.receiveParameters()["deck"] ?: "minimalista" // Default to "minimalista"
-            if (player != null && selectedDeck in listOf("minimalista", "pixel Art", "balatro")) {
+            if (player != null && selectedDeck in listOf("minimalista", "pixel art", "balatro")) {
                 call.sessions.set(DeckStyle(selectedDeck))
                 val previewCards = generatePreviewCards(selectedDeck)
                 call.respond(
