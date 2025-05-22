@@ -30,7 +30,7 @@ h1 {
     margin-bottom: 30px;
     border-bottom: 2px solid #f0f;
     padding-bottom: 15px;
-    animation: title-glow 2s infinite alternate;
+    animation: sign-flicker 3s infinite;
 }
 
 @keyframes title-glow {
@@ -120,7 +120,7 @@ body::before {
     opacity: 0.15;
 }
 
-/* Casino lights effect */
+/* Vignette effect for boxed look */
 body::after {
     content: "";
     position: fixed;
@@ -128,8 +128,7 @@ body::after {
     left: 0;
     width: 100%;
     height: 100%;
-    background: radial-gradient(circle at 50% 50%, rgba(255, 0, 255, 0.1) 0%, rgba(0, 0, 0, 0) 70%);
-    animation: casino-lights 5s infinite alternate;
+    box-shadow: inset 0 0 150px rgba(0, 0, 0, 0.9);
     pointer-events: none;
     z-index: 999;
 }
@@ -143,5 +142,17 @@ body::after {
     }
     100% {
         background: radial-gradient(circle at 50% 70%, rgba(0, 255, 255, 0.1) 0%, rgba(0, 0, 0, 0) 70%);
+    }
+}
+
+/* Sign flicker animation for welcome text */
+@keyframes sign-flicker {
+    0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+        text-shadow: 0 0 10px #f0f, 0 0 20px #f0f, 0 0 30px #f0f;
+        opacity: 1;
+    }
+    20%, 24%, 55% {
+        text-shadow: none;
+        opacity: 0.8;
     }
 }
