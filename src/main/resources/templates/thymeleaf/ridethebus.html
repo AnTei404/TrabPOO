@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Ride the Bus</title>
+    <style>
+        .card-container {
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+        }
+        .card {
+            margin: 5px;
+        }
+        /* Help button styles */
+        .help-button {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            width: 30px;
+            height: 30px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 100;
+        }
+        /* Popup styles */
+        .rules-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            z-index: 101;
+            max-width: 80%;
+            max-height: 80%;
+            overflow-y: auto;
+        }
+        .popup-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            font-size: 20px;
+        }
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 100;
+        }
+    </style>
+</head>
+<body>
+<button class="help-button" onclick="showRules()">?</button>
+<div class="overlay" id="overlay" onclick="hideRules()"></div>
+<div class="rules-popup" id="rulesPopup">
+    <span class="popup-close" onclick="hideRules()">×</span>
+    <h2>Ride the Bus Rules</h2>
+    <p>Ride the Bus is a card game with four rounds of increasing difficulty:</p>
+    <ol>
+        <li><strong>Round 1:</strong> Guess if the card is Red or Black</li>
+        <li><strong>Round 2:</strong> Guess if the next card is Higher or Lower than the previous card</li>
+        <li><strong>Round 3:</strong> Guess if the next card is Inside or Outside the range of the first two cards</li>
+        <li><strong>Round 4:</strong> Guess the suit of the next card (Hearts, Diamonds, Clubs, or Spades)</li>
+    </ol>
+    <p>Each correct guess increases your multiplier. You can choose to leave with your winnings after each round (except the first).</p>
+</div>
+
+<h1>Ride the Bus, <span th:text="${name}"></span>!</h1>
+<p>Chips: <span th:text="${chips}"></span> | Bet: <span th:text="${chipsBet}"></span> | Multiplier: <span th:text="${gameState.multiplier}"></span>x</p>
+<div class="card-container">
+    <div th:each="card, idx : ${gameState.cards}" class="card">
+        <img th:src="${card.imagePath}" alt="Card">
+    </div>
+</div>
+<div th:if="${!gameState.gameOver}">
+    <form th:if="${gameState.currentRound == 0}" action="/casino/ridethebus/guess" method="post">
+        <button name="choice" value="red">Red</button>
+        <button name="choice" value="black">Black</button>
+    </form>
+    <form th:if="${gameState.currentRound == 1}" action="/casino/ridethebus/guess" method="post">
+        <button name="choice" value="higher">Higher</button>
+        <button name="choice" value="lower">Lower</button>
+        <button th:if="${gameState.canLeave}" name="choice" value="leave">Leave with Winnings</button>
+    </form>
+    <form th:if="${gameState.currentRound == 2}" action="/casino/ridethebus/guess" method="post">
+        <button name="choice" value="inside">Inside</button>
+        <button name="choice" value="outside">Outside</button>
+        <button th:if="${gameState.canLeave}" name="choice" value="leave">Leave with Winnings</button>
+    </form>
+    <form th:if="${gameState.currentRound == 3}" action="/casino/ridethebus/guess" method="post">
+        <button name="choice" value="hearts">Hearts</button>
+        <button name="choice" value="diamonds">Diamonds</button>
+        <button name="choice" value="clubs">Clubs</button>
+        <button name="choice" value="spades">Spades</button>
+        <button th:if="${gameState.canLeave}" name="choice" value="leave">Leave with Winnings</button>
+    </form>
+</div>
+<div th:if="${gameState.gameOver}">
+    <h2 th:text="${gameState.result}"></h2>
+    <form action="/casino/ridethebus/restart" method="post" style="display:inline;">
+        <button type="submit">Play Again</button>
+    </form>
+    <form action="/games" method="get" style="display:inline;">
+        <button type="submit">Back to Games</button>
+    </form>
+</div>
+
+<script>
+    function showRules() {
+        document.getElementById('overlay').style.display = 'block';
+        document.getElementById('rulesPopup').style.display = 'block';
+    }
+
+    function hideRules() {
+        document.getElementById('overlay').style.display = 'none';
+        document.getElementById('rulesPopup').style.display = 'none';
+    }
+</script>
+</body>
+</html>

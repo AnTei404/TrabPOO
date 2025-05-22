@@ -17,8 +17,8 @@ class HigherOrLowerGame {
     var playerCard: Card? = null
     var dealerCard: Card? = null
     var currentRound: Int = 1
-    var totalRounds: Int = 3
-    var multiplier: Int = 1
+    var totalRounds: Int = 2
+    var multiplier: Int = 2
     var canLeaveOrAllIn: Boolean = false
     var gameOver: Boolean = false
     var showDealerCard: Boolean = false
@@ -37,7 +37,7 @@ class HigherOrLowerGame {
     }
 
     private fun dealNewRound() {
-        if (deck.cards.size < 2) deck = Deck().apply { shuffle() }
+        if (deck.cards.size < 52) deck = Deck().apply { shuffle() }
         playerCard = deck.cards.removeFirst()
         dealerCard = deck.cards.removeFirst()
         showDealerCard = false
@@ -73,10 +73,10 @@ class HigherOrLowerGame {
 
     fun allIn(deckStyle: String): HigherOrLowerGameState {
         if (!canLeaveOrAllIn) return getState(deckStyle)
-        totalRounds += 2
+        totalRounds += 1
         multiplier *= 2
         canLeaveOrAllIn = false
-        currentRound++
+        currentRound = 1
         dealNewRound()
         return getState(deckStyle)
     }
@@ -90,7 +90,7 @@ class HigherOrLowerGame {
         deck = Deck().apply { shuffle() }
         currentRound = 1
         totalRounds = 3
-        multiplier = 1
+        multiplier = 2
         canLeaveOrAllIn = false
         gameOver = false
         dealNewRound()

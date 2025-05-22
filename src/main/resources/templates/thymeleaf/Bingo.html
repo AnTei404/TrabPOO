@@ -42,9 +42,73 @@
       flex-direction: column;
       align-items: center;
     }
+    /* Help button styles */
+    .help-button {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      width: 30px;
+      height: 30px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      font-size: 20px;
+      cursor: pointer;
+      z-index: 100;
+    }
+    /* Popup styles */
+    .rules-popup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: white;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+      z-index: 101;
+      max-width: 80%;
+      max-height: 80%;
+      overflow-y: auto;
+    }
+    .popup-close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      cursor: pointer;
+      font-size: 20px;
+    }
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      z-index: 100;
+    }
   </style>
 </head>
 <body>
+<button class="help-button" onclick="showRules()">?</button>
+<div class="overlay" id="overlay" onclick="hideRules()"></div>
+<div class="rules-popup" id="rulesPopup">
+  <span class="popup-close" onclick="hideRules()">×</span>
+  <h2>Bingo Rules</h2>
+  <p>Bingo is a game of chance where players mark numbers on their cards as they are drawn randomly.</p>
+  <ul>
+    <li>Each player gets a card with 25 numbers arranged in a 5x5 grid</li>
+    <li>The center square is a "free" space</li>
+    <li>Numbers are drawn randomly one at a time</li>
+    <li>If a drawn number appears on your card, it is marked</li>
+    <li>The first player to complete a their card wins.</li>
+    <li>In this version, you play against the house cards</li>
+  </ul>
+</div>
+
 <h1>Bingo, <span th:text="${name}"></span>!</h1>
 <p>Chips: <span th:text="${chips}"></span> | Bet: <span th:text="${chipsBet}"></span> | Players: <span th:text="${numPlayers}"></span></p>
 
@@ -116,7 +180,11 @@
   </div>
 </div>
 
-<a href="/games">Back to Games</a>
+<div th:if="${gameState.userHasBingo or !#lists.isEmpty(gameState.houseWinners)}">
+  <form action="/games" method="get" style="display:inline;">
+    <button type="submit">Back to Games</button>
+  </form>
+</div>
 
 <script>
   // Save scroll position before form submit
@@ -133,6 +201,16 @@
       sessionStorage.removeItem('bingoScroll');
     }
   });
+
+  function showRules() {
+    document.getElementById('overlay').style.display = 'block';
+    document.getElementById('rulesPopup').style.display = 'block';
+  }
+
+  function hideRules() {
+    document.getElementById('overlay').style.display = 'none';
+    document.getElementById('rulesPopup').style.display = 'none';
+  }
 </script>
 </body>
 </html>
