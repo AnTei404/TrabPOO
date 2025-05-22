@@ -3,68 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Blackjack</title>
-    <style>
-        .card-container {
-            display: flex;
-            gap: 10px;
-            justify-content: flex-start; /* Align cards to the left */
-        }
-        .card {
-            text-align: center;
-        }
-        .card img {
-            width: 100px;
-            height: auto;
-        }
-        /* Help button styles */
-        .help-button {
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            width: 30px;
-            height: 30px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            font-size: 20px;
-            cursor: pointer;
-            z-index: 100;
-        }
-        /* Popup styles */
-        .rules-popup {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: white;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.5);
-            z-index: 101;
-            max-width: 80%;
-            max-height: 80%;
-            overflow-y: auto;
-        }
-        .popup-close {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            cursor: pointer;
-            font-size: 20px;
-        }
-        .overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-            z-index: 100;
-        }
-    </style>
+    <link rel="stylesheet" href="/styles/blackjack.css">
 </head>
 <body>
 <button class="help-button" onclick="showRules()">?</button>
@@ -110,18 +49,18 @@
 
 <div>
     <div th:if="${!gameState.gameOver}">
-        <form action="/casino/blackjack/hit" method="post" style="display:inline;">
+        <form action="/casino/blackjack/hit" method="post">
             <button type="submit">Hit</button>
         </form>
-        <form action="/casino/blackjack/stand" method="post" style="display:inline;">
+        <form action="/casino/blackjack/stand" method="post">
             <button type="submit">Stand</button>
         </form>
     </div>
     <div th:if="${gameState.gameOver}">
-        <form action="/casino/blackjack/restart" method="post" th:if="${chipsBet != null}" style="display:inline;">
+        <form action="/casino/blackjack/restart" method="post" th:if="${chipsBet != null}">
             <button type="submit" th:disabled="${chips < chipsBet}">Restart Game</button>
         </form>
-        <form action="/casino/blackjack" method="get" style="display:inline;">
+        <form action="/casino/blackjack" method="get">
             <button type="submit">Place a New Bet</button>
         </form>
     </div>
@@ -143,7 +82,7 @@
 </div>
 
 <div th:if="${gameState.gameOver}">
-    <form action="/games" method="get" style="display:inline;">
+    <form action="/games" method="get">
         <button type="submit">Back to Games</button>
     </form>
 </div>

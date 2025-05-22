@@ -4,59 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Higher or Lower</title>
-    <style>
-        .card-container { display: flex; gap: 20px; }
-        .card img { width: 100px; }
-        .disabled-btn { opacity: 0.5; pointer-events: none; }
-        /* Help button styles */
-        .help-button {
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            width: 30px;
-            height: 30px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            font-size: 20px;
-            cursor: pointer;
-            z-index: 100;
-        }
-        /* Popup styles */
-        .rules-popup {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: white;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.5);
-            z-index: 101;
-            max-width: 80%;
-            max-height: 80%;
-            overflow-y: auto;
-        }
-        .popup-close {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            cursor: pointer;
-            font-size: 20px;
-        }
-        .overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-            z-index: 100;
-        }
-    </style>
+    <link rel="stylesheet" href="/styles/higherorlower.css">
 </head>
 <body>
 <button class="help-button" onclick="showRules()">?</button>
@@ -92,17 +40,17 @@
 </div>
 
 <div th:if="${!gameOver}">
-    <form action="/casino/higherorlower/guess" method="post" style="display:inline;" th:if="${!showDealerCard}">
+    <form action="/casino/higherorlower/guess" method="post" th:if="${!showDealerCard}">
         <button type="submit" name="guess" value="higher">Higher</button>
         <button type="submit" name="guess" value="lower">Lower</button>
     </form>
-    <form action="/casino/higherorlower/next" method="post" style="display:inline;" th:if="${showDealerCard and !canLeaveOrAllIn}">
+    <form action="/casino/higherorlower/next" method="post" th:if="${showDealerCard and !canLeaveOrAllIn}">
         <button type="submit">Next Round</button>
     </form>
-    <form action="/casino/higherorlower/allin" method="post" style="display:inline;" th:if="${canLeaveOrAllIn}">
+    <form action="/casino/higherorlower/allin" method="post" th:if="${canLeaveOrAllIn}">
         <button type="submit">All In</button>
     </form>
-    <form action="/casino/higherorlower/leave" method="post" style="display:inline;" th:if="${canLeaveOrAllIn}">
+    <form action="/casino/higherorlower/leave" method="post" th:if="${canLeaveOrAllIn}">
         <button type="submit">Leave with Winnings</button>
     </form>
 </div>
@@ -110,13 +58,13 @@
 <div th:if="${gameOver}">
     <h2 th:text="${result}"></h2>
     <p th:text="${resultMessage}"></p>
-    <form action="/casino/higherorlower/restart" method="post" style="display:inline;">
+    <form action="/casino/higherorlower/restart" method="post">
         <button type="submit">Play Again</button>
     </form>
-    <form action="/casino/higherorlower" method="get" style="display:inline;">
+    <form action="/casino/higherorlower" method="get">
         <button type="submit">Change Bet</button>
     </form>
-    <form action="/games" method="get" style="display:inline;">
+    <form action="/games" method="get">
         <button type="submit">Back to Games</button>
     </form>
 </div>

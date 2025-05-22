@@ -1,0 +1,151 @@
+/* Retroesque style for Bet page */
+
+/* Base styles */
+body {
+    background-color: #000;
+    color: #0f0;
+    font-family: 'Courier New', monospace;
+    padding: 20px;
+    background-image: linear-gradient(to bottom, #000, #111);
+    text-shadow: 0 0 5px #0f0;
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+h1 {
+    color: #0ff;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px #0ff;
+    margin-bottom: 30px;
+    font-size: 2em;
+    border-bottom: 2px solid #0ff;
+    padding-bottom: 10px;
+}
+
+p {
+    font-size: 1.2em;
+    margin: 20px 0;
+}
+
+/* Span elements (for dynamic content) */
+span {
+    color: #ff0;
+    font-weight: bold;
+    text-shadow: 0 0 5px #ff0;
+}
+
+/* Form styles */
+form {
+    margin: 30px auto;
+    padding: 20px;
+    border: 2px solid #0f0;
+    border-radius: 10px;
+    max-width: 400px;
+    background-color: rgba(0, 50, 0, 0.3);
+    box-shadow: 0 0 15px #0f0;
+}
+
+label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 1.2em;
+    color: #0ff;
+}
+
+input[type="number"] {
+    background-color: #111;
+    color: #ff0;
+    border: 2px solid #0f0;
+    padding: 10px;
+    font-size: 1.2em;
+    width: 80%;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    text-align: center;
+    font-family: 'Courier New', monospace;
+    box-shadow: 0 0 10px #0f0;
+}
+
+input[type="number"]:focus {
+    outline: none;
+    border-color: #ff0;
+    box-shadow: 0 0 15px #ff0;
+}
+
+button {
+    background-color: #0f0;
+    color: #000;
+    border: none;
+    padding: 12px 25px;
+    font-size: 1.2em;
+    cursor: pointer;
+    border-radius: 5px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 10px;
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    transition: all 0.3s;
+    box-shadow: 0 0 10px #0f0;
+}
+
+button:hover {
+    background-color: #ff0;
+    box-shadow: 0 0 15px #ff0;
+    transform: scale(1.05);
+}
+
+/* Back link */
+a {
+    display: inline-block;
+    margin-top: 20px;
+    color: #f00;
+    text-decoration: none;
+    font-size: 1.1em;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s;
+    border: 2px solid #f00;
+    border-radius: 5px;
+    padding: 8px 15px;
+    box-shadow: 0 0 10px #f00;
+}
+
+a:hover {
+    color: #fff;
+    background-color: rgba(255, 0, 0, 0.2);
+    text-shadow: 0 0 10px #fff;
+    box-shadow: 0 0 15px #f00;
+    transform: scale(1.05);
+}
+
+/* CRT screen effect */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+    background-size: 100% 4px;
+    z-index: 1000;
+    pointer-events: none;
+    opacity: 0.15;
+}
+
+/* Betting animation */
+@keyframes pulse-border {
+    0%, 100% {
+        box-shadow: 0 0 15px #0f0;
+    }
+    50% {
+        box-shadow: 0 0 25px #0f0, 0 0 35px #0f0;
+    }
+}
+
+form {
+    animation: pulse-border 2s infinite;
+}
