@@ -166,5 +166,24 @@ fun Application.configureTemplating() {
                 call.respondRedirect("/index.html")
             }
         }
+
+        get("/casino/ridethebus") {
+            val player = call.sessions.get<Player>()
+            if (player != null) {
+                call.respond(
+                    ThymeleafContent(
+                        "bet",
+                        mapOf(
+                            "name" to player.name,
+                            "chips" to player.chips,
+                            "title" to "Ride the Bus - Place Your Bet",
+                            "formAction" to "/casino/ridethebus/bet"
+                        )
+                    )
+                )
+            } else {
+                call.respondRedirect("/index.html")
+            }
+        }
     }
 }

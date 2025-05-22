@@ -16,9 +16,74 @@
             width: 100px;
             height: auto;
         }
+        /* Help button styles */
+        .help-button {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            width: 30px;
+            height: 30px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 100;
+        }
+        /* Popup styles */
+        .rules-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            z-index: 101;
+            max-width: 80%;
+            max-height: 80%;
+            overflow-y: auto;
+        }
+        .popup-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            font-size: 20px;
+        }
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 100;
+        }
     </style>
 </head>
 <body>
+<button class="help-button" onclick="showRules()">?</button>
+<div class="overlay" id="overlay" onclick="hideRules()"></div>
+<div class="rules-popup" id="rulesPopup">
+    <span class="popup-close" onclick="hideRules()">×</span>
+    <h2>Blackjack Rules</h2>
+    <p>Blackjack is a card game where the goal is to have a hand value closer to 21 than the dealer without going over.</p>
+    <ul>
+        <li>Cards 2-10 are worth their face value</li>
+        <li>Face cards (Jack, Queen, King) are worth 10</li>
+        <li>Aces are worth 1 or 11, whichever is more favorable</li>
+        <li>If your first two cards total 21, you have a "blackjack"</li>
+        <li>You can "hit" to take another card or "stand" to keep your current hand</li>
+        <li>If you go over 21, you "bust" and lose</li>
+        <li>The dealer must hit until they have at least 17</li>
+    </ul>
+</div>
+
 <h1>Welcome to the Blackjack table, <span th:text="${name}"></span>!</h1>
 
 <div>
@@ -78,7 +143,21 @@
 </div>
 
 <div th:if="${gameState.gameOver}">
-    <a href="/games">Back to Games</a>
+    <form action="/games" method="get" style="display:inline;">
+        <button type="submit">Back to Games</button>
+    </form>
 </div>
+
+<script>
+    function showRules() {
+        document.getElementById('overlay').style.display = 'block';
+        document.getElementById('rulesPopup').style.display = 'block';
+    }
+
+    function hideRules() {
+        document.getElementById('overlay').style.display = 'none';
+        document.getElementById('rulesPopup').style.display = 'none';
+    }
+</script>
 </body>
 </html>
