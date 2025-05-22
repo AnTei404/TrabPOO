@@ -9,6 +9,8 @@
 <h1>Welcome to the Receptionist, <span th:text="${name}"></span>!</h1>
 <p>You currently have <span th:text="${chips}"></span> chips and $<span th:text="${money}"></span>.</p>
 
+<button class="rules-button" onclick="showRules()">View Game Rules</button>
+
 <h2>Exchange Money for Chips</h2>
 <form action="/exchange-money-for-chips" method="post">
     <label for="money">Enter amount of money to exchange:</label>
@@ -47,8 +49,6 @@
 </div>
 
 <a href="/welcome">Back to Welcome</a>
-
-<button class="rules-button" onclick="showRules()">View Game Rules</button>
 
 <div class="overlay" id="overlay" onclick="hideRules()"></div>
 <div class="rules-popup" id="rulesPopup">

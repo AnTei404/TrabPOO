@@ -167,6 +167,9 @@ button[value="lower"]:hover {
     cursor: pointer;
     z-index: 100;
     box-shadow: 0 0 10px #f0f;
+    text-align: center;
+    line-height: 30px;
+    padding: 0;
 }
 
 .help-button:hover {
