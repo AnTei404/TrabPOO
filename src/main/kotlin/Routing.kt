@@ -370,6 +370,7 @@ fun Application.configureRouting() {
                     tempPlayer = player.copy(chips = player.chips + chipsBet)
                     resultMessage = "It's a tie! Your bet is returned. You have ${tempPlayer.chips} chips."
                 } else if (houseWinners.isNotEmpty()) {
+                    tempPlayer = player
                     resultMessage = "House wins! You lost $chipsBet chips and now have ${player.chips} chips."
                 }
                 val finalPlayer = tempPlayer

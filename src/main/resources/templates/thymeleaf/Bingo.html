@@ -58,16 +58,16 @@
     </tr>
   </table>
 
-  <h2>Drawn Numbers</h2>
-  <p th:text="${#lists.isEmpty(gameState.drawnNumbers) ? 'None yet' : gameState.drawnNumbers}"></p>
-
-  <h2 th:if="${gameState.lastNumber != null}">Last Number: <span th:text="${gameState.lastNumber}"></span></h2>
-
   <div th:if="${!(gameState.userHasBingo or !#lists.isEmpty(gameState.houseWinners))}">
     <form action="/casino/bingo/next" method="post">
       <button type="submit">Next Number</button>
     </form>
   </div>
+
+  <h2 th:if="${gameState.lastNumber != null}">Last Number: <span th:text="${gameState.lastNumber}"></span></h2>
+
+  <h2>Drawn Numbers</h2>
+  <p th:text="${#lists.isEmpty(gameState.drawnNumbers) ? 'None yet' : gameState.drawnNumbers}"></p>
 
   <div th:if="${gameState.tie}">
     <h2>It's a tie! Your bet is returned.</h2>
