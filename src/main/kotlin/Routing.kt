@@ -240,7 +240,7 @@ fun Application.configureRouting() {
             val player = call.sessions.get<Player>()
             val chipsBet = call.receiveParameters()["chipsBet"]?.toIntOrNull()
             if (player != null && chipsBet != null && chipsBet > 0 && chipsBet <= player.chips) {
-                val updatedPlayer = player.copy(lastBet = chipsBet, chips = player.chips - chipsBet)
+                val updatedPlayer = player.copy(lastBet = chipsBet)
                 call.sessions.set(updatedPlayer)
                 call.respond(
                     ThymeleafContent(
@@ -248,7 +248,7 @@ fun Application.configureRouting() {
                         mapOf(
                             "name" to player.name,
                             "chipsBet" to chipsBet,
-                            "chips" to updatedPlayer.chips,
+                            "chips" to player.chips,
                             "reels" to listOf("❓", "❓", "❓"),
                             "resultMessage" to "Press Spin to play!",
                             "win" to false,
