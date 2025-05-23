@@ -100,8 +100,9 @@ fun Application.configureRouting() {
             val chipsBet = call.receiveParameters()["chipsBet"]?.toIntOrNull()
             val deckStyle = call.sessions.get<DeckStyle>()?.style ?: "minimalista" // Default to "minimalista"
             if (player != null && chipsBet != null && chipsBet > 0 && chipsBet <= player.chips) {
-                val updatedPlayer = player.copy(lastBet = chipsBet, chips = player.chips - chipsBet)
-                call.sessions.set(updatedPlayer)
+                player.chips -= chipsBet
+                player.lastBet = chipsBet
+                call.sessions.set(player)
                 val gameState = blackjack.startGame(deckStyle)
                 call.respond(
                     ThymeleafContent(
@@ -110,7 +111,7 @@ fun Application.configureRouting() {
                             "name" to player.name,
                             "gameState" to gameState,
                             "chipsBet" to chipsBet,
-                            "chips" to updatedPlayer.chips,
+                            "chips" to player.chips,
                             "deckStyle" to deckStyle // Pass deckStyle here
                         )
                     )
@@ -160,33 +161,32 @@ fun Application.configureRouting() {
                 val gameState = blackjack.stand(deckStyle) // Pass deckStyle here
                 val chipsBet = player.lastBet ?: 0
                 var resultMessage = ""
-                var updatedPlayer = player
                 when (gameState.gameState) {
                     "Blackjack! You win 3x!" -> {
-                        updatedPlayer = player.copy(chips = player.chips + chipsBet * 3)
-                        resultMessage = "Blackjack! You won ${chipsBet * 3} chips and now have ${updatedPlayer.chips} chips."
+                        player.chips += chipsBet * 3
+                        resultMessage = "Blackjack! You won ${chipsBet * 3} chips and now have ${player.chips} chips."
                     }
                     "You win!" -> {
-                        updatedPlayer = player.copy(chips = player.chips + chipsBet * 2)
-                        resultMessage = "You won $chipsBet chips and now have ${updatedPlayer.chips} chips."
+                        player.chips += chipsBet * 2
+                        resultMessage = "You won $chipsBet chips and now have ${player.chips} chips."
                     }
                     "You lose!" -> {
                         resultMessage = "You lost $chipsBet chips and now have ${player.chips} chips."
                     }
                     "It's a tie!" -> {
-                        updatedPlayer = player.copy(chips = player.chips + chipsBet)
-                        resultMessage = "It's a tie! Your bet is returned. You have ${updatedPlayer.chips} chips."
+                        player.chips += chipsBet
+                        resultMessage = "It's a tie! Your bet is returned. You have ${player.chips} chips."
                     }
                 }
-                call.sessions.set(updatedPlayer)
+                call.sessions.set(player)
                 call.respond(
                     ThymeleafContent(
                         "blackjack",
                         mapOf(
-                            "name" to updatedPlayer.name,
+                            "name" to player.name,
                             "gameState" to gameState,
                             "chipsBet" to chipsBet,
-                            "chips" to updatedPlayer.chips,
+                            "chips" to player.chips,
                             "resultMessage" to resultMessage
                         )
                     )
@@ -202,8 +202,8 @@ fun Application.configureRouting() {
             val deckStyle = call.sessions.get<DeckStyle>()?.style ?: "minimalista" // Default to "minimalista"
             if (player != null && lastBet != null) {
                 if (player.chips >= lastBet) {
-                    val updatedPlayer = player.copy(chips = player.chips - lastBet)
-                    call.sessions.set(updatedPlayer)
+                    player.chips -= lastBet
+                    call.sessions.set(player)
                     val gameState = blackjack.restartGame(deckStyle) // Pass deckStyle here
                     call.respond(
                         ThymeleafContent(
@@ -212,7 +212,7 @@ fun Application.configureRouting() {
                                 "name" to player.name,
                                 "gameState" to gameState,
                                 "chipsBet" to lastBet,
-                                "chips" to updatedPlayer.chips
+                                "chips" to player.chips
                             )
                         )
                     )
@@ -240,8 +240,8 @@ fun Application.configureRouting() {
             val player = call.sessions.get<Player>()
             val chipsBet = call.receiveParameters()["chipsBet"]?.toIntOrNull()
             if (player != null && chipsBet != null && chipsBet > 0 && chipsBet <= player.chips) {
-                val updatedPlayer = player.copy(lastBet = chipsBet)
-                call.sessions.set(updatedPlayer)
+                player.lastBet = chipsBet
+                call.sessions.set(player)
                 call.respond(
                     ThymeleafContent(
                         "slots",
@@ -265,29 +265,27 @@ fun Application.configureRouting() {
             val player = call.sessions.get<Player>()
             val chipsBet = call.receiveParameters()["chipsBet"]?.toIntOrNull() ?: player?.lastBet ?: 0
             if (player != null && chipsBet > 0 && player.chips >= chipsBet) {
-                val updatedPlayer = player.copy(
-                    chips = player.chips - chipsBet,
-                    lastBet = chipsBet
-                )
+                player.chips -= chipsBet
+                player.lastBet = chipsBet
+
                 val slots = trab.casino.Slots()
                 val result = slots.spin(chipsBet)
                 val emojiGrid = result.grid.map { row -> row.map { trab.casino.symbolToEmoji(it) } }
-                var finalPlayer = updatedPlayer
                 val win = result.payout > 0
                 val resultMessage = if (win) {
-                    finalPlayer = updatedPlayer.copy(chips = updatedPlayer.chips + result.payout)
+                    player.chips += result.payout
                     "You won ${result.payout} chips! 🎉 (Lines: ${result.winLines.joinToString()})"
                 } else {
                     "No win. Try again!"
                 }
-                call.sessions.set(finalPlayer)
+                call.sessions.set(player)
                 call.respond(
                     ThymeleafContent(
                         "slots",
                         mapOf(
-                            "name" to finalPlayer.name,
+                            "name" to player.name,
                             "chipsBet" to chipsBet,
-                            "chips" to finalPlayer.chips,
+                            "chips" to player.chips,
                             "grid" to emojiGrid,
                             "resultMessage" to resultMessage,
                             "win" to win,
@@ -323,8 +321,9 @@ fun Application.configureRouting() {
             val player = call.sessions.get<Player>()
             val chipsBet = call.receiveParameters()["chipsBet"]?.toIntOrNull()
             if (player != null && chipsBet != null && chipsBet > 0 && chipsBet <= player.chips) {
-                val updatedPlayer = player.copy(lastBet = chipsBet, chips = player.chips - chipsBet)
-                call.sessions.set(updatedPlayer)
+                player.lastBet = chipsBet
+                player.chips -= chipsBet
+                call.sessions.set(player)
                 val bingoGame = BingoGame()
                 bingoGames[player.name] = bingoGame // Store in-memory
                 val gameState = BingoGameState(
@@ -339,9 +338,9 @@ fun Application.configureRouting() {
                     ThymeleafContent(
                         "Bingo",
                         mapOf(
-                            "name" to updatedPlayer.name,
+                            "name" to player.name,
                             "chipsBet" to chipsBet,
-                            "chips" to updatedPlayer.chips,
+                            "chips" to player.chips,
                             "numPlayers" to 1 + bingoGame.houseCards.size,
                             "gameState" to gameState
                         )
@@ -361,20 +360,17 @@ fun Application.configureRouting() {
                 val userHasBingo = bingoGame.userHasBingo()
                 val houseWinners = bingoGame.houseWinners()
                 val tie = userHasBingo && houseWinners.isNotEmpty()
-                var tempPlayer = player
                 var resultMessage = ""
                 if (userHasBingo && !tie) {
-                    tempPlayer = player.copy(chips = player.chips + chipsBet * 6)
-                    resultMessage = "Bingo! You win ${chipsBet * 6} chips and now have ${tempPlayer.chips} chips."
+                    player.chips += chipsBet * 6
+                    resultMessage = "Bingo! You win ${chipsBet * 6} chips and now have ${player.chips} chips."
                 } else if (tie) {
-                    tempPlayer = player.copy(chips = player.chips + chipsBet)
-                    resultMessage = "It's a tie! Your bet is returned. You have ${tempPlayer.chips} chips."
+                    player.chips += chipsBet
+                    resultMessage = "It's a tie! Your bet is returned. You have ${player.chips} chips."
                 } else if (houseWinners.isNotEmpty()) {
-                    tempPlayer = player
                     resultMessage = "House wins! You lost $chipsBet chips and now have ${player.chips} chips."
                 }
-                val finalPlayer = tempPlayer
-                call.sessions.set(finalPlayer)
+                call.sessions.set(player)
                 val gameState = BingoGameState(
                     userCard = bingoGame.userCard,
                     houseCards = bingoGame.houseCards,
@@ -388,9 +384,9 @@ fun Application.configureRouting() {
                     ThymeleafContent(
                         "Bingo",
                         mapOf(
-                            "name" to finalPlayer.name,
+                            "name" to player.name,
                             "chipsBet" to chipsBet,
-                            "chips" to finalPlayer.chips,
+                            "chips" to player.chips,
                             "numPlayers" to 1 + bingoGame.houseCards.size,
                             "gameState" to gameState,
                             "resultMessage" to resultMessage
@@ -406,8 +402,8 @@ fun Application.configureRouting() {
             val player = call.sessions.get<Player>()
             val chipsBet = player?.lastBet ?: 0
             if (player != null && chipsBet > 0 && player.chips >= chipsBet) {
-                val updatedPlayer = player.copy(chips = player.chips - chipsBet)
-                call.sessions.set(updatedPlayer)
+                player.chips -= chipsBet
+                call.sessions.set(player)
                 val bingoGame = BingoGame()
                 bingoGames[player.name] = bingoGame // Store in-memory
                 val gameState = BingoGameState(
@@ -422,9 +418,9 @@ fun Application.configureRouting() {
                     ThymeleafContent(
                         "Bingo",
                         mapOf(
-                            "name" to updatedPlayer.name,
+                            "name" to player.name,
                             "chipsBet" to chipsBet,
-                            "chips" to updatedPlayer.chips,
+                            "chips" to player.chips,
                             "numPlayers" to 1 + bingoGame.houseCards.size,
                             "gameState" to gameState
                         )
@@ -443,19 +439,20 @@ fun Application.configureRouting() {
                 call.respondRedirect("/casino/higherorlower")
                 return@post
             }
-            val updatedPlayer = player.copy(chips = player.chips - chipsBet, lastBet = chipsBet)
-            call.sessions.set(updatedPlayer)
+            player.chips -= chipsBet
+            player.lastBet = chipsBet
+            call.sessions.set(player)
 
             val deckStyle = call.sessions.get<DeckStyle>()?.style ?: "minimalista"
             val game = HigherOrLowerGame()
-            higherOrLowerGames[updatedPlayer.name] = game
+            higherOrLowerGames[player.name] = game
             val gameState = game.getState(deckStyle)
             call.respond(
                 ThymeleafContent(
                     "higherorlower",
                     mapOfNonNull(
-                        "name" to updatedPlayer.name,
-                        "chips" to updatedPlayer.chips,
+                        "name" to player.name,
+                        "chips" to player.chips,
                         "chipsBet" to chipsBet,
                         "playerCard" to gameState.playerCard,
                         "dealerCard" to gameState.dealerCard,
@@ -578,17 +575,17 @@ fun Application.configureRouting() {
             val lastBet = player?.lastBet
             val deckStyle = call.sessions.get<DeckStyle>()?.style ?: "minimalista"
             if (player != null && lastBet != null && player.chips >= lastBet) {
-                val updatedPlayer = player.copy(chips = player.chips - lastBet)
-                call.sessions.set(updatedPlayer)
+                player.chips -= lastBet
+                call.sessions.set(player)
                 val game = HigherOrLowerGame()
-                higherOrLowerGames[updatedPlayer.name] = game
+                higherOrLowerGames[player.name] = game
                 val gameState = game.getState(deckStyle)
                 call.respond(
                     ThymeleafContent(
                         "higherorlower",
                         mapOfNonNull(
-                            "name" to updatedPlayer.name,
-                            "chips" to updatedPlayer.chips,
+                            "name" to player.name,
+                            "chips" to player.chips,
                             "chipsBet" to lastBet,
                             "playerCard" to gameState.playerCard,
                             "dealerCard" to gameState.dealerCard,
@@ -618,11 +615,9 @@ fun Application.configureRouting() {
                 val gameState = game.leave(deckStyle)
                 // Calculate winnings
                 val winnings = chipsBet * gameState.multiplier
-                val updatedPlayer = player.copy(
-                    chips = player.chips + winnings,
-                    lastBet = null
-                )
-                call.sessions.set(updatedPlayer)
+                player.chips += winnings
+                player.lastBet = null
+                call.sessions.set(player)
                 call.respond(
                     ThymeleafContent(
                         "higherorlower",
@@ -654,8 +649,9 @@ fun Application.configureRouting() {
             val chipsBet = params["chipsBet"]?.toIntOrNull() ?: 0
             val deckStyle = call.sessions.get<DeckStyle>()?.style ?: "minimalista"
             if (player != null && chipsBet > 0 && player.chips >= chipsBet) {
-                val updatedPlayer = player.copy(chips = player.chips - chipsBet, lastBet = chipsBet)
-                call.sessions.set(updatedPlayer)
+                player.chips -= chipsBet
+                player.lastBet = chipsBet
+                call.sessions.set(player)
                 val game = RideTheBusGame(deckStyle)
                 rideTheBusGames[player.name] = game
                 val gameState = game.getState(deckStyle)
@@ -664,7 +660,7 @@ fun Application.configureRouting() {
                         "ridethebus",
                         mapOf(
                             "name" to player.name,
-                            "chips" to updatedPlayer.chips,
+                            "chips" to player.chips,
                             "chipsBet" to chipsBet,
                             "gameState" to gameState
                         )
@@ -685,14 +681,16 @@ fun Application.configureRouting() {
                 val gameState = if (choice == "leave") game.leave(deckStyle) else game.guess(choice, deckStyle)
                 // Only pay out if player pressed "leave" and game is over
                 val payout = if (choice == "leave" && gameState.gameOver && gameState.multiplier > 1) chipsBet * gameState.multiplier else 0
-                val updatedPlayer = if (payout > 0) player.copy(chips = player.chips + payout) else player
-                call.sessions.set(updatedPlayer)
+                if (payout > 0) {
+                    player.chips += payout
+                }
+                call.sessions.set(player)
                 call.respond(
                     ThymeleafContent(
                         "ridethebus",
                         mapOf(
                             "name" to player.name,
-                            "chips" to updatedPlayer.chips,
+                            "chips" to player.chips,
                             "chipsBet" to chipsBet,
                             "gameState" to gameState
                         )
@@ -708,8 +706,8 @@ fun Application.configureRouting() {
             val lastBet = player?.lastBet
             val deckStyle = call.sessions.get<DeckStyle>()?.style ?: "minimalista"
             if (player != null && lastBet != null && player.chips >= lastBet) {
-                val updatedPlayer = player.copy(chips = player.chips - lastBet)
-                call.sessions.set(updatedPlayer)
+                player.chips -= lastBet
+                call.sessions.set(player)
                 val game = RideTheBusGame(deckStyle)
                 rideTheBusGames[player.name] = game
                 val gameState = game.getState(deckStyle)
@@ -718,7 +716,7 @@ fun Application.configureRouting() {
                         "ridethebus",
                         mapOf(
                             "name" to player.name,
-                            "chips" to updatedPlayer.chips,
+                            "chips" to player.chips,
                             "chipsBet" to lastBet,
                             "gameState" to gameState
                         )

@@ -41,9 +41,9 @@ fun Application.configureSecurity() {
 @Serializable
 data class Player(
     val name: String,
-    val chips: Int = Random.nextInt(0, 301), // Random chips between 0 and 300
-    val money: Int = Random.nextInt(50, 301), // Random money between 50 and 300
-    val lastBet: Int? = null
+    var chips: Int = Random.nextInt(0, 301), // Random chips between 0 and 300
+    var money: Int = Random.nextInt(50, 301), // Random money between 50 and 300
+    var lastBet: Int? = null
 )
 
 @Serializable
