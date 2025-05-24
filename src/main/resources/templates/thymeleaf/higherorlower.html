@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <title>Higher or Lower</title>
     <link rel="stylesheet" href="/styles/higherorlower.css">
+    <link rel="stylesheet" href="/styles/sidemenu.css">
 </head>
 <body>
 <button class="help-button" onclick="showRules()">?</button>
@@ -24,49 +25,70 @@
 </div>
 
 <h1>Higher or Lower, <span th:text="${name}"></span>!</h1>
-<p>Chips: <span th:text="${chips}"></span> | Bet: <span th:text="${chipsBet}"></span> | Round: <span th:text="${currentRound}"></span>/<span th:text="${totalRounds}"></span> | Multiplier: <span th:text="${multiplier}"></span>x</p>
 
-<div class="card-container">
-    <div>
-        <h3>Your Card</h3>
-        <img th:src="${playerCard != null} ? ${playerCard.imagePath} : '/Baralhos/CardBack.png'" alt="Player Card">
-        <p th:text="${playerCard != null} ? ${playerCard.rank + ' of ' + playerCard.suit} : '---'"></p>
+<div class="game-container">
+    <div class="game-content">
+        <div class="card-container">
+            <div>
+                <h3>Your Card</h3>
+                <img th:src="${playerCard != null} ? ${playerCard.imagePath} : '/Baralhos/CardBack.png'" alt="Player Card">
+                <p th:text="${playerCard != null} ? ${playerCard.rank + ' of ' + playerCard.suit} : '---'"></p>
+            </div>
+            <div>
+                <h3>Dealer Card</h3>
+                <img th:src="${showDealerCard and dealerCard != null} ? ${dealerCard.imagePath} : '/Baralhos/CardBack.png'" alt="Dealer Card">
+                <p th:text="${showDealerCard and dealerCard != null} ? ${dealerCard.rank + ' of ' + dealerCard.suit} : 'Hidden'"></p>
+            </div>
+        </div>
+
+        <div th:if="${gameOver}">
+            <h2 th:text="${result}"></h2>
+        </div>
     </div>
-    <div>
-        <h3>Dealer Card</h3>
-        <img th:src="${showDealerCard and dealerCard != null} ? ${dealerCard.imagePath} : '/Baralhos/CardBack.png'" alt="Dealer Card">
-        <p th:text="${showDealerCard and dealerCard != null} ? ${dealerCard.rank + ' of ' + dealerCard.suit} : 'Hidden'"></p>
+
+    <div class="sidemenu">
+        <img src="/Staff/BingusDealer.png" alt="Dealer" class="dealer-photo">
+
+        <div class="game-controls">
+            <div th:if="${!gameOver}">
+                <form action="/casino/higherorlower/guess" method="post" th:if="${!showDealerCard}">
+                    <button type="submit" name="guess" value="higher">Higher</button>
+                    <button type="submit" name="guess" value="lower">Lower</button>
+                </form>
+                <form action="/casino/higherorlower/next" method="post" th:if="${showDealerCard and !canLeaveOrAllIn}">
+                    <button type="submit">Next Round</button>
+                </form>
+                <form action="/casino/higherorlower/allin" method="post" th:if="${canLeaveOrAllIn}">
+                    <button type="submit">All In</button>
+                </form>
+                <form action="/casino/higherorlower/leave" method="post" th:if="${canLeaveOrAllIn}">
+                    <button type="submit">Leave with Winnings</button>
+                </form>
+            </div>
+
+            <div th:if="${gameOver}">
+                <form action="/casino/higherorlower/restart" method="post">
+                    <button type="submit">Play Again</button>
+                </form>
+                <form action="/casino/higherorlower" method="get">
+                    <button type="submit">Change Bet</button>
+                </form>
+                <form action="/games" method="get">
+                    <button type="submit">Back to Games</button>
+                </form>
+            </div>
+        </div>
+
+        <img th:src="${playerPhoto}" alt="Player" class="player-photo">
+
+        <div class="game-info">
+            <p>Chips: <span th:text="${chips}"></span></p>
+            <p>Bet: <span th:text="${chipsBet}"></span></p>
+            <p>Round: <span th:text="${currentRound}"></span>/<span th:text="${totalRounds}"></span></p>
+            <p>Multiplier: <span th:text="${multiplier}"></span>x</p>
+            <p th:if="${gameOver}" th:text="${resultMessage}"></p>
+        </div>
     </div>
-</div>
-
-<div th:if="${!gameOver}">
-    <form action="/casino/higherorlower/guess" method="post" th:if="${!showDealerCard}">
-        <button type="submit" name="guess" value="higher">Higher</button>
-        <button type="submit" name="guess" value="lower">Lower</button>
-    </form>
-    <form action="/casino/higherorlower/next" method="post" th:if="${showDealerCard and !canLeaveOrAllIn}">
-        <button type="submit">Next Round</button>
-    </form>
-    <form action="/casino/higherorlower/allin" method="post" th:if="${canLeaveOrAllIn}">
-        <button type="submit">All In</button>
-    </form>
-    <form action="/casino/higherorlower/leave" method="post" th:if="${canLeaveOrAllIn}">
-        <button type="submit">Leave with Winnings</button>
-    </form>
-</div>
-
-<div th:if="${gameOver}">
-    <h2 th:text="${result}"></h2>
-    <p th:text="${resultMessage}"></p>
-    <form action="/casino/higherorlower/restart" method="post">
-        <button type="submit">Play Again</button>
-    </form>
-    <form action="/casino/higherorlower" method="get">
-        <button type="submit">Change Bet</button>
-    </form>
-    <form action="/games" method="get">
-        <button type="submit">Back to Games</button>
-    </form>
 </div>
 
 <script>

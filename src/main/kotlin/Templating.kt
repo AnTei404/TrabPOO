@@ -10,6 +10,8 @@ import io.ktor.server.thymeleaf.ThymeleafContent
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver
 import trab.casino.Blackjack
 import trab.casino.generatePreviewCards
+import trab.removePlayerPhoto
+import trab.selectPhoto
 
 val blackjack = Blackjack() // Shared instance
 
@@ -23,12 +25,26 @@ fun Application.configureTemplating() {
     }
 
     routing {
+        // Serve the index page as a Thymeleaf template
+        get("/") {
+            val defaultPhoto = "/Player/Spongebob.jpg"
+            val photoGrid = selectPhoto(defaultPhoto)
+            call.respond(
+                ThymeleafContent(
+                    "index",
+                    mapOf(
+                        "photoGrid" to photoGrid,
+                        "selectedPhoto" to defaultPhoto
+                    )
+                )
+            )
+        }
 
         get("/welcome") {
             val player = call.sessions.get<Player>()
             if (player == null) {
                 call.application.log.info("Player session is null")
-                call.respondRedirect("/index.html")
+                call.respondRedirect("/")
             } else {
                 call.respond(
                     ThymeleafContent(
@@ -46,8 +62,8 @@ fun Application.configureTemplating() {
         get("/receptionist") {
             val player = call.sessions.get<Player>()
             val deckStyle = call.sessions.get<DeckStyle>()?.style ?: "minimalista"
-            val previewCards = generatePreviewCards(deckStyle)
             if (player != null) {
+                val previewCards = generatePreviewCards(deckStyle)
                 call.respond(
                     ThymeleafContent(
                         "receptionist",
@@ -55,13 +71,14 @@ fun Application.configureTemplating() {
                             "name" to player.name,
                             "chips" to player.chips,
                             "money" to player.money,
+                            "photoPath" to player.photoPath,
                             "deckStyle" to deckStyle,
                             "previewCards" to previewCards
                         )
                     )
                 )
             } else {
-                call.respondRedirect("/index.html")
+                call.respondRedirect("/")
             }
         }
 
@@ -72,14 +89,24 @@ fun Application.configureTemplating() {
         get("/leave") {
             val player = call.sessions.get<Player>()
             if (player != null) {
+                // Store the name before clearing the session
+                val playerName = player.name
+
+                // Remove the player's photo from the map
+                removePlayerPhoto(playerName)
+
+                // Clear the session when the user leaves
+                call.sessions.clear<Player>()
+                call.sessions.clear<DeckStyle>()
+
                 call.respond(
                     ThymeleafContent(
                         "leave",
-                        mapOf("name" to player.name)
+                        mapOf("name" to playerName)
                     )
                 )
             } else {
-                call.respondRedirect("/index.html")
+                call.respondRedirect("/")
             }
         }
 
@@ -98,7 +125,7 @@ fun Application.configureTemplating() {
                     )
                 )
             } else {
-                call.respondRedirect("/index.html")
+                call.respondRedirect("/")
             }
         }
 
@@ -117,7 +144,7 @@ fun Application.configureTemplating() {
                     )
                 )
             } else {
-                call.respondRedirect("/index.html")
+                call.respondRedirect("/")
             }
         }
 
@@ -136,7 +163,7 @@ fun Application.configureTemplating() {
                     )
                 )
             } else {
-                call.respondRedirect("/index.html")
+                call.respondRedirect("/")
             }
         }
 
@@ -155,7 +182,7 @@ fun Application.configureTemplating() {
                     )
                 )
             } else {
-                call.respondRedirect("/index.html")
+                call.respondRedirect("/")
             }
         }
 
@@ -174,7 +201,7 @@ fun Application.configureTemplating() {
                     )
                 )
             } else {
-                call.respondRedirect("/index.html")
+                call.respondRedirect("/")
             }
         }
     }

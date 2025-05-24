@@ -13,9 +13,10 @@ body {
     text-align: center;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     min-height: 100vh;
+    padding-top: 50px;
 }
 
 h1, h2 {
@@ -27,7 +28,7 @@ h1, h2 {
 
 h1 {
     font-size: 2.5em;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
     border-bottom: 2px solid #f0f;
     padding-bottom: 15px;
     animation: sign-flicker 3s infinite;
@@ -50,7 +51,7 @@ form {
     border: 2px solid #0f0;
     box-shadow: 0 0 15px #0f0;
     max-width: 500px;
-    margin: 0 auto;
+    margin: 100px auto;
 }
 
 label {
@@ -59,6 +60,7 @@ label {
     margin-bottom: 15px;
     color: #ff0;
     text-shadow: 0 0 5px #ff0;
+    text-align: center;
 }
 
 input[type="text"] {
@@ -68,8 +70,9 @@ input[type="text"] {
     padding: 10px 15px;
     font-size: 1.2em;
     border-radius: 5px;
-    width: 80%;
-    margin-bottom: 20px;
+    width: 70%;
+    margin: 0 auto 20px auto;
+    display: block;
     font-family: 'Courier New', monospace;
     box-shadow: 0 0 10px #0ff;
     text-shadow: 0 0 5px #0ff;

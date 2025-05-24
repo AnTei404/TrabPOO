@@ -52,6 +52,7 @@ fun Application.configureRouting() {
                             "name" to player.name,
                             "chips" to player.chips,
                             "money" to player.money,
+                            "photoPath" to player.photoPath,
                             "deckStyle" to selectedDeck,
                             "previewCards" to previewCards,
                             "successMessage" to "Deck saved successfully!"
@@ -112,7 +113,8 @@ fun Application.configureRouting() {
                             "gameState" to gameState,
                             "chipsBet" to chipsBet,
                             "chips" to player.chips,
-                            "deckStyle" to deckStyle // Pass deckStyle here
+                            "deckStyle" to deckStyle, // Pass deckStyle here
+                            "playerPhoto" to getOrCreatePlayerPhoto(player.name)
                         )
                     )
                 )
@@ -145,12 +147,13 @@ fun Application.configureRouting() {
                             "gameState" to gameState,
                             "chipsBet" to chipsBet,
                             "chips" to updatedChips,
-                            "resultMessage" to resultMessage
+                            "resultMessage" to resultMessage,
+                            "playerPhoto" to getOrCreatePlayerPhoto(player.name)
                         )
                     )
                 )
             } else {
-                call.respondRedirect("/index.html")
+                call.respondRedirect("/")
             }
         }
 
@@ -187,12 +190,13 @@ fun Application.configureRouting() {
                             "gameState" to gameState,
                             "chipsBet" to chipsBet,
                             "chips" to player.chips,
-                            "resultMessage" to resultMessage
+                            "resultMessage" to resultMessage,
+                            "playerPhoto" to getOrCreatePlayerPhoto(player.name)
                         )
                     )
                 )
             } else {
-                call.respondRedirect("/index.html")
+                call.respondRedirect("/")
             }
         }
 
@@ -212,7 +216,8 @@ fun Application.configureRouting() {
                                 "name" to player.name,
                                 "gameState" to gameState,
                                 "chipsBet" to lastBet,
-                                "chips" to player.chips
+                                "chips" to player.chips,
+                                "playerPhoto" to getOrCreatePlayerPhoto(player.name)
                             )
                         )
                     )
@@ -226,7 +231,8 @@ fun Application.configureRouting() {
                                 "gameState" to gameState,
                                 "chipsBet" to lastBet,
                                 "chips" to player.chips,
-                                "error" to "You don't have enough."
+                                "error" to "You don't have enough.",
+                                "playerPhoto" to getOrCreatePlayerPhoto(player.name)
                             )
                         )
                     )
@@ -294,7 +300,7 @@ fun Application.configureRouting() {
                     )
                 )
             } else {
-                call.respondRedirect("/casino/slots")
+                call.respondRedirect("/")
             }
         }
 
@@ -342,7 +348,8 @@ fun Application.configureRouting() {
                             "chipsBet" to chipsBet,
                             "chips" to player.chips,
                             "numPlayers" to 1 + bingoGame.houseCards.size,
-                            "gameState" to gameState
+                            "gameState" to gameState,
+                            "playerPhoto" to getOrCreatePlayerPhoto(player.name)
                         )
                     )
                 )
@@ -362,8 +369,8 @@ fun Application.configureRouting() {
                 val tie = userHasBingo && houseWinners.isNotEmpty()
                 var resultMessage = ""
                 if (userHasBingo && !tie) {
-                    player.chips += chipsBet * 6
-                    resultMessage = "Bingo! You win ${chipsBet * 6} chips and now have ${player.chips} chips."
+                    player.chips += chipsBet * 4
+                    resultMessage = "Bingo! You win ${chipsBet * 4} chips and now have ${player.chips} chips."
                 } else if (tie) {
                     player.chips += chipsBet
                     resultMessage = "It's a tie! Your bet is returned. You have ${player.chips} chips."
@@ -389,7 +396,8 @@ fun Application.configureRouting() {
                             "chips" to player.chips,
                             "numPlayers" to 1 + bingoGame.houseCards.size,
                             "gameState" to gameState,
-                            "resultMessage" to resultMessage
+                            "resultMessage" to resultMessage,
+                            "playerPhoto" to getOrCreatePlayerPhoto(player.name)
                         )
                     )
                 )
@@ -422,7 +430,8 @@ fun Application.configureRouting() {
                             "chipsBet" to chipsBet,
                             "chips" to player.chips,
                             "numPlayers" to 1 + bingoGame.houseCards.size,
-                            "gameState" to gameState
+                            "gameState" to gameState,
+                            "playerPhoto" to getOrCreatePlayerPhoto(player.name)
                         )
                     )
                 )
@@ -463,7 +472,8 @@ fun Application.configureRouting() {
                         "totalRounds" to gameState.totalRounds,
                         "multiplier" to gameState.multiplier,
                         "canLeaveOrAllIn" to gameState.canLeaveOrAllIn,
-                        "gameOver" to gameState.gameOver
+                        "gameOver" to gameState.gameOver,
+                        "playerPhoto" to getOrCreatePlayerPhoto(player.name)
                     )
                 )
             )
@@ -495,7 +505,8 @@ fun Application.configureRouting() {
                             "totalRounds" to gameState.totalRounds,
                             "multiplier" to gameState.multiplier,
                             "canLeaveOrAllIn" to gameState.canLeaveOrAllIn,
-                            "gameOver" to gameState.gameOver
+                            "gameOver" to gameState.gameOver,
+                            "playerPhoto" to getOrCreatePlayerPhoto(player.name)
                         )
                     )
                 )
@@ -528,7 +539,8 @@ fun Application.configureRouting() {
                             "totalRounds" to gameState.totalRounds,
                             "multiplier" to gameState.multiplier,
                             "canLeaveOrAllIn" to gameState.canLeaveOrAllIn,
-                            "gameOver" to gameState.gameOver
+                            "gameOver" to gameState.gameOver,
+                            "playerPhoto" to getOrCreatePlayerPhoto(player.name)
                         )
                     )
                 )
@@ -561,7 +573,8 @@ fun Application.configureRouting() {
                             "totalRounds" to gameState.totalRounds,
                             "multiplier" to gameState.multiplier,
                             "canLeaveOrAllIn" to gameState.canLeaveOrAllIn,
-                            "gameOver" to gameState.gameOver
+                            "gameOver" to gameState.gameOver,
+                            "playerPhoto" to getOrCreatePlayerPhoto(player.name)
                         )
                     )
                 )
@@ -596,7 +609,8 @@ fun Application.configureRouting() {
                             "totalRounds" to gameState.totalRounds,
                             "multiplier" to gameState.multiplier,
                             "canLeaveOrAllIn" to gameState.canLeaveOrAllIn,
-                            "gameOver" to gameState.gameOver
+                            "gameOver" to gameState.gameOver,
+                            "playerPhoto" to getOrCreatePlayerPhoto(player.name)
                         )
                     )
                 )
@@ -634,7 +648,8 @@ fun Application.configureRouting() {
                             "totalRounds" to gameState.totalRounds,
                             "multiplier" to gameState.multiplier,
                             "canLeaveOrAllIn" to gameState.canLeaveOrAllIn,
-                            "gameOver" to gameState.gameOver
+                            "gameOver" to gameState.gameOver,
+                            "playerPhoto" to getOrCreatePlayerPhoto(player.name)
                         )
                     )
                 )
@@ -723,7 +738,7 @@ fun Application.configureRouting() {
                     )
                 )
             } else {
-                call.respondRedirect("/casino/ridethebus")
+                call.respondRedirect("/")
             }
         }
     }

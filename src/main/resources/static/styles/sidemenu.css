@@ -1,0 +1,108 @@
+/* Sidemenu styles for casino games */
+
+/* Main layout container */
+.game-container {
+    display: flex;
+    justify-content: space-between;
+    max-width: 1300px;
+    margin: 0 auto;
+    position: relative;
+}
+
+/* Main game area */
+.game-content {
+    flex: 1;
+    padding: 20px;
+    max-width: 900px;
+}
+
+/* Sidemenu container */
+.sidemenu {
+    width: 250px;
+    background-color: rgba(0, 0, 0, 0.7);
+    border-left: 2px solid #0f0;
+    box-shadow: -5px 0 15px rgba(0, 255, 0, 0.3);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: sticky;
+    top: 20px;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+}
+
+/* Dealer photo in sidemenu */
+.sidemenu .dealer-photo {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    border: 3px solid #f0f;
+    box-shadow: 0 0 15px #f0f;
+    margin: 10px auto 20px;
+    display: block;
+    transition: all 0.3s;
+}
+
+.sidemenu .dealer-photo:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 25px #f0f;
+}
+
+/* Game controls section */
+.game-controls {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+    border-top: 1px solid #0f0;
+    padding-top: 20px;
+}
+
+/* Player photo in sidemenu */
+.sidemenu .player-photo {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    border: 3px solid #00f;
+    box-shadow: 0 0 15px #00f;
+    margin: 10px auto 20px;
+    display: block;
+    transition: all 0.3s;
+}
+
+.sidemenu .player-photo:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 25px #00f;
+}
+
+/* Game info section */
+.game-info {
+    width: 100%;
+    margin-top: 20px;
+    text-align: center;
+    border-top: 1px solid #0f0;
+    padding-top: 20px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1000px) {
+    .game-container {
+        flex-direction: column;
+    }
+
+    .sidemenu {
+        width: 100%;
+        border-left: none;
+        border-top: 2px solid #0f0;
+        box-shadow: 0 -5px 15px rgba(0, 255, 0, 0.3);
+        margin-top: 20px;
+        position: static;
+        max-height: none;
+    }
+
+    .game-content {
+        max-width: 100%;
+    }
+}

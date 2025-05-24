@@ -21,7 +21,7 @@ data class BingoCard(val grid: List<List<BingoCell>>) {
 }
 
 class BingoGame(
-    val numHouseCards: Int = 5 // Now 5 house cards
+    val numHouseCards: Int = 3 // Now 5 house cards
 ) {
     val userCard: BingoCard = generateCard()
     val houseCards: List<BingoCard> = List(numHouseCards) { generateCard() }

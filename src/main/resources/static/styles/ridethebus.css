@@ -1,5 +1,22 @@
 /* Retroesque style for Ride the Bus page */
 
+/* Dealer photo styles */
+.dealer-photo {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: 3px solid #f0f;
+    box-shadow: 0 0 15px #f0f;
+    margin: 10px auto;
+    display: block;
+    transition: all 0.3s;
+}
+
+.dealer-photo:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 25px #f0f;
+}
+
 /* Base styles */
 body {
     background-color: #000;

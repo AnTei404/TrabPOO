@@ -16,6 +16,7 @@ import kotlinx.serialization.Serializable
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver
 import trab.casino.BingoGame
 import kotlin.random.Random
+import trab.getOrCreatePlayerPhoto
 
 fun Application.configureSecurity() {
     install(Sessions) {
@@ -28,10 +29,21 @@ fun Application.configureSecurity() {
     }
     routing {
         post("/submit-name") {
-            val name = call.receiveParameters()["name"] ?: return@post call.respondText(
+            val parameters = call.receiveParameters()
+            val name = parameters["name"] ?: return@post call.respondText(
                 "Name is required", status = HttpStatusCode.BadRequest
             )
-            call.sessions.set(Player(name = name)) // Use default constructor for random values
+            val photoPath = parameters["photoPath"] ?: "/Player/Spongebob.jpg" // Default photo if none selected
+
+            // Store the selected photo in the map
+            setPlayerPhoto(name, photoPath)
+
+            // Create player with the selected photo
+            val player = Player(name = name)
+            // Update the player's photoPath to ensure it uses the selected photo
+            player.photoPath = photoPath
+
+            call.sessions.set(player)
             call.sessions.set(DeckStyle("minimalista")) // Default deck style
             call.respondRedirect("/welcome")
         }
@@ -43,8 +55,17 @@ data class Player(
     val name: String,
     var chips: Int = Random.nextInt(0, 301), // Random chips between 0 and 300
     var money: Int = Random.nextInt(50, 301), // Random money between 50 and 300
-    var lastBet: Int? = null
-)
+    var lastBet: Int? = null,
+    var photoPath: String = "" // Will be initialized in init block or set explicitly
+) {
+    // Initialize photoPath when Player is created
+    init {
+        // Only set a default photo if one hasn't been explicitly set
+        if (photoPath.isEmpty()) {
+            photoPath = getOrCreatePlayerPhoto(name)
+        }
+    }
+}
 
 @Serializable
 data class DeckStyle(
