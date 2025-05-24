@@ -1,22 +1,5 @@
 /* Retroesque style for Ride the Bus page */
 
-/* Dealer photo styles */
-.dealer-photo {
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    border: 3px solid #f0f;
-    box-shadow: 0 0 15px #f0f;
-    margin: 10px auto;
-    display: block;
-    transition: all 0.3s;
-}
-
-.dealer-photo:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 25px #f0f;
-}
-
 /* Base styles */
 body {
     background-color: #000;
@@ -24,17 +7,25 @@ body {
     font-family: 'Courier New', monospace;
     padding: 20px;
     background-image: linear-gradient(to bottom, #000, #111);
-    text-shadow: 0 0 5px #0f0;
-    max-width: 800px;
     margin: 0 auto;
-    text-align: center;
+    text-shadow: 0 0 5px #0f0;
 }
 
-h1, h2 {
-    color: #f0f;
+/* Game content styles */
+.game-content {
+    text-align: center;
+    background-color: rgba(0, 20, 0, 0.3);
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
+    border: 1px solid #0f0;
+}
+
+h1, h2, h3 {
+    color: #0ff;
     text-transform: uppercase;
     letter-spacing: 2px;
-    text-shadow: 0 0 10px #f0f;
+    text-shadow: 0 0 10px #0ff;
 }
 
 h1 {
@@ -42,6 +33,7 @@ h1 {
     margin-bottom: 20px;
     border-bottom: 2px solid #f0f;
     padding-bottom: 10px;
+    text-align: center;
 }
 
 h2 {
@@ -49,6 +41,13 @@ h2 {
     margin: 20px 0;
     color: #ff0;
     text-shadow: 0 0 10px #ff0;
+}
+
+h3 {
+    font-size: 1.4em;
+    margin: 15px 0;
+    color: #0ff;
+    text-shadow: 0 0 8px #0ff;
 }
 
 p {
@@ -66,7 +65,7 @@ span {
 /* Card container styles */
 .card-container {
     display: flex;
-    flex-direction: row;
+    flex-wrap: wrap;
     gap: 10px;
     justify-content: center;
     margin: 30px auto;
@@ -75,7 +74,7 @@ span {
     border-radius: 10px;
     border: 2px solid #0f0;
     box-shadow: 0 0 15px #0f0;
-    max-width: 600px;
+    max-width: 700px;
 }
 
 .card {
@@ -99,6 +98,17 @@ span {
     box-shadow: 0 0 20px #f0f;
 }
 
+/* Round info styles */
+.round-info {
+    background-color: rgba(0, 50, 50, 0.3);
+    padding: 15px;
+    border-radius: 8px;
+    margin: 20px auto;
+    max-width: 600px;
+    border-left: 4px solid #0ff;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+}
+
 /* Form styles */
 form {
     margin: 10px 0;
@@ -108,6 +118,7 @@ form.inline {
     display: inline;
 }
 
+/* Button styles */
 button {
     background-color: #0f0;
     color: #000;
@@ -131,80 +142,83 @@ button:hover {
     transform: scale(1.05);
 }
 
-button[value="red"] {
+/* Sidebar button styles */
+.sidemenu button {
+    width: 90%;
+    margin: 5px auto;
+    display: block;
+    font-size: 0.95em;
+    padding: 8px 10px;
+}
+
+/* Color-coded buttons */
+button[value="red"], button[value="hearts"], button[value="diamonds"] {
     background-color: #f00;
     box-shadow: 0 0 10px #f00;
 }
 
-button[value="red"]:hover {
+button[value="red"]:hover, button[value="hearts"]:hover, button[value="diamonds"]:hover {
     background-color: #f55;
     box-shadow: 0 0 15px #f55;
 }
 
-button[value="black"] {
+button[value="black"], button[value="clubs"], button[value="spades"] {
     background-color: #000;
     color: #fff;
     border: 1px solid #fff;
     box-shadow: 0 0 10px #fff;
 }
 
-button[value="black"]:hover {
+button[value="black"]:hover, button[value="clubs"]:hover, button[value="spades"]:hover {
     background-color: #333;
     box-shadow: 0 0 15px #fff;
 }
 
-button[value="hearts"], button[value="diamonds"], button[value="clubs"], button[value="spades"] {
-    padding: 10px 15px;
-    font-size: 1em;
+button[value="higher"] {
+    background-color: #0ff;
+    box-shadow: 0 0 10px #0ff;
 }
 
-button[value="hearts"] {
-    background-color: #f00;
-    box-shadow: 0 0 10px #f00;
+button[value="higher"]:hover {
+    background-color: #5ff;
+    box-shadow: 0 0 15px #5ff;
 }
 
-button[value="hearts"]:hover {
-    background-color: #f55;
-    box-shadow: 0 0 15px #f55;
+button[value="lower"] {
+    background-color: #ff0;
+    box-shadow: 0 0 10px #ff0;
 }
 
-button[value="diamonds"] {
-    background-color: #f00;
-    box-shadow: 0 0 10px #f00;
+button[value="lower"]:hover {
+    background-color: #ff5;
+    box-shadow: 0 0 15px #ff5;
 }
 
-button[value="diamonds"]:hover {
-    background-color: #f55;
-    box-shadow: 0 0 15px #f55;
+button[value="inside"] {
+    background-color: #0f0;
+    box-shadow: 0 0 10px #0f0;
 }
 
-button[value="clubs"] {
-    background-color: #000;
-    color: #fff;
-    border: 1px solid #fff;
-    box-shadow: 0 0 10px #fff;
+button[value="inside"]:hover {
+    background-color: #5f5;
+    box-shadow: 0 0 15px #5f5;
 }
 
-button[value="clubs"]:hover {
-    background-color: #333;
-    box-shadow: 0 0 15px #fff;
+button[value="outside"] {
+    background-color: #f0f;
+    box-shadow: 0 0 10px #f0f;
 }
 
-button[value="spades"] {
-    background-color: #000;
-    color: #fff;
-    border: 1px solid #fff;
-    box-shadow: 0 0 10px #fff;
-}
-
-button[value="spades"]:hover {
-    background-color: #333;
-    box-shadow: 0 0 15px #fff;
+button[value="outside"]:hover {
+    background-color: #f5f;
+    box-shadow: 0 0 15px #f5f;
 }
 
 button[value="leave"] {
     background-color: #f0f;
     box-shadow: 0 0 10px #f0f;
+    margin-top: 10px;
+    width: 100%;
 }
 
 button[value="leave"]:hover {
@@ -311,14 +325,4 @@ body::before {
     z-index: 1000;
     pointer-events: none;
     opacity: 0.15;
-}
-
-/* Card flip animation */
-@keyframes card-flip {
-    0% {
-        transform: rotateY(0deg);
-    }
-    100% {
-        transform: rotateY(180deg);
-    }
 }

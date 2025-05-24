@@ -27,6 +27,40 @@
 <h1>Bingo, <span th:text="${name}"></span>!</h1>
 
 <div class="game-container" th:if="${gameState != null}">
+  <!-- Left Sidebar -->
+  <div class="sidebar left-sidebar">
+    <img src="/Staff/BingusDealer.png" alt="Dealer" class="dealer-photo">
+
+    <div class="game-controls">
+      <div th:if="${!(gameState.userHasBingo or !#lists.isEmpty(gameState.houseWinners))}">
+        <form action="/casino/bingo/next" method="post">
+          <button type="submit">Next Number</button>
+        </form>
+      </div>
+
+      <div th:if="${gameState.userHasBingo or !#lists.isEmpty(gameState.houseWinners)}">
+        <form action="/casino/bingo/new" method="post">
+          <button type="submit">New Game</button>
+        </form>
+        <form action="/casino/bingo" method="get">
+          <button type="submit">Place another Bet</button>
+        </form>
+        <form action="/games" method="get">
+          <button type="submit">Go back to games</button>
+        </form>
+      </div>
+    </div>
+
+    <img th:src="${playerPhoto}" alt="Player" class="player-photo">
+
+    <div class="player-info">
+      <p class="player-name">Player: <span th:text="${name}"></span></p>
+      <p>Money: $<span th:text="${money}"></span></p>
+      <p>Chips: <span th:text="${chips}"></span></p>
+    </div>
+  </div>
+
+  <!-- Main Game Content -->
   <div class="game-content">
     <h2>House Cards</h2>
     <div class="house-cards-container">
@@ -61,9 +95,6 @@
 
     <h2 th:if="${gameState.lastNumber != null}">Last Number: <span th:text="${gameState.lastNumber}"></span></h2>
 
-    <h2>Drawn Numbers</h2>
-    <p th:text="${#lists.isEmpty(gameState.drawnNumbers) ? 'None yet' : gameState.drawnNumbers}"></p>
-
     <div th:if="${gameState.tie}">
       <h2>It's a tie! Your bet is returned.</h2>
     </div>
@@ -75,36 +106,29 @@
     </div>
   </div>
 
-  <div class="sidemenu">
-    <img src="/Staff/BingusDealer.png" alt="Dealer" class="dealer-photo">
-
-    <div class="game-controls">
-      <div th:if="${!(gameState.userHasBingo or !#lists.isEmpty(gameState.houseWinners))}">
-        <form action="/casino/bingo/next" method="post">
-          <button type="submit">Next Number</button>
-        </form>
+  <!-- Right Sidebar -->
+  <div class="sidebar right-sidebar">
+    <div class="game-stats">
+      <h3>Game Stats</h3>
+      <div class="stat-item">
+        <p>Player Bet: <span th:text="${chipsBet}"></span> chips</p>
       </div>
-
-      <div th:if="${gameState.userHasBingo or !#lists.isEmpty(gameState.houseWinners)}">
-        <form action="/casino/bingo/new" method="post">
-          <button type="submit">New Game</button>
-        </form>
-        <form action="/casino/bingo" method="get">
-          <button type="submit">Place another Bet</button>
-        </form>
-        <form action="/games" method="get">
-          <button type="submit">Go back to games</button>
-        </form>
+      <div class="stat-item">
+        <p>Players: <span th:text="${numPlayers}"></span></p>
       </div>
-    </div>
-
-    <img th:src="${playerPhoto}" alt="Player" class="player-photo">
-
-    <div class="game-info">
-      <p>Chips: <span th:text="${chips}"></span></p>
-      <p>Bet: <span th:text="${chipsBet}"></span></p>
-      <p>Players: <span th:text="${numPlayers}"></span></p>
-      <p th:if="${resultMessage != null}" th:text="${resultMessage}"></p>
+      <div class="stat-item">
+        <h4>Drawn Numbers</h4>
+        <p th:text="${#lists.isEmpty(gameState.drawnNumbers) ? 'None yet' : gameState.drawnNumbers}"></p>
+      </div>
+      <div class="stat-item" th:if="${gameState.userHasBingo and !gameState.tie}">
+        <p>Amount Won: <span th:text="${chipsBet * 2}"></span> chips</p>
+      </div>
+      <div class="stat-item" th:if="${!#lists.isEmpty(gameState.houseWinners) and !gameState.tie}">
+        <p>Amount Lost: <span th:text="${chipsBet}"></span> chips</p>
+      </div>
+      <div class="stat-item" th:if="${resultMessage != null}">
+        <p th:text="${resultMessage}"></p>
+      </div>
     </div>
   </div>
 </div>

@@ -7,21 +7,25 @@
     max-width: 1300px;
     margin: 0 auto;
     position: relative;
+    gap: 20px;
 }
 
 /* Main game area */
 .game-content {
     flex: 1;
     padding: 20px;
-    max-width: 900px;
+    max-width: 700px;
+    background-color: rgba(0, 20, 0, 0.3);
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
+    border: 1px solid #0f0;
+    order: 2;
 }
 
-/* Sidemenu container */
-.sidemenu {
+/* Sidebar base styles */
+.sidebar {
     width: 250px;
     background-color: rgba(0, 0, 0, 0.7);
-    border-left: 2px solid #0f0;
-    box-shadow: -5px 0 15px rgba(0, 255, 0, 0.3);
     padding: 20px;
     display: flex;
     flex-direction: column;
@@ -30,10 +34,25 @@
     top: 20px;
     max-height: calc(100vh - 40px);
     overflow-y: auto;
+    border-radius: 10px;
 }
 
-/* Dealer photo in sidemenu */
-.sidemenu .dealer-photo {
+/* Left sidebar specific styles */
+.left-sidebar {
+    border-right: 2px solid #0f0;
+    box-shadow: 5px 0 15px rgba(0, 255, 0, 0.3);
+    order: 3;
+}
+
+/* Right sidebar specific styles */
+.right-sidebar {
+    border-left: 2px solid #0f0;
+    box-shadow: -5px 0 15px rgba(0, 255, 0, 0.3);
+    order: 1;
+}
+
+/* Dealer photo in sidebar */
+.dealer-photo {
     width: 180px;
     height: 180px;
     border-radius: 50%;
@@ -44,7 +63,7 @@
     transition: all 0.3s;
 }
 
-.sidemenu .dealer-photo:hover {
+.dealer-photo:hover {
     transform: scale(1.05);
     box-shadow: 0 0 25px #f0f;
 }
@@ -60,8 +79,8 @@
     padding-top: 20px;
 }
 
-/* Player photo in sidemenu */
-.sidemenu .player-photo {
+/* Player photo in sidebar */
+.player-photo {
     width: 180px;
     height: 180px;
     border-radius: 50%;
@@ -72,13 +91,13 @@
     transition: all 0.3s;
 }
 
-.sidemenu .player-photo:hover {
+.player-photo:hover {
     transform: scale(1.05);
     box-shadow: 0 0 25px #00f;
 }
 
-/* Game info section */
-.game-info {
+/* Player info section */
+.player-info {
     width: 100%;
     margin-top: 20px;
     text-align: center;
@@ -86,23 +105,77 @@
     padding-top: 20px;
 }
 
+.player-info p {
+    margin: 8px 0;
+    font-size: 1.1em;
+}
+
+.player-name {
+    color: #0ff;
+    font-weight: bold;
+    text-shadow: 0 0 8px #0ff;
+}
+
+/* Game stats section (right sidebar) */
+.game-stats {
+    width: 100%;
+    text-align: center;
+}
+
+.game-stats h3 {
+    color: #ff0;
+    margin-bottom: 20px;
+    text-shadow: 0 0 10px #ff0;
+    border-bottom: 1px solid #ff0;
+    padding-bottom: 10px;
+}
+
+.stat-item {
+    background-color: rgba(0, 50, 50, 0.3);
+    padding: 12px;
+    border-radius: 8px;
+    margin: 15px 0;
+    border-left: 4px solid #0ff;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+    text-align: left;
+}
+
+.stat-item p {
+    margin: 0;
+    font-size: 1.1em;
+}
+
 /* Responsive adjustments */
-@media (max-width: 1000px) {
+@media (max-width: 1200px) {
     .game-container {
         flex-direction: column;
+        align-items: center;
     }
 
-    .sidemenu {
+    .sidebar {
         width: 100%;
-        border-left: none;
-        border-top: 2px solid #0f0;
-        box-shadow: 0 -5px 15px rgba(0, 255, 0, 0.3);
-        margin-top: 20px;
+        max-width: 500px;
         position: static;
         max-height: none;
+        margin-bottom: 20px;
+    }
+
+    .left-sidebar {
+        order: 3;
+        border-right: none;
+        border-bottom: 2px solid #0f0;
+        box-shadow: 0 5px 15px rgba(0, 255, 0, 0.3);
     }
 
     .game-content {
+        order: 2;
         max-width: 100%;
+    }
+
+    .right-sidebar {
+        order: 1;
+        border-left: none;
+        border-top: 2px solid #0f0;
+        box-shadow: 0 -5px 15px rgba(0, 255, 0, 0.3);
     }
 }

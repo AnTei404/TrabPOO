@@ -3,6 +3,7 @@
 <head>
     <title>Ride the Bus</title>
     <link rel="stylesheet" href="/styles/ridethebus.css">
+    <link rel="stylesheet" href="/styles/sidemenu.css">
 </head>
 <body>
 <button class="help-button" onclick="showRules()">?</button>
@@ -20,44 +21,102 @@
     <p>Each correct guess increases your multiplier. You can choose to leave with your winnings after each round (except the first).</p>
 </div>
 
-<h1>Ride the Bus, <span th:text="${name}"></span>!</h1>
-<p>Chips: <span th:text="${chips}"></span> | Bet: <span th:text="${chipsBet}"></span> | Multiplier: <span th:text="${gameState.multiplier}"></span>x</p>
-<div class="card-container">
-    <div th:each="card, idx : ${gameState.cards}" class="card">
-        <img th:src="${card.imagePath}" alt="Card">
+<div class="game-container">
+    <!-- Left Sidebar -->
+    <div class="sidebar left-sidebar">
+        <img src="/Staff/BingusCPCS.png" alt="Dealer" class="dealer-photo">
+
+        <div class="game-controls">
+            <div th:if="${!gameState.gameOver}">
+                <div th:if="${gameState.currentRound == 0}">
+                    <form action="/casino/ridethebus/guess" method="post">
+                        <button name="choice" value="red">Red</button>
+                        <button name="choice" value="black">Black</button>
+                    </form>
+                </div>
+                <div th:if="${gameState.currentRound == 1}">
+                    <form action="/casino/ridethebus/guess" method="post">
+                        <button name="choice" value="higher">Higher</button>
+                        <button name="choice" value="lower">Lower</button>
+                        <button th:if="${gameState.canLeave}" name="choice" value="leave">Leave with Winnings</button>
+                    </form>
+                </div>
+                <div th:if="${gameState.currentRound == 2}">
+                    <form action="/casino/ridethebus/guess" method="post">
+                        <button name="choice" value="inside">Inside</button>
+                        <button name="choice" value="outside">Outside</button>
+                        <button th:if="${gameState.canLeave}" name="choice" value="leave">Leave with Winnings</button>
+                    </form>
+                </div>
+                <div th:if="${gameState.currentRound == 3}">
+                    <form action="/casino/ridethebus/guess" method="post">
+                        <button name="choice" value="hearts">Hearts</button>
+                        <button name="choice" value="diamonds">Diamonds</button>
+                        <button name="choice" value="clubs">Clubs</button>
+                        <button name="choice" value="spades">Spades</button>
+                        <button th:if="${gameState.canLeave}" name="choice" value="leave">Leave with Winnings</button>
+                    </form>
+                </div>
+            </div>
+            <div th:if="${gameState.gameOver}">
+                <form action="/casino/ridethebus/restart" method="post">
+                    <button type="submit">Play Again</button>
+                </form>
+                <form action="/games" method="get">
+                    <button type="submit">Back to Games</button>
+                </form>
+            </div>
+        </div>
+
+        <img th:src="${playerPhoto}" alt="Player" class="player-photo">
+
+        <div class="player-info">
+            <p class="player-name">Player: <span th:text="${playerName}"></span></p>
+            <p>Money: $<span th:text="${money}"></span></p>
+            <p>Chips: <span th:text="${chips}"></span></p>
+        </div>
     </div>
-</div>
-<div th:if="${!gameState.gameOver}">
-    <form th:if="${gameState.currentRound == 0}" action="/casino/ridethebus/guess" method="post">
-        <button name="choice" value="red">Red</button>
-        <button name="choice" value="black">Black</button>
-    </form>
-    <form th:if="${gameState.currentRound == 1}" action="/casino/ridethebus/guess" method="post">
-        <button name="choice" value="higher">Higher</button>
-        <button name="choice" value="lower">Lower</button>
-        <button th:if="${gameState.canLeave}" name="choice" value="leave">Leave with Winnings</button>
-    </form>
-    <form th:if="${gameState.currentRound == 2}" action="/casino/ridethebus/guess" method="post">
-        <button name="choice" value="inside">Inside</button>
-        <button name="choice" value="outside">Outside</button>
-        <button th:if="${gameState.canLeave}" name="choice" value="leave">Leave with Winnings</button>
-    </form>
-    <form th:if="${gameState.currentRound == 3}" action="/casino/ridethebus/guess" method="post">
-        <button name="choice" value="hearts">Hearts</button>
-        <button name="choice" value="diamonds">Diamonds</button>
-        <button name="choice" value="clubs">Clubs</button>
-        <button name="choice" value="spades">Spades</button>
-        <button th:if="${gameState.canLeave}" name="choice" value="leave">Leave with Winnings</button>
-    </form>
-</div>
-<div th:if="${gameState.gameOver}">
-    <h2 th:text="${gameState.result}"></h2>
-    <form action="/casino/ridethebus/restart" method="post" class="inline">
-        <button type="submit">Play Again</button>
-    </form>
-    <form action="/games" method="get" class="inline">
-        <button type="submit">Back to Games</button>
-    </form>
+
+    <!-- Main Game Content -->
+    <div class="game-content">
+        <h2>Ride the Bus Game</h2>
+        <div class="card-container">
+            <div th:each="card, idx : ${gameState.cards}" class="card">
+                <img th:src="${card.imagePath}" alt="Card">
+            </div>
+        </div>
+        <div th:if="${gameState.gameOver}">
+            <h2 th:text="${gameState.result}"></h2>
+        </div>
+        <div class="round-info" th:if="${!gameState.gameOver}">
+            <h3 th:if="${gameState.currentRound == 0}">Round 1: Red or Black?</h3>
+            <h3 th:if="${gameState.currentRound == 1}">Round 2: Higher or Lower?</h3>
+            <h3 th:if="${gameState.currentRound == 2}">Round 3: Inside or Outside?</h3>
+            <h3 th:if="${gameState.currentRound == 3}">Round 4: Choose a Suit</h3>
+        </div>
+    </div>
+
+    <!-- Right Sidebar -->
+    <div class="sidebar right-sidebar">
+        <div class="game-stats">
+            <h3>Game Stats</h3>
+            <div class="stat-item">
+                <p>Round: <span th:text="${gameState.currentRound + 1}"></span>/4</p>
+            </div>
+            <div class="stat-item">
+                <p>Player Bet: <span th:text="${chipsBet}"></span> chips</p>
+            </div>
+            <div class="stat-item">
+                <p>Multiplier: <span th:text="${gameState.multiplier}"></span>x</p>
+            </div>
+            <div class="stat-item" th:if="${gameState.gameOver && gameState.result.contains('won')}">
+                <p>Amount Won: <span th:text="${chipsBet * gameState.multiplier}"></span> chips</p>
+            </div>
+            <div class="stat-item" th:if="${gameState.gameOver && gameState.result.contains('lost')}">
+                <p>Amount Lost: <span th:text="${chipsBet}"></span> chips</p>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>

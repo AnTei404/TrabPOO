@@ -27,36 +27,8 @@
 <h1>Welcome to the Blackjack table, <span th:text="${name}"></span>!</h1>
 
 <div class="game-container">
-    <div class="game-content">
-        <div>
-            <h2>Dealer's Hand</h2>
-            <div class="card-container">
-                <div class="card" th:each="card, iterStat : ${gameState.dealerHand}">
-                    <img th:src="${gameState.gameOver || iterStat.index == 0 ? card.imagePath : '/Baralhos/CardBack.png'}" alt="Card Image">
-                    <p th:text="${gameState.gameOver || iterStat.index == 0 ? card.rank + ' of ' + card.suit : 'Hidden Card'}"></p>
-                </div>
-            </div>
-            <p>Total: <span th:text="${gameState.dealerTotal}"></span></p>
-        </div>
-
-        <div>
-            <h2>Your Hand</h2>
-            <div class="card-container">
-                <div class="card" th:each="card : ${gameState.playerHand}">
-                    <img th:src="${card.imagePath}" alt="Card Image">
-                    <p th:text="${card.rank + ' of ' + card.suit}"></p>
-                </div>
-            </div>
-            <p>Total: <span th:text="${gameState.playerTotal}"></span></p>
-        </div>
-
-        <div th:if="${gameState.gameOver}">
-            <h2>Game Over</h2>
-            <p th:text="${gameState.gameState}"></p>
-        </div>
-    </div>
-
-    <div class="sidemenu">
+    <!-- Left Sidebar -->
+    <div class="sidebar left-sidebar">
         <img src="/Staff/BingusDealer.png" alt="Dealer" class="dealer-photo">
 
         <div class="game-controls">
@@ -86,14 +58,62 @@
 
         <img th:src="${playerPhoto}" alt="Player" class="player-photo">
 
-        <div class="game-info">
-            <p th:if="${!gameState.gameOver}">
-                Bet: <span th:text="${chipsBet}"></span> chips <br>
-                Chips owned: <span th:text="${chips}"></span>
-            </p>
-            <p th:if="${gameState.gameOver}">
-                <span th:text="${resultMessage}"></span>
-            </p>
+        <div class="player-info">
+            <p class="player-name">Player: <span th:text="${name}"></span></p>
+            <p>Money: $<span th:text="${money}"></span></p>
+            <p>Chips: <span th:text="${chips}"></span></p>
+        </div>
+    </div>
+
+    <!-- Main Game Content -->
+    <div class="game-content">
+        <div>
+            <h2>Dealer's Hand</h2>
+            <div class="card-container">
+                <div class="card" th:each="card, iterStat : ${gameState.dealerHand}">
+                    <img th:src="${gameState.gameOver || iterStat.index == 0 ? card.imagePath : '/Baralhos/CardBack.png'}" alt="Card Image">
+                    <p th:text="${gameState.gameOver || iterStat.index == 0 ? card.rank + ' of ' + card.suit : 'Hidden Card'}"></p>
+                </div>
+            </div>
+            <p>Total: <span th:text="${gameState.dealerTotal}"></span></p>
+        </div>
+
+        <div>
+            <h2>Your Hand</h2>
+            <div class="card-container">
+                <div class="card" th:each="card : ${gameState.playerHand}">
+                    <img th:src="${card.imagePath}" alt="Card Image">
+                    <p th:text="${card.rank + ' of ' + card.suit}"></p>
+                </div>
+            </div>
+            <p>Total: <span th:text="${gameState.playerTotal}"></span></p>
+        </div>
+
+        <div th:if="${gameState.gameOver}">
+            <h2>Game Over</h2>
+            <p th:text="${gameState.gameState}"></p>
+        </div>
+    </div>
+
+    <!-- Right Sidebar -->
+    <div class="sidebar right-sidebar">
+        <div class="game-stats">
+            <h3>Game Stats</h3>
+            <div class="stat-item">
+                <p>Player Bet: <span th:text="${chipsBet}"></span> chips</p>
+            </div>
+            <div class="stat-item" th:if="${gameState.gameOver && resultMessage.contains('won')}">
+                <p>Amount Won: <span th:text="${chipsBet * 2}"></span> chips</p>
+            </div>
+            <div class="stat-item" th:if="${gameState.gameOver && resultMessage.contains('lost')}">
+                <p>Amount Lost: <span th:text="${chipsBet}"></span> chips</p>
+            </div>
+            <div class="stat-item" th:if="${gameState.gameOver && resultMessage.contains('Blackjack')}">
+                <p>Blackjack Bonus: <span th:text="${chipsBet * 1.5}"></span> chips</p>
+            </div>
+            <div class="stat-item" th:if="${gameState.gameOver && resultMessage.contains('Push')}">
+                <p>Push: Bet returned</p>
+            </div>
         </div>
     </div>
 </div>

@@ -677,7 +677,8 @@ fun Application.configureRouting() {
                             "name" to player.name,
                             "chips" to player.chips,
                             "chipsBet" to chipsBet,
-                            "gameState" to gameState
+                            "gameState" to gameState,
+                            "playerPhoto" to getOrCreatePlayerPhoto(player.name)
                         )
                     )
                 )
@@ -707,7 +708,8 @@ fun Application.configureRouting() {
                             "name" to player.name,
                             "chips" to player.chips,
                             "chipsBet" to chipsBet,
-                            "gameState" to gameState
+                            "gameState" to gameState,
+                            "playerPhoto" to getOrCreatePlayerPhoto(player.name)
                         )
                     )
                 )
@@ -733,7 +735,8 @@ fun Application.configureRouting() {
                             "name" to player.name,
                             "chips" to player.chips,
                             "chipsBet" to lastBet,
-                            "gameState" to gameState
+                            "gameState" to gameState,
+                            "playerPhoto" to getOrCreatePlayerPhoto(player.name)
                         )
                     )
                 )
