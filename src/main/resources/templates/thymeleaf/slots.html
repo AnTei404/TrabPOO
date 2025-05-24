@@ -21,8 +21,8 @@
     </ul>
 </div>
 
-<h1>Slots, <span th:text="${name}"></span>!</h1>
 <div>
+    <h2>Slots Game</h2>
     <div class="reels">
         <table>
             <tbody th:if="${grid != null}">
@@ -38,7 +38,7 @@
         </table>
     </div>
 
-    <h2>Payout Table</h2>
+    <h3>Payout Table</h3>
     <table>
         <thead>
         <tr>
@@ -76,7 +76,7 @@
     <p th:text="${resultMessage}"></p>
     <p>Bet: <span th:text="${chipsBet}"></span> chips | Chips owned: <span th:text="${chips}"></span></p>
     <form action="/casino/slots/spin" method="post">
-        <button type="submit">Spin</button>
+        <button type="submit" th:disabled="${chips < chipsBet}">Spin</button>
     </form>
     <form action="/casino/slots/change-bet" method="post">
         <button type="submit">Change Bet</button>
@@ -93,6 +93,7 @@
             sessionStorage.setItem('slotsScroll', window.scrollY);
         });
     });
+
     // Restore scroll position on page load
     window.addEventListener('load', function() {
         const y = sessionStorage.getItem('slotsScroll');

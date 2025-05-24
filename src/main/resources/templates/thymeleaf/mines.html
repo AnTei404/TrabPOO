@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Mines</title>
+    <link rel="stylesheet" href="/styles/mines.css">
+    <link rel="stylesheet" href="/styles/sidemenu.css">
+</head>
+<body>
+<button class="help-button" onclick="showRules()">?</button>
+<div class="overlay" id="overlay" onclick="hideRules()"></div>
+<div class="rules-popup" id="rulesPopup">
+    <span class="popup-close" onclick="hideRules()">×</span>
+    <h2>Mines Rules</h2>
+    <p>Mines is a game of chance where you need to avoid hitting a mine:</p>
+    <ol>
+        <li>The game is played on a 5x5 grid with one hidden mine.</li>
+        <li>Click on squares to reveal them. Each revealed square increases your potential payout.</li>
+        <li>If you reveal a mine, you lose your bet.</li>
+        <li>You can cash out at any time to secure your winnings.</li>
+        <li>The more squares you reveal without hitting the mine, the higher your payout multiplier.</li>
+    </ol>
+    <p>Payout multipliers increase as you reveal more squares, from 1.0x up to 12.0x for revealing all squares except the mine.</p>
+</div>
+
+<div class="game-container">
+    <!-- Left Sidebar -->
+    <div class="sidebar left-sidebar">
+        <div class="game-stats">
+            <h3>Game Stats</h3>
+            <div class="stat-item">
+                <p>Squares Revealed: <span th:text="${gameState.squaresRevealed}"></span>/24</p>
+            </div>
+            <div class="stat-item">
+                <p>Player Bet: <span th:text="${chipsBet}"></span> chips</p>
+            </div>
+            <div class="stat-item">
+                <p>Current Multiplier: <span th:text="${gameState.payoutMultiplier}"></span>x</p>
+            </div>
+            <div class="stat-item">
+                <p>Potential Payout: <span th:text="${gameState.payout}"></span> chips</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Game Content -->
+    <div class="game-content">
+        <h2>Mines Game</h2>
+        <div class="grid-container">
+            <div class="mines-grid">
+                <div th:each="row, rowStat : ${gameState.grid}" class="grid-row">
+                    <div th:each="cell, colStat : ${row}" class="grid-cell" 
+                         th:classappend="${cell.revealed ? (cell.hasMine ? 'revealed mine-cell' : 'revealed safe-cell') : 'unrevealed'}"
+                         th:onclick="${!gameState.gameOver && !cell.revealed} ? 'revealCell(' + ${cell.row} + ',' + ${cell.col} + ')' : ''">
+                        <div th:if="${!cell.revealed}" class="hidden">?</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div th:if="${gameState.gameOver && gameState.mineRevealed}" class="result-message">
+            <h3>Game Over! You hit a mine!</h3>
+        </div>
+        <div th:if="${gameState.gameOver && !gameState.mineRevealed}" class="result-message">
+            <h3>Congratulations! You cashed out with <span th:text="${gameState.payout}"></span> chips!</h3>
+        </div>
+        <div th:if="${resultMessage}" class="result-message">
+            <h3 th:text="${resultMessage}"></h3>
+        </div>
+    </div>
+
+    <!-- Right Sidebar -->
+    <div class="sidebar right-sidebar">
+        <img src="/Staff/BingusDealer.png" alt="Dealer" class="dealer-photo">
+
+        <div class="game-controls">
+            <div th:if="${!gameState.gameOver}">
+                <form action="/casino/mines/cashout" method="post">
+                    <button type="submit">End Game</button>
+                </form>
+            </div>
+            <div th:if="${gameState.gameOver}" class="game-over-controls">
+                <div class="button-row">
+                    <form action="/casino/mines/restart" method="post">
+                        <button type="submit" th:disabled="${chips < chipsBet}">Play Again</button>
+                    </form>
+                    <form action="/casino/mines/newbet" method="post">
+                        <button type="submit">New Bet</button>
+                    </form>
+                </div>
+                <form action="/games" method="get">
+                    <button type="submit" class="leave-button">Back to Games</button>
+                </form>
+            </div>
+        </div>
+
+        <img th:src="${playerPhoto}" alt="Player" class="player-photo">
+
+        <div class="player-info">
+            <p class="player-name">Player: <span th:text="${name}"></span></p>
+            <p>Chips: <span th:text="${chips}"></span></p>
+        </div>
+    </div>
+</div>
+
+<form id="revealForm" action="/casino/mines/reveal" method="get">
+    <input type="hidden" id="rowInput" name="row" value="">
+    <input type="hidden" id="colInput" name="col" value="">
+</form>
+
+<script>
+    // Function to reveal a cell
+    function revealCell(row, col) {
+        document.getElementById('rowInput').value = row;
+        document.getElementById('colInput').value = col;
+        document.getElementById('revealForm').submit();
+    }
+
+    // Save scroll position before form submit
+    document.querySelectorAll('form').forEach(form => {
+        form.addEventListener('submit', function() {
+            sessionStorage.setItem('minesScroll', window.scrollY);
+        });
+    });
+
+    // Restore scroll position on page load
+    window.addEventListener('load', function() {
+        const y = sessionStorage.getItem('minesScroll');
+        if (y !== null) {
+            window.scrollTo(0, parseInt(y));
+            sessionStorage.removeItem('minesScroll');
+        }
+    });
+
+    function showRules() {
+        document.getElementById('overlay').style.display = 'block';
+        document.getElementById('rulesPopup').style.display = 'block';
+    }
+
+    function hideRules() {
+        document.getElementById('overlay').style.display = 'none';
+        document.getElementById('rulesPopup').style.display = 'none';
+    }
+</script>
+</body>
+</html>

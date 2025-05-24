@@ -3,30 +3,32 @@
 /* Main layout container */
 .game-container {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     max-width: 1300px;
     margin: 0 auto;
     position: relative;
-    gap: 20px;
+    gap: 10px;
 }
 
 /* Main game area */
 .game-content {
-    flex: 1;
-    padding: 20px;
-    max-width: 700px;
+    flex: 3;
+    padding: 30px;
+    min-width: 55%;
     background-color: rgba(0, 20, 0, 0.3);
     border-radius: 10px;
-    box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
-    border: 1px solid #0f0;
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+    border: 2px solid #0f0;
     order: 2;
+    margin: 0 10px;
 }
 
 /* Sidebar base styles */
 .sidebar {
-    width: 250px;
+    width: 240px;
+    flex: 0 0 240px; /* Fixed width, doesn't grow or shrink */
     background-color: rgba(0, 0, 0, 0.7);
-    padding: 20px;
+    padding: 12px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -34,6 +36,7 @@
     top: 20px;
     max-height: calc(100vh - 40px);
     overflow-y: auto;
+    overflow-x: hidden;
     border-radius: 10px;
 }
 
@@ -41,26 +44,30 @@
 .left-sidebar {
     border-right: 2px solid #0f0;
     box-shadow: 5px 0 15px rgba(0, 255, 0, 0.3);
-    order: 3;
+    order: 1;
 }
 
 /* Right sidebar specific styles */
 .right-sidebar {
     border-left: 2px solid #0f0;
     box-shadow: -5px 0 15px rgba(0, 255, 0, 0.3);
-    order: 1;
+    order: 3;
 }
 
-/* Dealer photo in sidebar */
-.dealer-photo {
+/* Common photo styles */
+.dealer-photo, .player-photo {
     width: 180px;
     height: 180px;
     border-radius: 50%;
-    border: 3px solid #f0f;
-    box-shadow: 0 0 15px #f0f;
-    margin: 10px auto 20px;
+    margin: 10px auto 15px;
     display: block;
     transition: all 0.3s;
+}
+
+/* Dealer photo specific styles */
+.dealer-photo {
+    border: 3px solid #f0f;
+    box-shadow: 0 0 15px #f0f;
 }
 
 .dealer-photo:hover {
@@ -79,16 +86,10 @@
     padding-top: 20px;
 }
 
-/* Player photo in sidebar */
+/* Player photo specific styles */
 .player-photo {
-    width: 180px;
-    height: 180px;
-    border-radius: 50%;
     border: 3px solid #00f;
     box-shadow: 0 0 15px #00f;
-    margin: 10px auto 20px;
-    display: block;
-    transition: all 0.3s;
 }
 
 .player-photo:hover {
@@ -111,42 +112,55 @@
 }
 
 .player-name {
-    color: #0ff;
+    color: #ff0;
     font-weight: bold;
-    text-shadow: 0 0 8px #0ff;
+    text-shadow: 0 0 8px #ff0;
 }
 
 /* Game stats section (right sidebar) */
 .game-stats {
     width: 100%;
     text-align: center;
+    padding: 15px;
+    background-color: rgba(0, 30, 30, 0.2);
+    border-radius: 10px;
+    border: 1px solid #0f0;
+    box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
 }
 
 .game-stats h3 {
     color: #ff0;
-    margin-bottom: 20px;
-    text-shadow: 0 0 10px #ff0;
-    border-bottom: 1px solid #ff0;
-    padding-bottom: 10px;
+    margin-bottom: 25px;
+    text-shadow: 0 0 15px #ff0;
+    border-bottom: 2px solid #ff0;
+    padding-bottom: 15px;
+    font-size: 1.5em;
 }
 
 .stat-item {
-    background-color: rgba(0, 50, 50, 0.3);
-    padding: 12px;
-    border-radius: 8px;
-    margin: 15px 0;
-    border-left: 4px solid #0ff;
-    box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+    background-color: rgba(0, 50, 50, 0.4);
+    padding: 15px;
+    border-radius: 10px;
+    margin: 20px 0;
+    border-left: 6px solid #ff0;
+    box-shadow: 0 0 15px rgba(255, 255, 0, 0.4);
     text-align: left;
+    transition: all 0.3s;
+}
+
+.stat-item:hover {
+    transform: translateX(5px);
+    box-shadow: 0 0 20px rgba(255, 255, 0, 0.6);
 }
 
 .stat-item p {
     margin: 0;
-    font-size: 1.1em;
+    font-size: 1.2em;
+    font-weight: bold;
 }
 
 /* Responsive adjustments */
-@media (max-width: 1200px) {
+@media (max-width: 1000px) {
     .game-container {
         flex-direction: column;
         align-items: center;
@@ -154,14 +168,15 @@
 
     .sidebar {
         width: 100%;
-        max-width: 500px;
+        max-width: 600px;
+        flex: none;
         position: static;
         max-height: none;
-        margin-bottom: 20px;
+        margin-bottom: 15px;
     }
 
     .left-sidebar {
-        order: 3;
+        order: 1;
         border-right: none;
         border-bottom: 2px solid #0f0;
         box-shadow: 0 5px 15px rgba(0, 255, 0, 0.3);
@@ -170,10 +185,13 @@
     .game-content {
         order: 2;
         max-width: 100%;
+        min-width: auto; /* Override min-width for small screens */
+        width: 100%;
+        margin: 20px 0;
     }
 
     .right-sidebar {
-        order: 1;
+        order: 3;
         border-left: none;
         border-top: 2px solid #0f0;
         box-shadow: 0 -5px 15px rgba(0, 255, 0, 0.3);

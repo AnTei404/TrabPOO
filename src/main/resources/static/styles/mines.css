@@ -1,4 +1,4 @@
-/* Retroesque style for Ride the Bus page */
+/* Retroesque style for Mines page */
 
 /* Base styles */
 body {
@@ -16,7 +16,6 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    overflow: hidden;
 }
 
 /* Game content styles */
@@ -70,44 +69,88 @@ span {
     text-shadow: 0 0 5px #0ff;
 }
 
-/* Card container styles */
-.card-container {
+/* Mines grid container styles */
+.grid-container {
     display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
     justify-content: center;
     margin: 30px auto;
     background-color: rgba(0, 50, 0, 0.3);
-    padding: 20px;
+    padding: 30px;
     border-radius: 10px;
     border: 2px solid #0f0;
     box-shadow: 0 0 15px #0f0;
-    max-width: 700px;
+    max-width: 500px;
+    min-height: 400px;
 }
 
-.card {
-    margin: 5px;
+.mines-grid {
+    display: grid;
+    grid-template-rows: repeat(5, 1fr);
+    gap: 10px;
+    width: 100%;
+    justify-content: center;
+}
+
+.grid-row {
+    display: grid;
+    grid-template-columns: repeat(5, 60px);
+    gap: 10px;
+    justify-content: center;
+}
+
+.grid-cell {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 24px;
     transition: all 0.3s;
     transform-style: preserve-3d;
     perspective: 1000px;
 }
 
-.card img {
-    width: 120px;
-    height: auto;
-    border: 3px solid #f0f;
-    border-radius: 10px;
+.grid-cell.unrevealed {
+    background-color: #222;
+    border: 2px solid #0f0;
+    box-shadow: 0 0 10px #0f0;
+}
+
+.grid-cell.unrevealed:hover {
+    background-color: #333;
+    transform: scale(1.05);
+    box-shadow: 0 0 15px #0ff;
+    border-color: #0ff;
+}
+
+.grid-cell.revealed {
+    background-color: #111;
+    border: 2px solid #f0f;
     box-shadow: 0 0 10px #f0f;
-    transition: all 0.3s;
 }
 
-.card:hover img {
-    transform: scale(1.05) rotateY(10deg);
-    box-shadow: 0 0 20px #f0f;
+.grid-cell.revealed.safe-cell {
+    background-color: #0a0;
+    border: 2px solid #0f0;
+    box-shadow: 0 0 10px #0f0;
 }
 
-/* Round info styles */
-.round-info {
+.grid-cell.revealed.mine-cell {
+    background-color: #a00;
+    border: 2px solid #f00;
+    box-shadow: 0 0 10px #f00;
+}
+
+.hidden {
+    color: #0f0;
+    font-weight: bold;
+    text-shadow: 0 0 5px #0f0;
+}
+
+/* Result message styles */
+.result-message {
     background-color: rgba(0, 50, 50, 0.3);
     padding: 15px;
     border-radius: 8px;
@@ -121,19 +164,9 @@ span {
 form {
     margin: 10px 0;
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
     gap: 8px;
     width: 100%;
-}
-
-form.inline {
-    display: inline;
-}
-
-/* Special styling for the suits form in round 4 */
-form.suits-form {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
 }
 
 /* Button styles */
@@ -170,76 +203,75 @@ button:hover:not([disabled]) {
     transform: scale(1.05);
 }
 
-/* Sidebar button styles */
-.sidemenu button {
-    width: 90%;
-    margin: 5px auto;
-    display: block;
-    font-size: 0.95em;
-    padding: 8px 10px;
+/* Cash Out button style */
+form button[type="submit"] {
+    background-color: #f0f;
+    box-shadow: 0 0 10px #f0f;
 }
 
-/* Color-coded buttons */
-button[value="red"], button[value="hearts"], button[value="diamonds"] {
-    background-color: #f00;
-    box-shadow: 0 0 10px #f00;
+form button[type="submit"]:hover {
+    background-color: #f5f;
+    box-shadow: 0 0 15px #f5f;
 }
 
-button[value="red"]:hover, button[value="hearts"]:hover, button[value="diamonds"]:hover {
-    background-color: #f55;
-    box-shadow: 0 0 15px #f55;
+/* Game over controls */
+.game-over-controls {
+    width: 100%;
 }
 
-button[value="black"], button[value="clubs"], button[value="spades"] {
-    background-color: #000;
-    color: #fff;
-    border: 1px solid #fff;
-    box-shadow: 0 0 10px #fff;
+.button-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-bottom: 10px;
+    width: 100%;
 }
 
-button[value="black"]:hover, button[value="clubs"]:hover, button[value="spades"]:hover {
-    background-color: #333;
-    box-shadow: 0 0 15px #fff;
+.button-row form {
+    margin: 0;
+    width: 100%;
 }
 
-button[value="higher"] {
+.button-row form button {
+    width: 100%;
+    min-width: 120px;
+    text-align: center;
+}
+
+.button-row form:first-child button {
     background-color: #0ff;
     box-shadow: 0 0 10px #0ff;
 }
 
-button[value="higher"]:hover {
+.button-row form:first-child button:hover {
     background-color: #5ff;
     box-shadow: 0 0 15px #5ff;
 }
 
-button[value="lower"] {
+.button-row form:last-child button {
     background-color: #ff0;
     box-shadow: 0 0 10px #ff0;
 }
 
-button[value="lower"]:hover {
+.button-row form:last-child button:hover {
     background-color: #ff5;
     box-shadow: 0 0 15px #ff5;
 }
 
-button[value="inside"], button[value="outside"] {
-    background-color: #0ff;
-    box-shadow: 0 0 10px #0ff;
+/* Style for the Leave button */
+.game-over-controls > form {
+    width: 100%;
+    margin-top: 10px;
 }
 
-button[value="inside"]:hover, button[value="outside"]:hover {
-    background-color: #5ff;
-    box-shadow: 0 0 15px #5ff;
-}
-
-button[value="leave"] {
+.leave-button {
     background-color: #f0f;
     box-shadow: 0 0 10px #f0f;
     margin-top: 10px;
     grid-column: span 2;
 }
 
-button[value="leave"]:hover {
+.leave-button:hover {
     background-color: #f5f;
     box-shadow: 0 0 15px #f5f;
 }
@@ -332,66 +364,16 @@ button[value="leave"]:hover {
     text-shadow: 0 0 5px #0ff;
 }
 
-/* Game over controls */
-.game-over-controls {
-    width: 100%;
+/* Animations */
+@keyframes explode {
+    0% { transform: scale(0); opacity: 0; }
+    50% { transform: scale(1.5); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
 }
 
-.button-row {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-    margin-bottom: 10px;
-    width: 100%;
-}
-
-.button-row form {
-    margin: 0;
-    width: 100%;
-}
-
-.button-row form button {
-    width: 100%;
-    min-width: 120px;
-    text-align: center;
-}
-
-.button-row form:first-child button {
-    background-color: #0ff;
-    box-shadow: 0 0 10px #0ff;
-}
-
-.button-row form:first-child button:hover {
-    background-color: #5ff;
-    box-shadow: 0 0 15px #5ff;
-}
-
-.button-row form:last-child button {
-    background-color: #ff0;
-    box-shadow: 0 0 10px #ff0;
-}
-
-.button-row form:last-child button:hover {
-    background-color: #ff5;
-    box-shadow: 0 0 15px #ff5;
-}
-
-/* Style for the Leave button */
-.game-over-controls > form {
-    width: 100%;
-    margin-top: 10px;
-}
-
-.leave-button {
-    background-color: #f0f;
-    box-shadow: 0 0 10px #f0f;
-    margin-top: 10px;
-    grid-column: span 2;
-}
-
-.leave-button:hover {
-    background-color: #f5f;
-    box-shadow: 0 0 15px #f5f;
+@keyframes shine {
+    0% { text-shadow: 0 0 5px #0ff; }
+    100% { text-shadow: 0 0 20px #0ff; }
 }
 
 /* CRT screen effect */
@@ -407,4 +389,87 @@ body::before {
     z-index: 1000;
     pointer-events: none;
     opacity: 0.15;
+}
+
+/* Game container layout */
+.game-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Sidebar styles */
+.sidebar {
+    width: 250px;
+    background-color: rgba(0, 20, 0, 0.3);
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
+    border: 1px solid #0f0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.dealer-photo, .player-photo {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #f0f;
+    box-shadow: 0 0 10px #f0f;
+}
+
+.player-info {
+    width: 100%;
+    text-align: center;
+    background-color: rgba(0, 30, 0, 0.5);
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #0f0;
+}
+
+.game-stats {
+    width: 100%;
+    text-align: center;
+}
+
+.stat-item {
+    background-color: rgba(0, 30, 0, 0.5);
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    border: 1px solid #0f0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1000px) {
+    .game-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .sidebar {
+        width: 90%;
+        max-width: 500px;
+        margin-bottom: 20px;
+    }
+
+    .grid-container {
+        padding: 25px;
+        min-height: 350px;
+    }
+
+    .grid-cell {
+        width: 50px;
+        height: 50px;
+        font-size: 20px;
+    }
+
+    .grid-row {
+        grid-template-columns: repeat(5, 50px);
+    }
 }

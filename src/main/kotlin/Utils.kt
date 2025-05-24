@@ -69,3 +69,29 @@ fun setPlayerPhoto(name: String, photoPath: String) {
 fun getOrCreatePlayerPhoto(name: String): String {
     return playerPhotos.getOrPut(name) { getRandomPlayerImage() }
 }
+
+/**
+ * Creates a standardized result message for casino games
+ * 
+ * @param gameOver Whether the game is over
+ * @param isWin Whether the player won (true) or lost (false)
+ * @param chipsBet The amount of chips bet
+ * @param currentChips The player's current chip balance
+ * @param multiplier Optional multiplier for win calculation (default is 1)
+ * @return A formatted result message string
+ */
+fun createResultMessage(
+    gameOver: Boolean,
+    isWin: Boolean,
+    chipsBet: Int,
+    currentChips: Int,
+    multiplier: Int = 1
+): String {
+    if (!gameOver) return ""
+
+    return if (isWin) {
+        "You won ${chipsBet * multiplier} chips and now have $currentChips chips."
+    } else {
+        "You lost $chipsBet chips and now have $currentChips chips."
+    }
+}

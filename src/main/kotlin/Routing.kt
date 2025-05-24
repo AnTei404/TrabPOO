@@ -1,6 +1,7 @@
 package trab
 
 import trab.mapOfNonNull
+import trab.createResultMessage
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.http.content.*
@@ -26,6 +27,8 @@ import trab.casino.HigherOrLowerGame
 import trab.casino.RideTheBusGame
 import trab.casino.CardMatch
 import trab.casino.toCardWithImage
+import trab.casino.Mines
+import trab.casino.MinesGameState
 import kotlin.compareTo
 import kotlin.text.get
 import kotlin.text.set
@@ -35,6 +38,7 @@ fun Application.configureRouting() {
     val bingoGames = mutableMapOf<String, BingoGame>() // In-memory storage for BingoGame per player
     val higherOrLowerGames = mutableMapOf<String, HigherOrLowerGame>()
     val rideTheBusGames = mutableMapOf<String, RideTheBusGame>()
+    val minesGames = mutableMapOf<String, Mines>() // In-memory storage for Mines game per player
 
     routing {
         staticResources("/", "static")
@@ -113,6 +117,7 @@ fun Application.configureRouting() {
                             "gameState" to gameState,
                             "chipsBet" to chipsBet,
                             "chips" to player.chips,
+                            "money" to player.money,
                             "deckStyle" to deckStyle, // Pass deckStyle here
                             "playerPhoto" to getOrCreatePlayerPhoto(player.name)
                         )
@@ -129,16 +134,13 @@ fun Application.configureRouting() {
             if (player != null) {
                 val gameState = blackjack.hit(deckStyle) // Pass deckStyle here
                 val chipsBet = player.lastBet ?: 0
-                var resultMessage = ""
                 var updatedChips = player.chips
-                if (gameState.gameOver) {
-                    when (gameState.gameState) {
-                        "Bust! You lose." -> {
-                            resultMessage = "You lost $chipsBet chips and now have $updatedChips chips."
-                        }
-                        else -> {}
-                    }
-                }
+                val resultMessage = createResultMessage(
+                    gameOver = gameState.gameOver && gameState.playerBust,
+                    isWin = false,
+                    chipsBet = chipsBet,
+                    currentChips = updatedChips
+                )
                 call.respond(
                     ThymeleafContent(
                         "blackjack",
@@ -147,13 +149,14 @@ fun Application.configureRouting() {
                             "gameState" to gameState,
                             "chipsBet" to chipsBet,
                             "chips" to updatedChips,
+                            "money" to player.money,
                             "resultMessage" to resultMessage,
                             "playerPhoto" to getOrCreatePlayerPhoto(player.name)
                         )
                     )
                 )
             } else {
-                call.respondRedirect("/")
+                call.respondRedirect("/casino/blackjack")
             }
         }
 
@@ -163,24 +166,31 @@ fun Application.configureRouting() {
             if (player != null) {
                 val gameState = blackjack.stand(deckStyle) // Pass deckStyle here
                 val chipsBet = player.lastBet ?: 0
-                var resultMessage = ""
-                when (gameState.gameState) {
-                    "Blackjack! You win 3x!" -> {
-                        player.chips += chipsBet * 3
-                        resultMessage = "Blackjack! You won ${chipsBet * 3} chips and now have ${player.chips} chips."
-                    }
-                    "You win!" -> {
-                        player.chips += chipsBet * 2
-                        resultMessage = "You won $chipsBet chips and now have ${player.chips} chips."
-                    }
-                    "You lose!" -> {
-                        resultMessage = "You lost $chipsBet chips and now have ${player.chips} chips."
-                    }
-                    "It's a tie!" -> {
-                        player.chips += chipsBet
-                        resultMessage = "It's a tie! Your bet is returned. You have ${player.chips} chips."
-                    }
+                var resultMessage: String
+
+                if (gameState.playerHasBlackjack && (gameState.dealerBust || gameState.playerTotal > gameState.dealerTotal)) {
+                    player.chips += chipsBet * 3
+                    resultMessage = "Blackjack! You won ${chipsBet * 3} chips and now have ${player.chips} chips."
+                } else if (gameState.dealerBust || gameState.playerTotal > gameState.dealerTotal) {
+                    player.chips += chipsBet * 2
+                    resultMessage = createResultMessage(
+                        gameOver = true,
+                        isWin = true,
+                        chipsBet = chipsBet,
+                        currentChips = player.chips
+                    )
+                } else if (gameState.playerTotal < gameState.dealerTotal) {
+                    resultMessage = createResultMessage(
+                        gameOver = true,
+                        isWin = false,
+                        chipsBet = chipsBet,
+                        currentChips = player.chips
+                    )
+                } else {
+                    player.chips += chipsBet
+                    resultMessage = "It's a tie! Your bet is returned. You have ${player.chips} chips."
                 }
+
                 call.sessions.set(player)
                 call.respond(
                     ThymeleafContent(
@@ -190,13 +200,14 @@ fun Application.configureRouting() {
                             "gameState" to gameState,
                             "chipsBet" to chipsBet,
                             "chips" to player.chips,
+                            "money" to player.money,
                             "resultMessage" to resultMessage,
                             "playerPhoto" to getOrCreatePlayerPhoto(player.name)
                         )
                     )
                 )
             } else {
-                call.respondRedirect("/")
+                call.respondRedirect("/casino/blackjack")
             }
         }
 
@@ -217,6 +228,7 @@ fun Application.configureRouting() {
                                 "gameState" to gameState,
                                 "chipsBet" to lastBet,
                                 "chips" to player.chips,
+                                "money" to player.money,
                                 "playerPhoto" to getOrCreatePlayerPhoto(player.name)
                             )
                         )
@@ -231,6 +243,7 @@ fun Application.configureRouting() {
                                 "gameState" to gameState,
                                 "chipsBet" to lastBet,
                                 "chips" to player.chips,
+                                "money" to player.money,
                                 "error" to "You don't have enough.",
                                 "playerPhoto" to getOrCreatePlayerPhoto(player.name)
                             )
@@ -238,7 +251,7 @@ fun Application.configureRouting() {
                     )
                 }
             } else {
-                call.respondRedirect("/index.html")
+                call.respondRedirect("/casino/blackjack")
             }
         }
 
@@ -255,6 +268,7 @@ fun Application.configureRouting() {
                             "name" to player.name,
                             "chipsBet" to chipsBet,
                             "chips" to player.chips,
+                            "money" to player.money,
                             "reels" to listOf("❓", "❓", "❓"),
                             "resultMessage" to "Press Spin to play!",
                             "win" to false,
@@ -278,6 +292,7 @@ fun Application.configureRouting() {
                 val result = slots.spin(chipsBet)
                 val emojiGrid = result.grid.map { row -> row.map { trab.casino.symbolToEmoji(it) } }
                 val win = result.payout > 0
+                // For slots, we keep the custom win message with line information
                 val resultMessage = if (win) {
                     player.chips += result.payout
                     "You won ${result.payout} chips! 🎉 (Lines: ${result.winLines.joinToString()})"
@@ -292,6 +307,7 @@ fun Application.configureRouting() {
                             "name" to player.name,
                             "chipsBet" to chipsBet,
                             "chips" to player.chips,
+                            "money" to player.money,
                             "grid" to emojiGrid,
                             "resultMessage" to resultMessage,
                             "win" to win,
@@ -300,7 +316,7 @@ fun Application.configureRouting() {
                     )
                 )
             } else {
-                call.respondRedirect("/")
+                call.respondRedirect("/casino/slots")
             }
         }
 
@@ -313,13 +329,14 @@ fun Application.configureRouting() {
                         mapOf(
                             "name" to player.name,
                             "chips" to player.chips,
+                            "money" to player.money,
                             "title" to "Slots - Place Your Bet",
                             "formAction" to "/casino/slots/bet"
                         )
                     )
                 )
             } else {
-                call.respondRedirect("/index.html")
+                call.respondRedirect("/casino/slots")
             }
         }
 
@@ -347,6 +364,7 @@ fun Application.configureRouting() {
                             "name" to player.name,
                             "chipsBet" to chipsBet,
                             "chips" to player.chips,
+                            "money" to player.money,
                             "numPlayers" to 1 + bingoGame.houseCards.size,
                             "gameState" to gameState,
                             "playerPhoto" to getOrCreatePlayerPhoto(player.name)
@@ -369,13 +387,18 @@ fun Application.configureRouting() {
                 val tie = userHasBingo && houseWinners.isNotEmpty()
                 var resultMessage = ""
                 if (userHasBingo && !tie) {
-                    player.chips += chipsBet * 4
-                    resultMessage = "Bingo! You win ${chipsBet * 4} chips and now have ${player.chips} chips."
+                    player.chips += chipsBet * 3
+                    resultMessage = "Bingo! You win ${chipsBet * 3} chips and now have ${player.chips} chips."
                 } else if (tie) {
                     player.chips += chipsBet
                     resultMessage = "It's a tie! Your bet is returned. You have ${player.chips} chips."
                 } else if (houseWinners.isNotEmpty()) {
-                    resultMessage = "House wins! You lost $chipsBet chips and now have ${player.chips} chips."
+                    resultMessage = createResultMessage(
+                        gameOver = true,
+                        isWin = false,
+                        chipsBet = chipsBet,
+                        currentChips = player.chips
+                    )
                 }
                 call.sessions.set(player)
                 val gameState = BingoGameState(
@@ -394,6 +417,7 @@ fun Application.configureRouting() {
                             "name" to player.name,
                             "chipsBet" to chipsBet,
                             "chips" to player.chips,
+                            "money" to player.money,
                             "numPlayers" to 1 + bingoGame.houseCards.size,
                             "gameState" to gameState,
                             "resultMessage" to resultMessage,
@@ -429,6 +453,7 @@ fun Application.configureRouting() {
                             "name" to player.name,
                             "chipsBet" to chipsBet,
                             "chips" to player.chips,
+                            "money" to player.money,
                             "numPlayers" to 1 + bingoGame.houseCards.size,
                             "gameState" to gameState,
                             "playerPhoto" to getOrCreatePlayerPhoto(player.name)
@@ -456,18 +481,29 @@ fun Application.configureRouting() {
             val game = HigherOrLowerGame()
             higherOrLowerGames[player.name] = game
             val gameState = game.getState(deckStyle)
+
+            val resultMessage = createResultMessage(
+                gameOver = gameState.gameOver,
+                isWin = gameState.result != "Game over",
+                chipsBet = chipsBet,
+                currentChips = player.chips,
+                multiplier = gameState.multiplier
+            )
+
             call.respond(
                 ThymeleafContent(
                     "higherorlower",
                     mapOfNonNull(
                         "name" to player.name,
                         "chips" to player.chips,
+                        "money" to player.money,
                         "chipsBet" to chipsBet,
                         "playerCard" to gameState.playerCard,
                         "dealerCard" to gameState.dealerCard,
                         "showDealerCard" to gameState.showDealerCard,
                         "result" to gameState.result,
-                        "resultMessage" to "",
+                        "resultMessage" to resultMessage,
+                        "sideMenuResult" to gameState.sideMenuResult,
                         "currentRound" to gameState.currentRound,
                         "totalRounds" to gameState.totalRounds,
                         "multiplier" to gameState.multiplier,
@@ -489,6 +525,15 @@ fun Application.configureRouting() {
             if (player != null && game != null && guess != null) {
                 val higher = guess == "higher"
                 val gameState = game.guess(higher, deckStyle)
+
+                val resultMessage = createResultMessage(
+                    gameOver = gameState.gameOver,
+                    isWin = gameState.result != "Game over",
+                    chipsBet = chipsBet,
+                    currentChips = player.chips,
+                    multiplier = gameState.multiplier
+                )
+
                 call.respond(
                     ThymeleafContent(
                         "higherorlower",
@@ -500,7 +545,8 @@ fun Application.configureRouting() {
                             "dealerCard" to gameState.dealerCard,
                             "showDealerCard" to gameState.showDealerCard,
                             "result" to gameState.result,
-                            "resultMessage" to "",
+                            "resultMessage" to resultMessage,
+                            "sideMenuResult" to gameState.sideMenuResult,
                             "currentRound" to gameState.currentRound,
                             "totalRounds" to gameState.totalRounds,
                             "multiplier" to gameState.multiplier,
@@ -523,6 +569,15 @@ fun Application.configureRouting() {
             val chipsBet = player?.lastBet ?: 0
             if (player != null && game != null) {
                 val gameState = game.nextRound(deckStyle)
+
+                val resultMessage = createResultMessage(
+                    gameOver = gameState.gameOver,
+                    isWin = gameState.result != "Game over",
+                    chipsBet = chipsBet,
+                    currentChips = player.chips,
+                    multiplier = gameState.multiplier
+                )
+
                 call.respond(
                     ThymeleafContent(
                         "higherorlower",
@@ -534,7 +589,8 @@ fun Application.configureRouting() {
                             "dealerCard" to gameState.dealerCard,
                             "showDealerCard" to gameState.showDealerCard,
                             "result" to gameState.result,
-                            "resultMessage" to "",
+                            "resultMessage" to resultMessage,
+                            "sideMenuResult" to gameState.sideMenuResult,
                             "currentRound" to gameState.currentRound,
                             "totalRounds" to gameState.totalRounds,
                             "multiplier" to gameState.multiplier,
@@ -557,6 +613,16 @@ fun Application.configureRouting() {
             val chipsBet = player?.lastBet ?: 0
             if (player != null && game != null) {
                 val gameState = game.allIn(deckStyle)
+
+                var resultMessage = ""
+                if (gameState.gameOver) {
+                    if (gameState.result == "Game over") {
+                        resultMessage = "You lost $chipsBet chips and now have ${player.chips} chips."
+                    } else {
+                        resultMessage = "You won ${chipsBet * gameState.multiplier} chips and now have ${player.chips} chips."
+                    }
+                }
+
                 call.respond(
                     ThymeleafContent(
                         "higherorlower",
@@ -568,7 +634,8 @@ fun Application.configureRouting() {
                             "dealerCard" to gameState.dealerCard,
                             "showDealerCard" to gameState.showDealerCard,
                             "result" to gameState.result,
-                            "resultMessage" to "",
+                            "resultMessage" to resultMessage,
+                            "sideMenuResult" to gameState.sideMenuResult,
                             "currentRound" to gameState.currentRound,
                             "totalRounds" to gameState.totalRounds,
                             "multiplier" to gameState.multiplier,
@@ -593,6 +660,16 @@ fun Application.configureRouting() {
                 val game = HigherOrLowerGame()
                 higherOrLowerGames[player.name] = game
                 val gameState = game.getState(deckStyle)
+
+                var resultMessage = ""
+                if (gameState.gameOver) {
+                    if (gameState.result == "Game over") {
+                        resultMessage = "You lost $lastBet chips and now have ${player.chips} chips."
+                    } else {
+                        resultMessage = "You won ${lastBet * gameState.multiplier} chips and now have ${player.chips} chips."
+                    }
+                }
+
                 call.respond(
                     ThymeleafContent(
                         "higherorlower",
@@ -604,7 +681,8 @@ fun Application.configureRouting() {
                             "dealerCard" to gameState.dealerCard,
                             "showDealerCard" to gameState.showDealerCard,
                             "result" to gameState.result,
-                            "resultMessage" to "",
+                            "resultMessage" to resultMessage,
+                            "sideMenuResult" to gameState.sideMenuResult,
                             "currentRound" to gameState.currentRound,
                             "totalRounds" to gameState.totalRounds,
                             "multiplier" to gameState.multiplier,
@@ -632,6 +710,16 @@ fun Application.configureRouting() {
                 player.chips += winnings
                 player.lastBet = null
                 call.sessions.set(player)
+
+                // Set a success message for leaving with winnings
+                val resultMessage = createResultMessage(
+                    gameOver = true,
+                    isWin = true,
+                    chipsBet = chipsBet,
+                    currentChips = player.chips,
+                    multiplier = gameState.multiplier
+                )
+
                 call.respond(
                     ThymeleafContent(
                         "higherorlower",
@@ -643,7 +731,8 @@ fun Application.configureRouting() {
                             "dealerCard" to gameState.dealerCard,
                             "showDealerCard" to gameState.showDealerCard,
                             "result" to gameState.result,
-                            "resultMessage" to "",
+                            "resultMessage" to resultMessage,
+                            "sideMenuResult" to gameState.sideMenuResult,
                             "currentRound" to gameState.currentRound,
                             "totalRounds" to gameState.totalRounds,
                             "multiplier" to gameState.multiplier,
@@ -676,6 +765,7 @@ fun Application.configureRouting() {
                         mapOf(
                             "name" to player.name,
                             "chips" to player.chips,
+                            "money" to player.money,
                             "chipsBet" to chipsBet,
                             "gameState" to gameState,
                             "playerPhoto" to getOrCreatePlayerPhoto(player.name)
@@ -707,6 +797,7 @@ fun Application.configureRouting() {
                         mapOf(
                             "name" to player.name,
                             "chips" to player.chips,
+                            "money" to player.money,
                             "chipsBet" to chipsBet,
                             "gameState" to gameState,
                             "playerPhoto" to getOrCreatePlayerPhoto(player.name)
@@ -734,12 +825,162 @@ fun Application.configureRouting() {
                         mapOf(
                             "name" to player.name,
                             "chips" to player.chips,
+                            "money" to player.money,
                             "chipsBet" to lastBet,
                             "gameState" to gameState,
                             "playerPhoto" to getOrCreatePlayerPhoto(player.name)
                         )
                     )
                 )
+            } else {
+                call.respondRedirect("/casino/ridethebus")
+            }
+        }
+
+        post("/casino/ridethebus/newbet") {
+            val player = call.sessions.get<Player>()
+            if (player != null) {
+                // Reset the last bet
+                player.lastBet = null
+                call.sessions.set(player)
+                // Redirect to the bet placement page
+                call.respondRedirect("/casino/ridethebus")
+            } else {
+                call.respondRedirect("/")
+            }
+        }
+
+        post("/casino/mines/bet") {
+            val player = call.sessions.get<Player>()
+            val chipsBet = call.receiveParameters()["chipsBet"]?.toIntOrNull()
+            if (player != null && chipsBet != null && chipsBet > 0 && chipsBet <= player.chips) {
+                player.chips -= chipsBet
+                player.lastBet = chipsBet
+                call.sessions.set(player)
+
+                val minesGame = Mines(chipsBet)
+                minesGames[player.name] = minesGame
+                val gameState = minesGame.getState()
+
+                call.respond(
+                    ThymeleafContent(
+                        "mines",
+                        mapOf(
+                            "name" to player.name,
+                            "chipsBet" to chipsBet,
+                            "chips" to player.chips,
+                            "money" to player.money,
+                            "gameState" to gameState,
+                            "playerPhoto" to getOrCreatePlayerPhoto(player.name)
+                        )
+                    )
+                )
+            } else {
+                call.respondText("Invalid bet", status = HttpStatusCode.BadRequest)
+            }
+        }
+
+        get("/casino/mines/reveal") {
+            val player = call.sessions.get<Player>()
+            val minesGame = player?.name?.let { minesGames[it] }
+            val chipsBet = player?.lastBet ?: 0
+
+            // Access URL parameters
+            val row = call.parameters["row"]?.toIntOrNull()
+            val col = call.parameters["col"]?.toIntOrNull()
+
+            if (player != null && minesGame != null && row != null && col != null) {
+                val gameState = minesGame.revealSquare(row, col)
+
+                call.respond(
+                    ThymeleafContent(
+                        "mines",
+                        mapOf(
+                            "name" to player.name,
+                            "chipsBet" to chipsBet,
+                            "chips" to player.chips,
+                            "money" to player.money,
+                            "gameState" to gameState,
+                            "playerPhoto" to getOrCreatePlayerPhoto(player.name)
+                        )
+                    )
+                )
+            } else {
+                call.respondRedirect("/casino/mines")
+            }
+        }
+
+        post("/casino/mines/cashout") {
+            val player = call.sessions.get<Player>()
+            val minesGame = player?.name?.let { minesGames[it] }
+            val chipsBet = player?.lastBet ?: 0
+
+            if (player != null && minesGame != null) {
+                val gameState = minesGame.endGame()
+
+                // Only pay out if game is not over due to hitting a mine
+                if (!gameState.mineRevealed) {
+                    player.chips += gameState.payout
+                    call.sessions.set(player)
+                }
+
+                call.respond(
+                    ThymeleafContent(
+                        "mines",
+                        mapOf(
+                            "name" to player.name,
+                            "chipsBet" to chipsBet,
+                            "chips" to player.chips,
+                            "money" to player.money,
+                            "gameState" to gameState,
+                            "resultMessage" to "You cashed out with ${gameState.payout} chips!",
+                            "playerPhoto" to getOrCreatePlayerPhoto(player.name)
+                        )
+                    )
+                )
+            } else {
+                call.respondRedirect("/casino/mines")
+            }
+        }
+
+        post("/casino/mines/restart") {
+            val player = call.sessions.get<Player>()
+            val lastBet = player?.lastBet
+
+            if (player != null && lastBet != null && player.chips >= lastBet) {
+                player.chips -= lastBet
+                call.sessions.set(player)
+
+                val minesGame = Mines(lastBet)
+                minesGames[player.name] = minesGame
+                val gameState = minesGame.getState()
+
+                call.respond(
+                    ThymeleafContent(
+                        "mines",
+                        mapOf(
+                            "name" to player.name,
+                            "chipsBet" to lastBet,
+                            "chips" to player.chips,
+                            "money" to player.money,
+                            "gameState" to gameState,
+                            "playerPhoto" to getOrCreatePlayerPhoto(player.name)
+                        )
+                    )
+                )
+            } else {
+                call.respondRedirect("/casino/mines")
+            }
+        }
+
+        post("/casino/mines/newbet") {
+            val player = call.sessions.get<Player>()
+            if (player != null) {
+                // Reset the last bet
+                player.lastBet = null
+                call.sessions.set(player)
+                // Redirect to the bet placement page
+                call.respondRedirect("/casino/mines")
             } else {
                 call.respondRedirect("/")
             }

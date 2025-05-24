@@ -24,11 +24,72 @@
     </ul>
 </div>
 
-<h1>Welcome to the Blackjack table, <span th:text="${name}"></span>!</h1>
-
 <div class="game-container">
     <!-- Left Sidebar -->
     <div class="sidebar left-sidebar">
+        <div class="game-stats">
+            <h3>Game Stats</h3>
+            <div class="stat-item">
+                <p>Player Bet: <span th:text="${chipsBet}"></span> chips</p>
+            </div>
+            <div class="stat-item" th:if="${gameState.gameOver && resultMessage.contains('won')}">
+                <p>Amount Won: <span th:text="${chipsBet * 2}"></span> chips</p>
+            </div>
+            <div class="stat-item" th:if="${gameState.gameOver && resultMessage.contains('lost')}">
+                <p>Amount Lost: <span th:text="${chipsBet}"></span> chips</p>
+            </div>
+            <div class="stat-item" th:if="${gameState.gameOver && resultMessage.contains('Blackjack')}">
+                <p>Blackjack Bonus: <span th:text="${chipsBet * 1.5}"></span> chips</p>
+            </div>
+            <div class="stat-item" th:if="${gameState.gameOver && resultMessage.contains('Push')}">
+                <p>Push: Bet returned</p>
+            </div>
+            <div class="stat-item" th:if="${resultMessage != null && resultMessage != ''}">
+                <p th:text="${resultMessage}"></p>
+            </div>
+            <div class="stat-item" th:if="${gameState.gameOver && (resultMessage == null || resultMessage == '')}">
+                <div th:switch="true">
+                    <p th:case="${gameState.playerHasBlackjack && (gameState.dealerBust || gameState.playerTotal > gameState.dealerTotal)}">Blackjack! You win 3x!</p>
+                    <p th:case="${!gameState.playerHasBlackjack && (gameState.dealerBust || gameState.playerTotal > gameState.dealerTotal)}">You win!</p>
+                    <p th:case="${gameState.playerBust || (!gameState.dealerBust && gameState.playerTotal < gameState.dealerTotal)}">You lose!</p>
+                    <p th:case="${!gameState.playerBust && !gameState.dealerBust && gameState.playerTotal == gameState.dealerTotal}">It's a tie!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Game Content -->
+    <div class="game-content">
+        <h2>Blackjack Game</h2>
+        <div>
+            <h3>Dealer's Hand</h3>
+            <div class="card-container">
+                <div class="card" th:each="card, iterStat : ${gameState.dealerHand}">
+                    <img th:src="${gameState.gameOver || iterStat.index == 0 ? card.imagePath : '/Baralhos/CardBack.png'}" alt="Card Image">
+                    <p th:text="${gameState.gameOver || iterStat.index == 0 ? card.rank + ' of ' + card.suit : 'Hidden Card'}"></p>
+                </div>
+            </div>
+            <p class="total-display">Total: <span th:text="${gameState.dealerTotal}"></span></p>
+        </div>
+
+        <div>
+            <h3>Your Hand</h3>
+            <div class="card-container">
+                <div class="card" th:each="card : ${gameState.playerHand}">
+                    <img th:src="${card.imagePath}" alt="Card Image">
+                    <p th:text="${card.rank + ' of ' + card.suit}"></p>
+                </div>
+            </div>
+            <p class="total-display">Total: <span th:text="${gameState.playerTotal}"></span></p>
+        </div>
+
+        <div th:if="${gameState.gameOver}">
+            <h3>Game Over</h3>
+        </div>
+    </div>
+
+    <!-- Right Sidebar -->
+    <div class="sidebar right-sidebar">
         <img src="/Staff/BingusDealer.png" alt="Dealer" class="dealer-photo">
 
         <div class="game-controls">
@@ -64,58 +125,6 @@
             <p>Chips: <span th:text="${chips}"></span></p>
         </div>
     </div>
-
-    <!-- Main Game Content -->
-    <div class="game-content">
-        <div>
-            <h2>Dealer's Hand</h2>
-            <div class="card-container">
-                <div class="card" th:each="card, iterStat : ${gameState.dealerHand}">
-                    <img th:src="${gameState.gameOver || iterStat.index == 0 ? card.imagePath : '/Baralhos/CardBack.png'}" alt="Card Image">
-                    <p th:text="${gameState.gameOver || iterStat.index == 0 ? card.rank + ' of ' + card.suit : 'Hidden Card'}"></p>
-                </div>
-            </div>
-            <p>Total: <span th:text="${gameState.dealerTotal}"></span></p>
-        </div>
-
-        <div>
-            <h2>Your Hand</h2>
-            <div class="card-container">
-                <div class="card" th:each="card : ${gameState.playerHand}">
-                    <img th:src="${card.imagePath}" alt="Card Image">
-                    <p th:text="${card.rank + ' of ' + card.suit}"></p>
-                </div>
-            </div>
-            <p>Total: <span th:text="${gameState.playerTotal}"></span></p>
-        </div>
-
-        <div th:if="${gameState.gameOver}">
-            <h2>Game Over</h2>
-            <p th:text="${gameState.gameState}"></p>
-        </div>
-    </div>
-
-    <!-- Right Sidebar -->
-    <div class="sidebar right-sidebar">
-        <div class="game-stats">
-            <h3>Game Stats</h3>
-            <div class="stat-item">
-                <p>Player Bet: <span th:text="${chipsBet}"></span> chips</p>
-            </div>
-            <div class="stat-item" th:if="${gameState.gameOver && resultMessage.contains('won')}">
-                <p>Amount Won: <span th:text="${chipsBet * 2}"></span> chips</p>
-            </div>
-            <div class="stat-item" th:if="${gameState.gameOver && resultMessage.contains('lost')}">
-                <p>Amount Lost: <span th:text="${chipsBet}"></span> chips</p>
-            </div>
-            <div class="stat-item" th:if="${gameState.gameOver && resultMessage.contains('Blackjack')}">
-                <p>Blackjack Bonus: <span th:text="${chipsBet * 1.5}"></span> chips</p>
-            </div>
-            <div class="stat-item" th:if="${gameState.gameOver && resultMessage.contains('Push')}">
-                <p>Push: Bet returned</p>
-            </div>
-        </div>
-    </div>
 </div>
 
 <script>
@@ -125,6 +134,7 @@
             sessionStorage.setItem('blackjackScroll', window.scrollY);
         });
     });
+
     // Restore scroll position on page load
     window.addEventListener('load', function() {
         const y = sessionStorage.getItem('blackjackScroll');
