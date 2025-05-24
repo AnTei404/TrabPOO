@@ -27,26 +27,8 @@
 <h1>Higher or Lower, <span th:text="${name}"></span>!</h1>
 
 <div class="game-container">
-    <div class="game-content">
-        <div class="card-container">
-            <div>
-                <h3>Your Card</h3>
-                <img th:src="${playerCard != null} ? ${playerCard.imagePath} : '/Baralhos/CardBack.png'" alt="Player Card">
-                <p th:text="${playerCard != null} ? ${playerCard.rank + ' of ' + playerCard.suit} : '---'"></p>
-            </div>
-            <div>
-                <h3>Dealer Card</h3>
-                <img th:src="${showDealerCard and dealerCard != null} ? ${dealerCard.imagePath} : '/Baralhos/CardBack.png'" alt="Dealer Card">
-                <p th:text="${showDealerCard and dealerCard != null} ? ${dealerCard.rank + ' of ' + dealerCard.suit} : 'Hidden'"></p>
-            </div>
-        </div>
-
-        <div th:if="${gameOver}">
-            <h2 th:text="${result}"></h2>
-        </div>
-    </div>
-
-    <div class="sidemenu">
+    <!-- Left Sidebar -->
+    <div class="sidebar left-sidebar">
         <img src="/Staff/BingusDealer.png" alt="Dealer" class="dealer-photo">
 
         <div class="game-controls">
@@ -81,12 +63,55 @@
 
         <img th:src="${playerPhoto}" alt="Player" class="player-photo">
 
-        <div class="game-info">
+        <div class="player-info">
+            <p class="player-name">Player: <span th:text="${name}"></span></p>
+            <p>Money: $<span th:text="${money}"></span></p>
             <p>Chips: <span th:text="${chips}"></span></p>
-            <p>Bet: <span th:text="${chipsBet}"></span></p>
-            <p>Round: <span th:text="${currentRound}"></span>/<span th:text="${totalRounds}"></span></p>
-            <p>Multiplier: <span th:text="${multiplier}"></span>x</p>
-            <p th:if="${gameOver}" th:text="${resultMessage}"></p>
+        </div>
+    </div>
+
+    <!-- Main Game Content -->
+    <div class="game-content">
+        <div class="card-container">
+            <div>
+                <h3>Your Card</h3>
+                <img th:src="${playerCard != null} ? ${playerCard.imagePath} : '/Baralhos/CardBack.png'" alt="Player Card">
+                <p th:text="${playerCard != null} ? ${playerCard.rank + ' of ' + playerCard.suit} : '---'"></p>
+            </div>
+            <div>
+                <h3>Dealer Card</h3>
+                <img th:src="${showDealerCard and dealerCard != null} ? ${dealerCard.imagePath} : '/Baralhos/CardBack.png'" alt="Dealer Card">
+                <p th:text="${showDealerCard and dealerCard != null} ? ${dealerCard.rank + ' of ' + dealerCard.suit} : 'Hidden'"></p>
+            </div>
+        </div>
+
+        <div th:if="${gameOver}">
+            <h2 th:text="${result}"></h2>
+        </div>
+    </div>
+
+    <!-- Right Sidebar -->
+    <div class="sidebar right-sidebar">
+        <div class="game-stats">
+            <h3>Game Stats</h3>
+            <div class="stat-item">
+                <p>Round: <span th:text="${currentRound}"></span>/<span th:text="${totalRounds}"></span></p>
+            </div>
+            <div class="stat-item">
+                <p>Player Bet: <span th:text="${chipsBet}"></span> chips</p>
+            </div>
+            <div class="stat-item">
+                <p>Multiplier: <span th:text="${multiplier}"></span>x</p>
+            </div>
+            <div class="stat-item" th:if="${gameOver && resultMessage.contains('won')}">
+                <p>Amount Won: <span th:text="${chipsBet * multiplier}"></span> chips</p>
+            </div>
+            <div class="stat-item" th:if="${gameOver && resultMessage.contains('lost')}">
+                <p>Amount Lost: <span th:text="${chipsBet}"></span> chips</p>
+            </div>
+            <div class="stat-item" th:if="${gameOver}">
+                <p th:text="${resultMessage}"></p>
+            </div>
         </div>
     </div>
 </div>
