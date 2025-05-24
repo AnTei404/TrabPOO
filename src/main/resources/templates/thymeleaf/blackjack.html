@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Blackjack</title>
     <link rel="stylesheet" href="/styles/blackjack.css">
+    <link rel="stylesheet" href="/styles/sidemenu.css">
 </head>
 <body>
 <button class="help-button" onclick="showRules()">?</button>
@@ -25,66 +26,76 @@
 
 <h1>Welcome to the Blackjack table, <span th:text="${name}"></span>!</h1>
 
-<div>
-    <h2>Dealer's Hand</h2>
-    <div class="card-container">
-        <div class="card" th:each="card, iterStat : ${gameState.dealerHand}">
-            <img th:src="${gameState.gameOver || iterStat.index == 0 ? card.imagePath : '/Baralhos/CardBack.png'}" alt="Card Image">
-            <p th:text="${gameState.gameOver || iterStat.index == 0 ? card.rank + ' of ' + card.suit : 'Hidden Card'}"></p>
+<div class="game-container">
+    <div class="game-content">
+        <div>
+            <h2>Dealer's Hand</h2>
+            <div class="card-container">
+                <div class="card" th:each="card, iterStat : ${gameState.dealerHand}">
+                    <img th:src="${gameState.gameOver || iterStat.index == 0 ? card.imagePath : '/Baralhos/CardBack.png'}" alt="Card Image">
+                    <p th:text="${gameState.gameOver || iterStat.index == 0 ? card.rank + ' of ' + card.suit : 'Hidden Card'}"></p>
+                </div>
+            </div>
+            <p>Total: <span th:text="${gameState.dealerTotal}"></span></p>
+        </div>
+
+        <div>
+            <h2>Your Hand</h2>
+            <div class="card-container">
+                <div class="card" th:each="card : ${gameState.playerHand}">
+                    <img th:src="${card.imagePath}" alt="Card Image">
+                    <p th:text="${card.rank + ' of ' + card.suit}"></p>
+                </div>
+            </div>
+            <p>Total: <span th:text="${gameState.playerTotal}"></span></p>
+        </div>
+
+        <div th:if="${gameState.gameOver}">
+            <h2>Game Over</h2>
+            <p th:text="${gameState.gameState}"></p>
         </div>
     </div>
-    <p>Total: <span th:text="${gameState.dealerTotal}"></span></p>
-</div>
 
-<div>
-    <h2>Your Hand</h2>
-    <div class="card-container">
-        <div class="card" th:each="card : ${gameState.playerHand}">
-            <img th:src="${card.imagePath}" alt="Card Image">
-            <p th:text="${card.rank + ' of ' + card.suit}"></p>
+    <div class="sidemenu">
+        <img src="/Staff/BingusDealer.png" alt="Dealer" class="dealer-photo">
+
+        <div class="game-controls">
+            <div th:if="${!gameState.gameOver}">
+                <form action="/casino/blackjack/hit" method="post">
+                    <button type="submit">Hit</button>
+                </form>
+                <form action="/casino/blackjack/stand" method="post">
+                    <button type="submit">Stand</button>
+                </form>
+            </div>
+            <div th:if="${gameState.gameOver}">
+                <form action="/casino/blackjack/restart" method="post" th:if="${chipsBet != null}">
+                    <button type="submit" th:disabled="${chips < chipsBet}">Restart Game</button>
+                </form>
+                <form action="/casino/blackjack" method="get">
+                    <button type="submit">Place a New Bet</button>
+                </form>
+            </div>
+
+            <div th:if="${gameState.gameOver}">
+                <form action="/games" method="get">
+                    <button type="submit">Back to Games</button>
+                </form>
+            </div>
+        </div>
+
+        <img th:src="${playerPhoto}" alt="Player" class="player-photo">
+
+        <div class="game-info">
+            <p th:if="${!gameState.gameOver}">
+                Bet: <span th:text="${chipsBet}"></span> chips <br>
+                Chips owned: <span th:text="${chips}"></span>
+            </p>
+            <p th:if="${gameState.gameOver}">
+                <span th:text="${resultMessage}"></span>
+            </p>
         </div>
     </div>
-    <p>Total: <span th:text="${gameState.playerTotal}"></span></p>
-</div>
-
-<div>
-    <div th:if="${!gameState.gameOver}">
-        <form action="/casino/blackjack/hit" method="post">
-            <button type="submit">Hit</button>
-        </form>
-        <form action="/casino/blackjack/stand" method="post">
-            <button type="submit">Stand</button>
-        </form>
-    </div>
-    <div th:if="${gameState.gameOver}">
-        <form action="/casino/blackjack/restart" method="post" th:if="${chipsBet != null}">
-            <button type="submit" th:disabled="${chips < chipsBet}">Restart Game</button>
-        </form>
-        <form action="/casino/blackjack" method="get">
-            <button type="submit">Place a New Bet</button>
-        </form>
-    </div>
-</div>
-
-<div>
-    <p th:if="${!gameState.gameOver}">
-        Bet: <span th:text="${chipsBet}"></span> chips |
-        Chips owned: <span th:text="${chips}"></span>
-    </p>
-    <p th:if="${gameState.gameOver}">
-        <span th:text="${resultMessage}"></span>
-    </p>
-</div>
-
-<div th:if="${gameState.gameOver}">
-    <h2>Game Over</h2>
-    <p th:text="${gameState.gameState}"></p>
-</div>
-
-<div th:if="${gameState.gameOver}">
-    <form action="/games" method="get">
-        <button type="submit">Back to Games</button>
-    </form>
 </div>
 
 <script>

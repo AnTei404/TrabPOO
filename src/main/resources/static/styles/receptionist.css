@@ -37,6 +37,7 @@ a:hover {
     padding: 10px;
     border-radius: 5px;
     box-shadow: 0 0 10px #0f0;
+    justify-content: center;
 }
 
 .card-container img {
@@ -230,10 +231,14 @@ button:hover {
 .main-container {
     display: flex;
     min-height: 90vh;
-    justify-content: center;
-    align-items: flex-start;
-    gap: 40px;
+    justify-content: space-between;
+    align-items: center;
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
 }
+
 .sidebar {
     background: rgba(17, 17, 17, 0.95);
     border: 2px solid #0f0;
@@ -242,19 +247,41 @@ button:hover {
     padding: 28px 18px;
     min-width: 220px;
     max-width: 260px;
-    margin-top: 40px;
+    margin-top: 0;
     display: flex;
     flex-direction: column;
     gap: 22px;
     height: fit-content;
     position: sticky;
-    top: 40px;
+    top: 0;
     z-index: 10;
+    flex: 0 0 auto; /* Don't grow or shrink */
 }
+
+/* Player Sidebar Styles */
+.player-sidebar {
+    order: 1;
+}
+
+.user-photo {
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.user-photo img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: 3px solid #0ff;
+    box-shadow: 0 0 15px #0ff;
+    object-fit: cover;
+}
+
 .sidebar .user-info {
     text-align: center;
     margin-bottom: 10px;
 }
+
 .sidebar .user-info strong {
     font-size: 20px;
     color: #0ff;
@@ -262,11 +289,13 @@ button:hover {
     letter-spacing: 1.5px;
     text-transform: uppercase;
 }
+
 .sidebar .user-info .stats {
     font-size: 14px;
     color: #0f0;
     margin-top: 4px;
 }
+
 .sidebar .divider {
     height: 2px;
     width: 100%;
@@ -274,9 +303,11 @@ button:hover {
     border: none;
     margin: 10px 0;
 }
+
 .sidebar .back-link {
     margin-bottom: 18px;
 }
+
 .sidebar .back-button {
     background: #f0f;
     color: #fff;
@@ -290,21 +321,68 @@ button:hover {
     width: 100%;
     padding: 10px 0;
 }
+
 .sidebar .back-button:hover {
     background: #c800c8;
     box-shadow: 0 0 25px #f0f;
     transform: translateY(-2px) scale(1.04);
 }
 
-@media (max-width: 900px) {
-    .main-container { flex-direction: column; align-items: center; }
+/* Receptionist Sidebar Styles */
+.receptionist-sidebar {
+    order: 3;
+}
+
+.receptionist-photo {
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.receptionist-photo img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: 3px solid #f0f;
+    box-shadow: 0 0 15px #f0f;
+    object-fit: cover;
+}
+
+.receptionist-info {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.receptionist-info strong {
+    font-size: 20px;
+    color: #f0f;
+    text-shadow: 0 0 8px #f0f;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+@media (max-width: 1100px) {
+    .main-container { 
+        flex-direction: column; 
+        align-items: center;
+    }
     .sidebar {
         position: relative;
         top: 0;
-        margin-top: 0;
+        margin-top: 10px;
         width: 100%;
-        max-width: none;
-        padding: 18px;
+        max-width: 400px;
+    }
+    .player-sidebar {
+        order: 1;
+    }
+    .main-card {
+        order: 2;
+        margin-top: 10px;
+        width: 100%;
+        max-width: 600px;
+    }
+    .receptionist-sidebar {
+        order: 3;
     }
 }
 
@@ -316,10 +394,20 @@ button:hover {
     padding: 40px 40px 30px 40px;
     min-width: 400px;
     max-width: 600px;
+    flex: 1 1 auto;
+    margin: 0 auto;
+}
+
+.main-card {
+    order: 2;
 }
 
 .section {
     margin-bottom: 32px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .deck-preview-title {

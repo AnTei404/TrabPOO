@@ -7,8 +7,11 @@
 </head>
 <body>
 <div class="main-container">
-    <!-- Improved Sidebar Navigation -->
-    <nav class="sidebar">
+    <!-- Left Sidebar - Player Profile -->
+    <nav class="sidebar player-sidebar">
+        <div class="user-photo">
+            <img th:src="${photoPath}" alt="Player Photo">
+        </div>
         <div class="user-info">
             <strong th:text="${name}"></strong>
             <div class="stats">
@@ -22,12 +25,10 @@
                 <button type="button" class="back-button">Back to Welcome</button>
             </a>
         </div>
-        <div style="flex:1"></div>
-        <button class="rules-button" onclick="showRules()">Game Rules</button>
     </nav>
 
     <!-- Main Card Content -->
-    <div class="card">
+    <div class="card main-card">
         <h1 style="text-align:center;">Reception Desk</h1>
         <div class="section">
             <h2>Exchange Money for Chips</h2>
@@ -67,6 +68,18 @@
         </div>
         <p class="success-message" th:if="${successMessage != null}" th:text="${successMessage}"></p>
     </div>
+
+    <!-- Right Sidebar - Receptionist -->
+    <nav class="sidebar receptionist-sidebar">
+        <div class="receptionist-photo">
+            <img src="/Staff/BingusRecep.png" alt="Receptionist Photo">
+        </div>
+        <div class="receptionist-info">
+            <strong>Receptionist</strong>
+        </div>
+        <div class="divider"></div>
+        <button class="rules-button" onclick="showRules()">Game Rules</button>
+    </nav>
 </div>
 
 <!-- Rules Popup (unchanged) -->
