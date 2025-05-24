@@ -2,6 +2,18 @@ package trab.casino
 
 import kotlin.compareTo
 
+data class BlackjackGameState(
+    val dealerFirstCard: Card?,
+    val dealerHand: List<Map<String, String>> = emptyList(),
+    val dealerTotal: Int = 0,
+    val playerHand: List<Map<String, String>> = emptyList(),
+    val playerTotal: Int = 0,
+    val playerHasBlackjack: Boolean = false,
+    val playerBust: Boolean = false,
+    val dealerBust: Boolean = false,
+    val gameOver: Boolean = false
+)
+
 class Blackjack {
     private val deck = Deck()
     private val dealerHand = mutableListOf<Card>()
@@ -25,6 +37,9 @@ class Blackjack {
             dealerTotal = calculateHandValue(listOf(dealerHand.first())),
             playerHand = playerHand.map { it.toCardWithImage(deckStyle) },
             playerTotal = calculateHandValue(playerHand),
+            playerHasBlackjack = false,
+            playerBust = false,
+            dealerBust = false,
             gameOver = gameOver
         )
     }
@@ -32,7 +47,6 @@ class Blackjack {
     fun hit(deckStyle: String): BlackjackGameState {
         if (gameOver) return BlackjackGameState(
             dealerFirstCard = dealerHand.firstOrNull(),
-            gameState = "Game is already over. Please restart.",
             gameOver = true
         )
 
@@ -47,7 +61,7 @@ class Blackjack {
                 playerHand = playerHand.map { it.toCardWithImage(deckStyle) },
                 playerTotal = playerTotal,
                 dealerTotal = calculateHandValue(dealerHand),
-                gameState = "Bust! You lose.",
+                playerBust = true,
                 gameOver = gameOver
             )
         }
@@ -65,7 +79,6 @@ class Blackjack {
     fun stand(deckStyle: String): BlackjackGameState {
         if (gameOver) return BlackjackGameState(
             dealerFirstCard = null,
-            gameState = "Game is already over. Please restart.",
             gameOver = true
         )
 
@@ -82,12 +95,7 @@ class Blackjack {
                 ((playerHand[0].rank == "Ace" && playerHand[1].rank in listOf("10", "Jack", "Queen", "King")) ||
                         (playerHand[1].rank == "Ace" && playerHand[0].rank in listOf("10", "Jack", "Queen", "King")))
 
-        val result = when {
-            playerHasBlackjack && (dealerTotal > 21 || playerTotal > dealerTotal) -> "Blackjack! You win 3x!"
-            dealerTotal > 21 || playerTotal > dealerTotal -> "You win!"
-            playerTotal < dealerTotal -> "You lose!"
-            else -> "It's a tie!"
-        }
+        val dealerBust = dealerTotal > 21
 
         return BlackjackGameState(
             dealerFirstCard = dealerHand.first(),
@@ -95,7 +103,8 @@ class Blackjack {
             dealerTotal = dealerTotal,
             playerHand = playerHand.map { it.toCardWithImage(deckStyle) },
             playerTotal = playerTotal,
-            gameState = result,
+            playerHasBlackjack = playerHasBlackjack,
+            dealerBust = dealerBust,
             gameOver = gameOver
         )
     }

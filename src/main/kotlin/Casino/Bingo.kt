@@ -4,6 +4,17 @@ import kotlinx.serialization.Serializable
 import kotlin.random.Random
 
 @Serializable
+data class BingoGameState(
+    val userCard: BingoCard,
+    val houseCards: List<BingoCard>,
+    val drawnNumbers: List<Int>,
+    val lastNumber: Int?,
+    val userHasBingo: Boolean,
+    val houseWinners: List<Int>,
+    val tie: Boolean = false
+)
+
+@Serializable
 data class BingoCell(val number: Int, var marked: Boolean = false)
 
 @Serializable
@@ -21,7 +32,7 @@ data class BingoCard(val grid: List<List<BingoCell>>) {
 }
 
 class BingoGame(
-    val numHouseCards: Int = 3 // Now 5 house cards
+    val numHouseCards: Int = 2 // Now 5 house cards
 ) {
     val userCard: BingoCard = generateCard()
     val houseCards: List<BingoCard> = List(numHouseCards) { generateCard() }

@@ -24,9 +24,15 @@ body {
     font-family: 'Courier New', monospace;
     padding: 20px;
     background-image: linear-gradient(to bottom, #000, #111);
+    background-attachment: fixed;
+    background-size: 100% 100vh;
     text-shadow: 0 0 5px #0f0;
     margin: 0 auto;
     text-align: center;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 h1, h2 {

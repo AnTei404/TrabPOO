@@ -13,10 +13,9 @@ body {
     text-align: center;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
     align-items: center;
     min-height: 100vh;
-    padding-top: 50px;
+    overflow: hidden;
 }
 
 h1, h2 {
@@ -28,7 +27,8 @@ h1, h2 {
 
 h1 {
     font-size: 2.5em;
-    margin-bottom: 20px;
+    margin-top: 10px;
+    margin-bottom: 10px;
     border-bottom: 2px solid #f0f;
     padding-bottom: 15px;
     animation: sign-flicker 3s infinite;
@@ -45,13 +45,17 @@ h1 {
 
 /* Form styles */
 form {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     background-color: rgba(0, 50, 0, 0.3);
     padding: 30px;
     border-radius: 10px;
     border: 2px solid #0f0;
     box-shadow: 0 0 15px #0f0;
     max-width: 500px;
-    margin: 100px auto;
+    width: 80%;
 }
 
 label {

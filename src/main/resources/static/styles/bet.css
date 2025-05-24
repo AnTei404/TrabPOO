@@ -7,10 +7,16 @@ body {
     font-family: 'Courier New', monospace;
     padding: 20px;
     background-image: linear-gradient(to bottom, #000, #111);
+    background-attachment: fixed;
+    background-size: 100% 100vh;
     text-shadow: 0 0 5px #0f0;
     max-width: 800px;
     margin: 0 auto;
     text-align: center;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
 h1 {
@@ -18,7 +24,8 @@ h1 {
     text-transform: uppercase;
     letter-spacing: 2px;
     text-shadow: 0 0 10px #0ff;
-    margin-bottom: 30px;
+    margin-top: 10px;
+    margin-bottom: 10px;
     font-size: 2em;
     border-bottom: 2px solid #0ff;
     padding-bottom: 10px;
@@ -26,7 +33,9 @@ h1 {
 
 p {
     font-size: 1.2em;
-    margin: 20px 0;
+    margin: 5px 0 20px 0;
+    color: #ff0;
+    font-weight: bold;
 }
 
 /* Span elements (for dynamic content) */
@@ -38,11 +47,15 @@ span {
 
 /* Form styles */
 form {
-    margin: 30px auto;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     padding: 20px;
     border: 2px solid #0f0;
     border-radius: 10px;
     max-width: 400px;
+    width: 80%;
     background-color: rgba(0, 50, 0, 0.3);
     box-shadow: 0 0 15px #0f0;
 }
@@ -99,8 +112,11 @@ button:hover {
 
 /* Back link */
 a {
-    display: inline-block;
-    margin-top: 20px;
+    display: block;
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
     color: #f00;
     text-decoration: none;
     font-size: 1.1em;
@@ -118,7 +134,7 @@ a:hover {
     background-color: rgba(255, 0, 0, 0.2);
     text-shadow: 0 0 10px #fff;
     box-shadow: 0 0 15px #f00;
-    transform: scale(1.05);
+    transform: translateX(-50%) scale(1.05);
 }
 
 /* CRT screen effect */

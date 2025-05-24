@@ -5,6 +5,7 @@ data class HigherOrLowerGameState(
     val dealerCard: Map<String, String>?, // Hidden until after guess
     val showDealerCard: Boolean = false,
     val result: String? = null,
+    val sideMenuResult: String? = null,
     val currentRound: Int = 1,
     val totalRounds: Int = 3,
     val multiplier: Int = 1,
@@ -23,6 +24,7 @@ class HigherOrLowerGame {
     var gameOver: Boolean = false
     var showDealerCard: Boolean = false
     var lastResult: String? = null
+    var sideMenuResult: String? = null
 
     private fun cardValue(card: Card): Int = when (card.rank) {
         "Ace" -> 14
@@ -42,6 +44,7 @@ class HigherOrLowerGame {
         dealerCard = deck.cards.removeFirst()
         showDealerCard = false
         lastResult = null
+        sideMenuResult = null
     }
 
     fun guess(higher: Boolean, deckStyle: String): HigherOrLowerGameState {
@@ -50,7 +53,8 @@ class HigherOrLowerGame {
         val playerValue = cardValue(playerCard!!)
         val dealerValue = cardValue(dealerCard!!)
         val win = (higher && dealerValue > playerValue) || (!higher && dealerValue < playerValue)
-        lastResult = if (win) "You win!" else "You lose!"
+        lastResult = if (win) "You win!" else "Game over"
+        sideMenuResult = if (win) "You win!" else "You lose!"
 
         if (win) {
             if (currentRound == totalRounds) {
@@ -103,6 +107,7 @@ class HigherOrLowerGame {
             dealerCard = if (showDealerCard) dealerCard?.toCardWithImage(deckStyle) else null,
             showDealerCard = showDealerCard,
             result = lastResult,
+            sideMenuResult = sideMenuResult,
             currentRound = currentRound,
             totalRounds = totalRounds,
             multiplier = multiplier,

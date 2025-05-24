@@ -24,90 +24,9 @@
   </ul>
 </div>
 
-<h1>Bingo, <span th:text="${name}"></span>!</h1>
-
 <div class="game-container" th:if="${gameState != null}">
   <!-- Left Sidebar -->
   <div class="sidebar left-sidebar">
-    <img src="/Staff/BingusDealer.png" alt="Dealer" class="dealer-photo">
-
-    <div class="game-controls">
-      <div th:if="${!(gameState.userHasBingo or !#lists.isEmpty(gameState.houseWinners))}">
-        <form action="/casino/bingo/next" method="post">
-          <button type="submit">Next Number</button>
-        </form>
-      </div>
-
-      <div th:if="${gameState.userHasBingo or !#lists.isEmpty(gameState.houseWinners)}">
-        <form action="/casino/bingo/new" method="post">
-          <button type="submit">New Game</button>
-        </form>
-        <form action="/casino/bingo" method="get">
-          <button type="submit">Place another Bet</button>
-        </form>
-        <form action="/games" method="get">
-          <button type="submit">Go back to games</button>
-        </form>
-      </div>
-    </div>
-
-    <img th:src="${playerPhoto}" alt="Player" class="player-photo">
-
-    <div class="player-info">
-      <p class="player-name">Player: <span th:text="${name}"></span></p>
-      <p>Money: $<span th:text="${money}"></span></p>
-      <p>Chips: <span th:text="${chips}"></span></p>
-    </div>
-  </div>
-
-  <!-- Main Game Content -->
-  <div class="game-content">
-    <h2>House Cards</h2>
-    <div class="house-cards-container">
-      <div class="house-card-wrapper" th:each="houseCard, idx : ${gameState.houseCards}">
-        <div class="house-label">House Card <span th:text="${idx.index + 1}"></span></div>
-        <table class="bingo-card">
-          <tr>
-            <th>B</th><th>I</th><th>N</th><th>G</th><th>O</th>
-          </tr>
-          <tr th:each="row, rowStat : ${houseCard.grid}">
-            <td th:each="cell, colStat : ${row}"
-                th:text="${cell.number}"
-                th:classappend="(${cell.marked} ? 'house-marked ' : '') + ((rowStat.index == 2 and colStat.index == 2) ? 'free' : '')">
-            </td>
-          </tr>
-        </table>
-      </div>
-    </div>
-
-    <h2>Player Card</h2>
-    <table class="bingo-card" th:if="${gameState.userCard != null}">
-      <tr>
-        <th>B</th><th>I</th><th>N</th><th>G</th><th>O</th>
-      </tr>
-      <tr th:each="row, rowStat : ${gameState.userCard.grid}">
-        <td th:each="cell, colStat : ${row}"
-            th:text="${cell.number}"
-            th:classappend="(${cell.marked} ? 'marked ' : '') + ((rowStat.index == 2 and colStat.index == 2) ? 'free' : '')">
-        </td>
-      </tr>
-    </table>
-
-    <h2 th:if="${gameState.lastNumber != null}">Last Number: <span th:text="${gameState.lastNumber}"></span></h2>
-
-    <div th:if="${gameState.tie}">
-      <h2>It's a tie! Your bet is returned.</h2>
-    </div>
-    <div th:if="${gameState.userHasBingo and !gameState.tie}">
-      <h2>🎉 BINGO! You win! 🎉</h2>
-    </div>
-    <div th:if="${!#lists.isEmpty(gameState.houseWinners) and !gameState.tie}">
-      <h2>House wins! (Card(s): <span th:text="${gameState.houseWinners}"></span>)</h2>
-    </div>
-  </div>
-
-  <!-- Right Sidebar -->
-  <div class="sidebar right-sidebar">
     <div class="game-stats">
       <h3>Game Stats</h3>
       <div class="stat-item">
@@ -126,9 +45,89 @@
       <div class="stat-item" th:if="${!#lists.isEmpty(gameState.houseWinners) and !gameState.tie}">
         <p>Amount Lost: <span th:text="${chipsBet}"></span> chips</p>
       </div>
-      <div class="stat-item" th:if="${resultMessage != null}">
+      <div class="stat-item" th:if="${resultMessage != null and (gameState.userHasBingo or !#lists.isEmpty(gameState.houseWinners))}">
         <p th:text="${resultMessage}"></p>
       </div>
+    </div>
+  </div>
+
+  <!-- Main Game Content -->
+  <div class="game-content">
+    <h2>Bingo Game</h2>
+    <h3>House Cards</h3>
+    <div class="house-cards-container">
+      <div class="house-card-wrapper" th:each="houseCard, idx : ${gameState.houseCards}">
+        <div class="house-label">House Card <span th:text="${idx.index + 1}"></span></div>
+        <table class="bingo-card">
+          <tr>
+            <th>B</th><th>I</th><th>N</th><th>G</th><th>O</th>
+          </tr>
+          <tr th:each="row, rowStat : ${houseCard.grid}">
+            <td th:each="cell, colStat : ${row}"
+                th:text="${cell.number}"
+                th:classappend="(${cell.marked} ? 'house-marked ' : '') + ((rowStat.index == 2 and colStat.index == 2) ? 'free' : '')">
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <h3>Player Card</h3>
+    <table class="bingo-card" th:if="${gameState.userCard != null}">
+      <tr>
+        <th>B</th><th>I</th><th>N</th><th>G</th><th>O</th>
+      </tr>
+      <tr th:each="row, rowStat : ${gameState.userCard.grid}">
+        <td th:each="cell, colStat : ${row}"
+            th:text="${cell.number}"
+            th:classappend="(${cell.marked} ? 'marked ' : '') + ((rowStat.index == 2 and colStat.index == 2) ? 'free' : '')">
+        </td>
+      </tr>
+    </table>
+
+    <h3 th:if="${gameState.lastNumber != null}">Last Number: <span th:text="${gameState.lastNumber}"></span></h3>
+
+    <div th:if="${gameState.tie}">
+      <h3>It's a tie! Your bet is returned.</h3>
+    </div>
+    <div th:if="${gameState.userHasBingo and !gameState.tie}">
+      <h3>🎉 BINGO! You win! 🎉</h3>
+    </div>
+    <div th:if="${!#lists.isEmpty(gameState.houseWinners) and !gameState.tie}">
+      <h3>House wins! (Card(s): <span th:text="${gameState.houseWinners}"></span>)</h3>
+    </div>
+  </div>
+
+  <!-- Right Sidebar -->
+  <div class="sidebar right-sidebar">
+    <img src="/Staff/BingusDealer.png" alt="Dealer" class="dealer-photo">
+
+    <div class="game-controls">
+      <div th:if="${!(gameState.userHasBingo or !#lists.isEmpty(gameState.houseWinners))}">
+        <form action="/casino/bingo/next" method="post">
+          <button type="submit">Next Number</button>
+        </form>
+      </div>
+
+      <div th:if="${gameState.userHasBingo or !#lists.isEmpty(gameState.houseWinners)}">
+        <form action="/casino/bingo/new" method="post">
+          <button type="submit" th:disabled="${chips < chipsBet}">New Game</button>
+        </form>
+        <form action="/casino/bingo" method="get">
+          <button type="submit">Place another Bet</button>
+        </form>
+        <form action="/games" method="get">
+          <button type="submit">Go back to games</button>
+        </form>
+      </div>
+    </div>
+
+    <img th:src="${playerPhoto}" alt="Player" class="player-photo">
+
+    <div class="player-info">
+      <p class="player-name">Player: <span th:text="${name}"></span></p>
+      <p>Money: $<span th:text="${money}"></span></p>
+      <p>Chips: <span th:text="${chips}"></span></p>
     </div>
   </div>
 </div>
@@ -140,6 +139,7 @@
       sessionStorage.setItem('bingoScroll', window.scrollY);
     });
   });
+
   // Restore scroll position on page load
   window.addEventListener('load', function() {
     const y = sessionStorage.getItem('bingoScroll');

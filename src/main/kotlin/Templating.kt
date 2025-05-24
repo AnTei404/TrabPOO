@@ -204,5 +204,25 @@ fun Application.configureTemplating() {
                 call.respondRedirect("/")
             }
         }
+
+        // Mines Game Routes
+        get("/casino/mines") {
+            val player = call.sessions.get<Player>()
+            if (player != null) {
+                call.respond(
+                    ThymeleafContent(
+                        "bet",
+                        mapOf(
+                            "name" to player.name,
+                            "chips" to player.chips,
+                            "title" to "Mines - Place Your Bet",
+                            "formAction" to "/casino/mines/bet"
+                        )
+                    )
+                )
+            } else {
+                call.respondRedirect("/")
+            }
+        }
     }
 }
