@@ -1,27 +1,32 @@
 package trab
 
 import io.ktor.http.*
-import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
-import io.ktor.server.http.content.*
-import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.plugins.cors.routing.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
-import io.ktor.server.sessions.*
-import io.ktor.server.thymeleaf.Thymeleaf
-import io.ktor.server.thymeleaf.ThymeleafContent
-import kotlinx.serialization.Serializable
-import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver
 
+/**
+ * Configures HTTP-related settings for the application.
+ * 
+ * This function sets up Cross-Origin Resource Sharing (CORS) configuration
+ * to allow specific HTTP methods and headers from any host.
+ * 
+ * @param Application The Ktor application instance to configure
+ */
 fun Application.configureHTTP() {
+    // Install CORS plugin to handle cross-origin requests
     install(CORS) {
+        // Allow specific HTTP methods
         allowMethod(HttpMethod.Options)
         allowMethod(HttpMethod.Put)
         allowMethod(HttpMethod.Delete)
         allowMethod(HttpMethod.Patch)
+
+        // Allow specific HTTP headers
         allowHeader(HttpHeaders.Authorization)
         allowHeader("MyCustomHeader")
-        anyHost() // @TODO: Don't do this in production if possible. Try to limit it.
+
+        // Allow requests from any host
+        // @TODO: Don't do this in production if possible. Try to limit it.
+        anyHost()
     }
 }

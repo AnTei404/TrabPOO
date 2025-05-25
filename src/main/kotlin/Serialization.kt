@@ -1,23 +1,24 @@
 package trab
 
-import io.ktor.http.*
-import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
-import io.ktor.server.http.content.*
-import io.ktor.server.plugins.contentnegotiation.*
-import io.ktor.server.plugins.cors.routing.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
-import io.ktor.server.sessions.*
-import io.ktor.server.thymeleaf.Thymeleaf
-import io.ktor.server.thymeleaf.ThymeleafContent
-import kotlinx.serialization.Serializable
-import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver
+import io.ktor.server.response.respond
+import io.ktor.server.routing.get
+import io.ktor.server.routing.routing
 
+/**
+ * Configures JSON serialization for the application.
+ * 
+ * This function sets up the serialization framework for converting Kotlin objects
+ * to JSON responses. It also includes a test endpoint that demonstrates
+ * the serialization functionality by returning a simple JSON object.
+ * 
+ * @param Application The Ktor application instance to configure
+ */
 fun Application.configureSerialization() {
     routing {
+        // Test endpoint to verify serialization is working
         get("/json/kotlinx-serialization") {
-                call.respond(mapOf("hello" to "world"))
-            }
+            call.respond(mapOf("hello" to "world"))
+        }
     }
 }
