@@ -30,19 +30,37 @@ import trab.casino.toCardWithImage
 import trab.casino.Mines
 import trab.casino.MinesGameState
 import kotlin.compareTo
-import kotlin.text.get
-import kotlin.text.set
 
+/**
+ * Configures all routing for the casino application.
+ * 
+ * This function sets up all HTTP routes for the application, including:
+ * - Static resources serving
+ * - Player management (login, registration, profile)
+ * - Money and chips exchange
+ * - Casino games (Blackjack, Bingo, Higher or Lower, Ride The Bus, Card Match, Mines)
+ * 
+ * Each route handles specific user interactions and game logic, maintaining
+ * game state through session variables and in-memory storage.
+ * 
+ * @param Application The Ktor application instance to configure
+ */
 fun Application.configureRouting() {
+    // Initialize game logic components
     val exchangeLogic = ExchangeLogic()
-    val bingoGames = mutableMapOf<String, BingoGame>() // In-memory storage for BingoGame per player
+
+    // In-memory storage for game instances per player
+    val bingoGames = mutableMapOf<String, BingoGame>()
     val higherOrLowerGames = mutableMapOf<String, HigherOrLowerGame>()
     val rideTheBusGames = mutableMapOf<String, RideTheBusGame>()
-    val minesGames = mutableMapOf<String, Mines>() // In-memory storage for Mines game per player
+    val minesGames = mutableMapOf<String, Mines>()
 
     routing {
+        // Serve static resources (CSS, JavaScript, images)
         staticResources("/", "static")
 
+        // ===== PLAYER PREFERENCES =====
+        // Route to handle deck selection for card games
         post("/select-deck") {
             val player = call.sessions.get<Player>()
             val selectedDeck = call.receiveParameters()["deck"] ?: "minimalista" // Default to "minimalista"
@@ -68,6 +86,8 @@ fun Application.configureRouting() {
             }
         }
 
+        // ===== CURRENCY EXCHANGE =====
+        // Route to exchange real money for casino chips
         post("/exchange-money-for-chips") {
             val player = call.sessions.get<Player>()
             val moneyToExchange = call.receiveParameters()["money"]?.toIntOrNull()
@@ -84,6 +104,7 @@ fun Application.configureRouting() {
             }
         }
 
+        // Route to exchange casino chips back to real money
         post("/exchange-chips-for-money") {
             val player = call.sessions.get<Player>()
             val chipsToExchange = call.receiveParameters()["chips"]?.toIntOrNull()
@@ -100,6 +121,8 @@ fun Application.configureRouting() {
             }
         }
 
+        // ===== BLACKJACK GAME =====
+        // Route to place a bet in Blackjack
         post("/casino/blackjack/bet") {
             val player = call.sessions.get<Player>()
             val chipsBet = call.receiveParameters()["chipsBet"]?.toIntOrNull()
@@ -786,7 +809,7 @@ fun Application.configureRouting() {
             if (player != null && game != null) {
                 val gameState = if (choice == "leave") game.leave(deckStyle) else game.guess(choice, deckStyle)
                 // Only pay out if player pressed "leave" and game is over
-                val payout = if (choice == "leave" && gameState.gameOver && gameState.multiplier > 1) chipsBet * gameState.multiplier else 0
+                val payout = if (choice == "leave" && gameState.gameOver && gameState.multiplier >= 1) chipsBet * gameState.multiplier else 0
                 if (payout > 0) {
                     player.chips += payout
                 }
