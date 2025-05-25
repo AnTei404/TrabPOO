@@ -14,9 +14,11 @@ data class RideTheBusGameState(
 )
 
 class RideTheBusGame(deckStyle: String) {
-    private val deck = Deck().apply { shuffle() }
-    private val cards = List(4) { deck.cards.removeFirst() }
-    private val revealed = MutableList(4) { false }
+    private var deck = Deck().apply { 
+        createRankOnlyDeck() // Use only 13 cards (one of each rank)
+    }
+    private var cards = List(4) { deck.cards.removeFirst() }
+    private var revealed = MutableList(4) { false }
     private var round = 0
     private var multiplier = 1
     private var gameOver = false
@@ -33,7 +35,11 @@ class RideTheBusGame(deckStyle: String) {
     )
 
     fun guess(choice: String, deckStyle: String): RideTheBusGameState {
-        if (gameOver) return getState(deckStyle)
+        if (gameOver) {
+            // If the game is over and the player tries to guess again, start a new game
+            return reset(deckStyle)
+        }
+
         val card = cards[round]
         val prevCard = if (round > 0) cards[round - 1] else null
         val correct = when (round) {
@@ -66,10 +72,18 @@ class RideTheBusGame(deckStyle: String) {
             if (round == 4) {
                 gameOver = true
                 result = "You won! Multiplier: $multiplier"
+                // Prepare a new deck for the next game, but don't reset the game state yet
+                deck = Deck().apply { 
+                    createRankOnlyDeck() 
+                }
             }
         } else {
             gameOver = true
             result = "You lost! Final multiplier: $multiplier"
+            // Prepare a new deck for the next game, but don't reset the game state yet
+            deck = Deck().apply { 
+                createRankOnlyDeck() 
+            }
         }
         return getState(deckStyle)
     }
@@ -77,6 +91,24 @@ class RideTheBusGame(deckStyle: String) {
     fun leave(deckStyle: String): RideTheBusGameState {
         gameOver = true
         result = "You left with multiplier: $multiplier"
+        // Prepare a new deck for the next game
+        deck = Deck().apply { 
+            createRankOnlyDeck() 
+        }
+        return getState(deckStyle)
+    }
+
+    fun reset(deckStyle: String): RideTheBusGameState {
+        // Create a new deck for a new game
+        deck = Deck().apply { 
+            createRankOnlyDeck() // Use only 13 cards (one of each rank)
+        }
+        cards = List(4) { deck.cards.removeFirst() }
+        revealed = MutableList(4) { false }
+        round = 0
+        multiplier = 1
+        gameOver = false
+        result = null
         return getState(deckStyle)
     }
 

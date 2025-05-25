@@ -10,11 +10,14 @@ data class HigherOrLowerGameState(
     val totalRounds: Int = 3,
     val multiplier: Int = 1,
     val canLeaveOrAllIn: Boolean = false,
-    val gameOver: Boolean = false
+    val gameOver: Boolean = false,
+    val roundCompleted: Boolean = false
 )
 
 class HigherOrLowerGame {
-    private var deck = Deck().apply { shuffle() }
+    private var deck = Deck().apply { 
+        createRankOnlyDeck() // Use only 13 cards (one of each rank)
+    }
     var playerCard: Card? = null
     var dealerCard: Card? = null
     var currentRound: Int = 1
@@ -25,6 +28,7 @@ class HigherOrLowerGame {
     var showDealerCard: Boolean = false
     var lastResult: String? = null
     var sideMenuResult: String? = null
+    var roundCompleted: Boolean = false
 
     private fun cardValue(card: Card): Int = when (card.rank) {
         "Ace" -> 14
@@ -39,12 +43,16 @@ class HigherOrLowerGame {
     }
 
     private fun dealNewRound() {
-        if (deck.cards.size < 52) deck = Deck().apply { shuffle() }
+        // Always create a new 13-card deck for each round
+        deck = Deck().apply { 
+            createRankOnlyDeck() 
+        }
         playerCard = deck.cards.removeFirst()
         dealerCard = deck.cards.removeFirst()
         showDealerCard = false
         lastResult = null
         sideMenuResult = null
+        roundCompleted = false
     }
 
     fun guess(higher: Boolean, deckStyle: String): HigherOrLowerGameState {
@@ -59,19 +67,34 @@ class HigherOrLowerGame {
         if (win) {
             if (currentRound == totalRounds) {
                 canLeaveOrAllIn = true
+                // Prepare a new deck for the next game
+                deck = Deck().apply { 
+                    createRankOnlyDeck() 
+                }
                 return getState(deckStyle)
             } else {
+                // Mark the round as completed but don't deal a new round yet
+                // This allows the player to see the result before moving to the next round
+                roundCompleted = true
                 currentRound++
             }
         } else {
             gameOver = true
+            // Prepare a new deck for the next game
+            deck = Deck().apply { 
+                createRankOnlyDeck() 
+            }
         }
         return getState(deckStyle)
     }
 
     fun nextRound(deckStyle: String): HigherOrLowerGameState {
         if (gameOver) return getState(deckStyle)
-        dealNewRound()
+        // Only deal a new round if the current round is completed
+        // This ensures the player can see the result before moving to the next round
+        if (roundCompleted) {
+            dealNewRound()
+        }
         return getState(deckStyle)
     }
 
@@ -81,22 +104,31 @@ class HigherOrLowerGame {
         multiplier *= 2
         canLeaveOrAllIn = false
         currentRound = 1
+        roundCompleted = false
         dealNewRound()
         return getState(deckStyle)
     }
 
     fun leave(deckStyle: String): HigherOrLowerGameState {
         gameOver = true
+        roundCompleted = false
+        // Prepare a new deck for the next game
+        deck = Deck().apply { 
+            createRankOnlyDeck() 
+        }
         return getState(deckStyle)
     }
 
     fun reset(deckStyle: String): HigherOrLowerGameState {
-        deck = Deck().apply { shuffle() }
+        deck = Deck().apply { 
+            createRankOnlyDeck() // Use only 13 cards (one of each rank)
+        }
         currentRound = 1
         totalRounds = 3
         multiplier = 2
         canLeaveOrAllIn = false
         gameOver = false
+        roundCompleted = false
         dealNewRound()
         return getState(deckStyle)
     }
@@ -112,6 +144,7 @@ class HigherOrLowerGame {
             totalRounds = totalRounds,
             multiplier = multiplier,
             canLeaveOrAllIn = canLeaveOrAllIn,
-            gameOver = gameOver
+            gameOver = gameOver,
+            roundCompleted = roundCompleted
         )
 }
