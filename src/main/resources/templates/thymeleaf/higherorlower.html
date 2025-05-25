@@ -17,7 +17,7 @@
     <ul>
         <li>You are shown a card and must guess if the next card will be higher or lower</li>
         <li>If you guess correctly, you progress in the round</li>
-        <li>After each each set of rounds, you can choose to leave with your winnings or continue playing</li>
+        <li>After each each set of rounds, you can choose to Cash Out or continue playing</li>
         <li>After each set of rounds the necessary rounds to leave increases by 1, and the payout doubles.</li>
         <li>If you guess incorrectly, you lose your bet</li>
         <li>Aces are considered the highest card</li>
@@ -88,7 +88,7 @@
                     <button type="submit">All In</button>
                 </form>
                 <form action="/casino/higherorlower/leave" method="post" th:if="${canLeaveOrAllIn}">
-                    <button type="submit">Leave with Winnings</button>
+                    <button type="submit">Cash Out</button>
                 </form>
             </div>
 

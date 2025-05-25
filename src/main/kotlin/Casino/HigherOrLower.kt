@@ -14,7 +14,7 @@ package trab.casino
  * @property currentRound The current round number
  * @property totalRounds The total number of rounds in the current game
  * @property multiplier The current win multiplier
- * @property canLeaveOrAllIn Whether the player can choose to leave with winnings or go all-in
+ * @property canLeaveOrAllIn Whether the player can choose to Cash Out or go all-in
  * @property gameOver Whether the game has ended
  * @property roundCompleted Whether the current round is completed
  */
@@ -59,7 +59,7 @@ class HigherOrLowerGame {
     /** The current win multiplier */
     var multiplier: Int = 2
 
-    /** Whether the player can choose to leave with winnings or go all-in */
+    /** Whether the player can choose to Cash Out or go all-in */
     var canLeaveOrAllIn: Boolean = false
 
     /** Whether the game has ended */
@@ -213,15 +213,15 @@ class HigherOrLowerGame {
     }
 
     /**
-     * Processes the player's decision to leave the game with current winnings.
-     * 
+     * Processes the player's decision to Cash Out.
+     *
      * This method:
      * 1. Ends the current game
      * 2. Prepares a fresh deck for the next game
      * 3. Returns the final game state
-     * 
+     *
      * @param deckStyle The visual style of the deck to use for card images
-     * @return The final state of the game after leaving
+     * @return The final state of the game after cashing out
      */
     fun leave(deckStyle: String): HigherOrLowerGameState {
         gameOver = true

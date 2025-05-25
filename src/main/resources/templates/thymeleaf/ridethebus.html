@@ -18,7 +18,7 @@
         <li><strong>Round 3:</strong> Guess if the next card is Inside or Outside the range of the first two cards</li>
         <li><strong>Round 4:</strong> Guess the suit of the next card (Hearts, Diamonds, Clubs, or Spades)</li>
     </ol>
-    <p>Each correct guess increases your multiplier. You can choose to leave with your winnings after each round (except the first).</p>
+    <p>Each correct guess increases your multiplier. You can choose to Cash Out after each round (except the first).</p>
 </div>
 
 <div class="game-container">
@@ -79,14 +79,14 @@
                     <form action="/casino/ridethebus/guess" method="post">
                         <button name="choice" value="higher">Higher</button>
                         <button name="choice" value="lower">Lower</button>
-                        <button th:if="${gameState.canLeave}" name="choice" value="leave">Leave with Winnings</button>
+                        <button th:if="${gameState.canLeave}" name="choice" value="leave">Cash Out</button>
                     </form>
                 </div>
                 <div th:if="${gameState.currentRound == 2}">
                     <form action="/casino/ridethebus/guess" method="post">
                         <button name="choice" value="inside">Inside</button>
                         <button name="choice" value="outside">Outside</button>
-                        <button th:if="${gameState.canLeave}" name="choice" value="leave">Leave with Winnings</button>
+                        <button th:if="${gameState.canLeave}" name="choice" value="leave">Cash Out</button>
                     </form>
                 </div>
                 <div th:if="${gameState.currentRound == 3}">
@@ -95,7 +95,7 @@
                         <button name="choice" value="diamonds">Diamonds</button>
                         <button name="choice" value="clubs">Clubs</button>
                         <button name="choice" value="spades">Spades</button>
-                        <button th:if="${gameState.canLeave}" name="choice" value="leave">Leave with Winnings</button>
+                        <button th:if="${gameState.canLeave}" name="choice" value="leave">Cash Out</button>
                     </form>
                 </div>
             </div>
