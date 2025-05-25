@@ -74,7 +74,7 @@
         <div class="game-controls">
             <div th:if="${!gameState.gameOver}">
                 <form action="/casino/mines/cashout" method="post">
-                    <button type="submit">End Game</button>
+                    <button type="submit">Cash Out</button>
                 </form>
             </div>
             <div th:if="${gameState.gameOver}" class="game-over-controls">

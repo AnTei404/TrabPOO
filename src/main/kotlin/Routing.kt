@@ -549,6 +549,13 @@ fun Application.configureRouting() {
                 val higher = guess == "higher"
                 val gameState = game.guess(higher, deckStyle)
 
+                // Pay out if player won and the game is over
+                if (gameState.gameOver && gameState.result != "Game over") {
+                    val payout = chipsBet * gameState.multiplier
+                    player.chips += payout
+                    call.sessions.set(player)
+                }
+
                 val resultMessage = createResultMessage(
                     gameOver = gameState.gameOver,
                     isWin = gameState.result != "Game over",
@@ -720,7 +727,7 @@ fun Application.configureRouting() {
             }
         }
 
-    // LEAVE: Player leaves and cashes out winnings
+    // LEAVE: Player chooses to Cash Out
         post("/casino/higherorlower/leave") {
             val player = call.sessions.get<Player>()
             val deckStyle = call.sessions.get<DeckStyle>()?.style ?: "minimalista"
@@ -734,7 +741,7 @@ fun Application.configureRouting() {
                 player.lastBet = null
                 call.sessions.set(player)
 
-                // Set a success message for leaving with winnings
+                // Set a success message for cashing out
                 val resultMessage = createResultMessage(
                     gameOver = true,
                     isWin = true,
@@ -808,8 +815,12 @@ fun Application.configureRouting() {
             val choice = call.receiveParameters()["choice"] ?: ""
             if (player != null && game != null) {
                 val gameState = if (choice == "leave") game.leave(deckStyle) else game.guess(choice, deckStyle)
-                // Only pay out if player pressed "leave" and game is over
-                val payout = if (choice == "leave" && gameState.gameOver && gameState.multiplier >= 1) chipsBet * gameState.multiplier else 0
+                // Pay out if player pressed "leave" and game is over OR if player won by completing all rounds
+                val payout = when {
+                    choice == "leave" && gameState.gameOver && gameState.multiplier >= 1 -> chipsBet * gameState.multiplier
+                    gameState.gameOver && gameState.result?.contains("won") == true -> chipsBet * gameState.multiplier
+                    else -> 0
+                }
                 if (payout > 0) {
                     player.chips += payout
                 }

@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Receptionist</title>
+    <title>Services</title>
     <link rel="stylesheet" href="/styles/receptionist.css">
 </head>
 <body>
@@ -29,7 +29,7 @@
 
     <!-- Main Card Content -->
     <div class="card main-card">
-        <h1 style="text-align:center;">Reception Desk</h1>
+        <h1 style="text-align:center;">Desk</h1>
         <div class="section">
             <h2>Exchange Money for Chips</h2>
             <form action="/exchange-money-for-chips" method="post">
@@ -75,7 +75,7 @@
             <img src="/Staff/BingusRecep.png" alt="Receptionist Photo">
         </div>
         <div class="receptionist-info">
-            <strong>Receptionist</strong>
+            <strong>Cashier</strong>
         </div>
         <div class="divider"></div>
         <button class="rules-button" onclick="showRules()">Game Rules</button>
@@ -147,7 +147,7 @@
         <ul>
             <li>You are shown a card and must guess if the next card will be higher or lower</li>
             <li>If you guess correctly, you progress in the round</li>
-            <li>After each each set of rounds, you can choose to leave with your winnings or continue playing</li>
+            <li>After each each set of rounds, you can choose to Cash Out or continue playing</li>
             <li>After each set of rounds the necessary rounds to leave increases by 1, and the payout doubles.</li>
             <li>If you guess incorrectly, you lose your bet</li>
             <li>Aces are considered the highest card</li>
@@ -165,7 +165,7 @@
             <li><strong>Round 3:</strong> Guess if the next card is Inside or Outside the range of the first two cards</li>
             <li><strong>Round 4:</strong> Guess the suit of the next card (Hearts, Diamonds, Clubs, or Spades)</li>
         </ol>
-        <p>Each correct guess increases your multiplier. You can choose to leave with your winnings after each round (except the first).</p>
+        <p>Each correct guess increases your multiplier. You can choose to Cash Out after each round (except the first).</p>
         <button class="back-button" onclick="backToSelection()">Back to Game Selection</button>
     </div>
 </div>
