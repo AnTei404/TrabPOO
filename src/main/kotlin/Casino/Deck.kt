@@ -13,4 +13,13 @@ class Deck {
     fun shuffle() {
         cards = cards.shuffled().toMutableList()
     }
+
+    // Creates a deck with only 13 cards (one of each rank)
+    fun createRankOnlyDeck() {
+        // Choose a random suit for each rank
+        cards = ranks.map { rank -> 
+            Card(rank, suits.random())
+        }.toMutableList()
+        shuffle()
+    }
 }
