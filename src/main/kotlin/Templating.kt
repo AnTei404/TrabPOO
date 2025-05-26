@@ -40,7 +40,7 @@ fun Application.configureTemplating() {
             )
         }
 
-        get("/welcome") {
+        get("/lobby") {
             val player = call.sessions.get<Player>()
             if (player == null) {
                 call.application.log.info("Player session is null")
@@ -48,7 +48,7 @@ fun Application.configureTemplating() {
             } else {
                 call.respond(
                     ThymeleafContent(
-                        "welcome",
+                        "lobby",
                         mapOf(
                             "name" to player.name,
                             "chips" to player.chips,
@@ -59,14 +59,14 @@ fun Application.configureTemplating() {
             }
         }
 
-        get("/receptionist") {
+        get("/services") {
             val player = call.sessions.get<Player>()
             val deckStyle = call.sessions.get<DeckStyle>()?.style ?: "minimalista"
             if (player != null) {
                 val previewCards = generatePreviewCards(deckStyle)
                 call.respond(
                     ThymeleafContent(
-                        "receptionist",
+                        "services",
                         mapOf(
                             "name" to player.name,
                             "chips" to player.chips,

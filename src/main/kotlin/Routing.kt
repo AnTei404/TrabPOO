@@ -69,7 +69,7 @@ fun Application.configureRouting() {
                 val previewCards = generatePreviewCards(selectedDeck)
                 call.respond(
                     ThymeleafContent(
-                        "receptionist",
+                        "services",
                         mapOf(
                             "name" to player.name,
                             "chips" to player.chips,
@@ -95,7 +95,7 @@ fun Application.configureRouting() {
                 val updatedPlayer = exchangeLogic.exchangeMoneyForChips(player, moneyToExchange)
                 if (updatedPlayer != null) {
                     call.sessions.set(updatedPlayer)
-                    call.respondRedirect("/receptionist")
+                    call.respondRedirect("/services")
                 } else {
                     call.respondText("Invalid exchange request", status = HttpStatusCode.BadRequest)
                 }
@@ -112,7 +112,7 @@ fun Application.configureRouting() {
                 val updatedPlayer = exchangeLogic.exchangeChipsForMoney(player, chipsToExchange)
                 if (updatedPlayer != null) {
                     call.sessions.set(updatedPlayer)
-                    call.respondRedirect("/receptionist")
+                    call.respondRedirect("/services")
                 } else {
                     call.respondText("Invalid exchange request", status = HttpStatusCode.BadRequest)
                 }

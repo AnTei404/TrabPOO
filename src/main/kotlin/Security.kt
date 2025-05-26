@@ -60,7 +60,7 @@ fun Application.configureSecurity() {
             // Set session cookies
             call.sessions.set(player)
             call.sessions.set(DeckStyle("minimalista")) // Default deck style
-            call.respondRedirect("/welcome")
+            call.respondRedirect("/lobby")
         }
     }
 }
