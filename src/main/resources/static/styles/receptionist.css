@@ -99,6 +99,69 @@ a:hover {
     border: 2px solid #0f0;
 }
 
+/* Bet History Styles */
+#betHistoryPopup {
+    max-width: 800px;
+}
+
+.bet-history-content {
+    margin-top: 20px;
+}
+
+.bet-history-summary {
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: rgba(0, 255, 0, 0.1);
+    border-radius: 5px;
+    border: 1px solid #0f0;
+}
+
+.bet-history-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    color: #0f0;
+}
+
+.bet-history-table th, 
+.bet-history-table td {
+    padding: 8px 12px;
+    text-align: left;
+    border-bottom: 1px solid #0f0;
+}
+
+.bet-history-table th {
+    background-color: rgba(0, 255, 0, 0.2);
+    color: #0ff;
+    text-transform: uppercase;
+}
+
+.win-text {
+    color: #0f0;
+    font-weight: bold;
+    text-shadow: 0 0 5px #0f0;
+}
+
+.loss-text {
+    color: #f00;
+    font-weight: bold;
+    text-shadow: 0 0 5px #f00;
+}
+
+.tie-text {
+    color: #ff0;
+    font-weight: bold;
+    text-shadow: 0 0 5px #ff0;
+}
+
+.win-row {
+    background-color: rgba(0, 255, 0, 0.1);
+}
+
+.loss-row {
+    background-color: rgba(255, 0, 0, 0.1);
+}
+
 .popup-close {
     position: absolute;
     top: 10px;

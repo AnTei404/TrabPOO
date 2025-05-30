@@ -64,6 +64,11 @@ fun Application.configureTemplating() {
             val deckStyle = call.sessions.get<DeckStyle>()?.style ?: "minimalista"
             if (player != null) {
                 val previewCards = generatePreviewCards(deckStyle)
+
+                // Get the player's bet history and total win/loss
+                val betHistory = player.betHistory.sortedByDescending { it.timestamp }.take(20) // Show last 20 bets
+                val totalWinLoss = player.getTotalWinLoss()
+
                 call.respond(
                     ThymeleafContent(
                         "receptionist",
@@ -73,7 +78,9 @@ fun Application.configureTemplating() {
                             "money" to player.money,
                             "photoPath" to player.photoPath,
                             "deckStyle" to deckStyle,
-                            "previewCards" to previewCards
+                            "previewCards" to previewCards,
+                            "betHistory" to betHistory,
+                            "totalWinLoss" to totalWinLoss
                         )
                     )
                 )

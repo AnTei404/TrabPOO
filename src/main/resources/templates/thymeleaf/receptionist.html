@@ -79,13 +79,14 @@
         </div>
         <div class="divider"></div>
         <button class="rules-button" onclick="showRules()">Game Rules</button>
+        <button class="rules-button" onclick="showBetHistory()">Bet History</button>
     </nav>
 </div>
 
 <!-- Rules Popup (unchanged) -->
-<div class="overlay" id="overlay" onclick="hideRules()"></div>
+<div class="overlay" id="overlay" onclick="hidePopups()"></div>
 <div class="rules-popup" id="rulesPopup">
-    <span class="popup-close" onclick="hideRules()">×</span>
+    <span class="popup-close" onclick="hidePopups()">×</span>
     <h2 class="rules-title">Game Rules</h2>
     <div id="game-selection" class="game-rules active">
         <h3>Select a Game to View Rules</h3>
@@ -169,26 +170,85 @@
         <button class="back-button" onclick="backToSelection()">Back to Game Selection</button>
     </div>
 </div>
+
+<!-- Bet History Popup -->
+<div class="rules-popup" id="betHistoryPopup">
+    <span class="popup-close" onclick="hidePopups()">×</span>
+    <h2 class="rules-title">Bet History</h2>
+    <div class="bet-history-content">
+        <div class="bet-history-summary">
+            <h3>Summary</h3>
+            <p th:if="${totalWinLoss != null}">
+                <span th:if="${totalWinLoss > 0}" class="win-text">Total Profit: <span th:text="${totalWinLoss}"></span> chips</span>
+                <span th:if="${totalWinLoss < 0}" class="loss-text">Total Loss: <span th:text="${totalWinLoss * -1}"></span> chips</span>
+                <span th:if="${totalWinLoss == 0}">Break Even: 0 chips</span>
+            </p>
+        </div>
+        <div class="bet-history-list">
+            <h3>Recent Bets</h3>
+            <table class="bet-history-table">
+                <thead>
+                    <tr>
+                        <th>Game</th>
+                        <th>Bet Amount</th>
+                        <th>Payout</th>
+                        <th>Result</th>
+                        <th>Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="bet : ${betHistory}" th:class="${bet.winAmount > 0 ? 'win-row' : 'loss-row'}">
+                        <td th:text="${bet.gameName}"></td>
+                        <td th:text="${bet.betAmount}"></td>
+                        <td th:text="${bet.winAmount > 0 ? bet.winAmount : -bet.betAmount}"></td>
+                        <td>
+                            <span th:if="${bet.winAmount > bet.betAmount}" class="win-text">Win</span>
+                            <span th:if="${bet.winAmount == bet.betAmount}" class="tie-text">Tie</span>
+                            <span th:if="${bet.winAmount < bet.betAmount}" class="loss-text">Loss</span>
+                        </td>
+                        <td th:text="${bet.getFormattedTime()}"></td>
+                    </tr>
+                    <tr th:if="${betHistory == null || betHistory.isEmpty()}">
+                        <td colspan="5">No bet history available</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
 <script>
-    // (existing JS unchanged)
+    // Game rules functions
     const games = ['blackjack', 'bingo', 'slots', 'higherorlower', 'ridethebus'];
     function showRules() {
+        hidePopups(); // Hide any open popups first
         document.getElementById('overlay').style.display = 'block';
         document.getElementById('rulesPopup').style.display = 'block';
         showGameSelection();
     }
-    function hideRules() {
+
+    function showBetHistory() {
+        hidePopups(); // Hide any open popups first
+        document.getElementById('overlay').style.display = 'block';
+        document.getElementById('betHistoryPopup').style.display = 'block';
+    }
+
+    function hidePopups() {
         document.getElementById('overlay').style.display = 'none';
         document.getElementById('rulesPopup').style.display = 'none';
+        document.getElementById('betHistoryPopup').style.display = 'none';
     }
+
     function showGameSelection() {
         document.querySelectorAll('.game-rules').forEach(el => el.classList.remove('active'));
         document.getElementById('game-selection').classList.add('active');
     }
+
     function selectGame(game) {
         document.querySelectorAll('.game-rules').forEach(el => el.classList.remove('active'));
         document.getElementById(`${game}-rules`).classList.add('active');
     }
+
     function backToSelection() { showGameSelection(); }
 </script>
 </body>
