@@ -192,10 +192,14 @@ fun Application.configureRouting() {
                 var resultMessage: String
 
                 if (gameState.playerHasBlackjack && (gameState.dealerBust || gameState.playerTotal > gameState.dealerTotal)) {
-                    player.chips += chipsBet * 3
-                    resultMessage = "Blackjack! You won ${chipsBet * 3} chips and now have ${player.chips} chips."
+                    val winAmount = chipsBet * 3
+                    player.chips += winAmount
+                    player.addBetRecord("Blackjack", chipsBet, winAmount)
+                    resultMessage = "Blackjack! You won $winAmount chips and now have ${player.chips} chips."
                 } else if (gameState.dealerBust || gameState.playerTotal > gameState.dealerTotal) {
-                    player.chips += chipsBet * 2
+                    val winAmount = chipsBet * 2
+                    player.chips += winAmount
+                    player.addBetRecord("Blackjack", chipsBet, winAmount)
                     resultMessage = createResultMessage(
                         gameOver = true,
                         isWin = true,
@@ -203,6 +207,7 @@ fun Application.configureRouting() {
                         currentChips = player.chips
                     )
                 } else if (gameState.playerTotal < gameState.dealerTotal) {
+                    player.addBetRecord("Blackjack", chipsBet, 0)
                     resultMessage = createResultMessage(
                         gameOver = true,
                         isWin = false,
@@ -211,6 +216,7 @@ fun Application.configureRouting() {
                     )
                 } else {
                     player.chips += chipsBet
+                    player.addBetRecord("Blackjack", chipsBet, chipsBet) // Tie - bet returned
                     resultMessage = "It's a tie! Your bet is returned. You have ${player.chips} chips."
                 }
 
@@ -318,8 +324,10 @@ fun Application.configureRouting() {
                 // For slots, we keep the custom win message with line information
                 val resultMessage = if (win) {
                     player.chips += result.payout
+                    player.addBetRecord("Slots", chipsBet, result.payout)
                     "You won ${result.payout} chips! 🎉 (Lines: ${result.winLines.joinToString()})"
                 } else {
+                    player.addBetRecord("Slots", chipsBet, 0)
                     "No win. Try again!"
                 }
                 call.sessions.set(player)
@@ -410,12 +418,16 @@ fun Application.configureRouting() {
                 val tie = userHasBingo && houseWinners.isNotEmpty()
                 var resultMessage = ""
                 if (userHasBingo && !tie) {
-                    player.chips += chipsBet * 3
-                    resultMessage = "Bingo! You win ${chipsBet * 3} chips and now have ${player.chips} chips."
+                    val winAmount = chipsBet * 3
+                    player.chips += winAmount
+                    player.addBetRecord("Bingo", chipsBet, winAmount)
+                    resultMessage = "Bingo! You win $winAmount chips and now have ${player.chips} chips."
                 } else if (tie) {
                     player.chips += chipsBet
+                    player.addBetRecord("Bingo", chipsBet, chipsBet) // Tie - bet returned
                     resultMessage = "It's a tie! Your bet is returned. You have ${player.chips} chips."
                 } else if (houseWinners.isNotEmpty()) {
+                    player.addBetRecord("Bingo", chipsBet, 0)
                     resultMessage = createResultMessage(
                         gameOver = true,
                         isWin = false,
@@ -553,7 +565,11 @@ fun Application.configureRouting() {
                 if (gameState.gameOver && gameState.result != "Game over") {
                     val payout = chipsBet * gameState.multiplier
                     player.chips += payout
+                    player.addBetRecord("Higher or Lower", chipsBet, payout)
                     call.sessions.set(player)
+                } else if (gameState.gameOver) {
+                    // Player lost
+                    player.addBetRecord("Higher or Lower", chipsBet, 0)
                 }
 
                 val resultMessage = createResultMessage(
@@ -738,6 +754,7 @@ fun Application.configureRouting() {
                 // Calculate winnings
                 val winnings = chipsBet * gameState.multiplier
                 player.chips += winnings
+                player.addBetRecord("Higher or Lower", chipsBet, winnings)
                 player.lastBet = null
                 call.sessions.set(player)
 
@@ -823,6 +840,9 @@ fun Application.configureRouting() {
                 }
                 if (payout > 0) {
                     player.chips += payout
+                    player.addBetRecord("Ride the Bus", chipsBet, payout)
+                } else if (gameState.gameOver && gameState.result?.contains("lost") == true) {
+                    player.addBetRecord("Ride the Bus", chipsBet, 0)
                 }
                 call.sessions.set(player)
                 call.respond(
@@ -955,7 +975,10 @@ fun Application.configureRouting() {
                 // Only pay out if game is not over due to hitting a mine
                 if (!gameState.mineRevealed) {
                     player.chips += gameState.payout
+                    player.addBetRecord("Mines", chipsBet, gameState.payout)
                     call.sessions.set(player)
+                } else {
+                    player.addBetRecord("Mines", chipsBet, 0)
                 }
 
                 call.respond(

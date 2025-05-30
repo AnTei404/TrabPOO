@@ -66,18 +66,45 @@ fun Application.configureSecurity() {
 }
 
 /**
+ * Represents a record of a bet made by a player.
+ *
+ * @property gameName The name of the game where the bet was placed
+ * @property betAmount The amount of chips bet
+ * @property winAmount The amount of chips won (0 if lost)
+ * @property timestamp The time when the bet was placed
+ */
+@Serializable
+data class BetRecord(
+    val gameName: String,
+    val betAmount: Int,
+    val winAmount: Int,
+    val timestamp: Long = System.currentTimeMillis()
+) {
+    /**
+     * Returns a formatted timestamp string for display
+     */
+    fun getFormattedTime(): String {
+        val date = java.util.Date(timestamp)
+        val format = java.text.SimpleDateFormat("HH:mm:ss")
+        return format.format(date)
+    }
+}
+
+/**
  * Represents a player in the casino.
  * 
  * This class stores all player-related information including:
  * - Personal details (name, photo)
  * - Game assets (chips, money)
  * - Game state (last bet)
+ * - Bet history
  * 
  * @property name The player's name, used as a unique identifier
  * @property chips The player's current chip balance for gambling
  * @property money The player's current money balance (can be exchanged for chips)
  * @property lastBet The amount of chips from the player's last bet
  * @property photoPath The path to the player's avatar image
+ * @property betHistory List of the player's past bets
  */
 @Serializable
 data class Player(
@@ -85,7 +112,8 @@ data class Player(
     var chips: Int = Random.nextInt(0, 301), // Random chips between 0 and 300
     var money: Int = Random.nextInt(50, 301), // Random money between 50 and 300
     var lastBet: Int? = null,
-    var photoPath: String = "" // Will be initialized in init block or set explicitly
+    var photoPath: String = "", // Will be initialized in init block or set explicitly
+    var betHistory: MutableList<BetRecord> = mutableListOf()
 ) {
     // Initialize photoPath when Player is created
     init {
@@ -93,6 +121,26 @@ data class Player(
         if (photoPath.isEmpty()) {
             photoPath = getOrCreatePlayerPhoto(name)
         }
+    }
+
+    /**
+     * Adds a bet record to the player's history
+     *
+     * @param gameName The name of the game
+     * @param betAmount The amount bet
+     * @param winAmount The amount won (0 if lost)
+     */
+    fun addBetRecord(gameName: String, betAmount: Int, winAmount: Int) {
+        betHistory.add(BetRecord(gameName, betAmount, winAmount))
+    }
+
+    /**
+     * Calculates the total amount won or lost from all bets
+     *
+     * @return The net amount (positive for overall win, negative for overall loss)
+     */
+    fun getTotalWinLoss(): Int {
+        return betHistory.sumOf { it.winAmount - it.betAmount }
     }
 }
 
