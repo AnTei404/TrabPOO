@@ -129,18 +129,4 @@ class Mines(private val betAmount: Int = 100) {
         )
     }
 
-    /**
-     * Resets the game to its initial state.
-     * This creates a new grid and places a mine at a new random position.
-     * 
-     * @return The initial game state after reset
-     */
-    fun reset(): MinesGameState {
-        grid = initializeGrid()
-        minePosition = placeMine()
-        gameOver = false
-        mineRevealed = false
-        squaresRevealed = 0
-        return getState()
-    }
 }
