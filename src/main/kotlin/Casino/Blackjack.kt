@@ -27,23 +27,12 @@ class Blackjack {
     }
 
     fun startGame(deckStyle: String): BlackjackGameState {
-        resetGame()
-        dealerHand.add(deck.cards.removeFirst())
-        dealerHand.add(deck.cards.removeFirst())
-        playerHand.add(deck.cards.removeFirst())
-        playerHand.add(deck.cards.removeFirst())
+        return resetGame(deckStyle)
+    }
 
-        return BlackjackGameState(
-            dealerFirstCard = dealerHand.first(),
-            dealerHand = dealerHand.map { it.toCardWithImage(deckStyle) },
-            dealerTotal = calculateHandValue(listOf(dealerHand.first())),
-            playerHand = playerHand.map { it.toCardWithImage(deckStyle) },
-            playerTotal = calculateHandValue(playerHand),
-            playerHasBlackjack = false,
-            playerBust = false,
-            dealerBust = false,
-            gameOver = gameOver
-        )
+    // Alias for startGame to maintain backward compatibility
+    fun restartGame(deckStyle: String): BlackjackGameState {
+        return startGame(deckStyle)
     }
 
     fun hit(deckStyle: String): BlackjackGameState {
@@ -111,18 +100,29 @@ class Blackjack {
         )
     }
 
-    fun restartGame(deckStyle: String): BlackjackGameState {
-        deck.shuffle()
-        return startGame(deckStyle)
-    }
-
-
-    private fun resetGame() {
+    private fun resetGame(deckStyle: String): BlackjackGameState {
         dealerHand.clear()
         playerHand.clear()
         gameOver = false
         deck.cards = Deck().cards
         deck.shuffle()
+
+        dealerHand.add(deck.cards.removeFirst())
+        dealerHand.add(deck.cards.removeFirst())
+        playerHand.add(deck.cards.removeFirst())
+        playerHand.add(deck.cards.removeFirst())
+
+        return BlackjackGameState(
+            dealerFirstCard = dealerHand.first(),
+            dealerHand = dealerHand.map { it.toCardWithImage(deckStyle) },
+            dealerTotal = calculateHandValue(listOf(dealerHand.first())),
+            playerHand = playerHand.map { it.toCardWithImage(deckStyle) },
+            playerTotal = calculateHandValue(playerHand),
+            playerHasBlackjack = false,
+            playerBust = false,
+            dealerBust = false,
+            gameOver = gameOver
+        )
     }
 
 

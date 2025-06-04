@@ -382,6 +382,77 @@ body::before {
     }
 }
 
+/* Game over controls */
+.game-over-controls {
+    width: 100%;
+}
+
+.button-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-bottom: 10px;
+    width: 100%;
+}
+
+.button-row form {
+    margin: 0;
+    width: 100%;
+}
+
+.button-row form button {
+    width: 100%;
+    min-width: 120px;
+    text-align: center;
+    height: 100%;
+    min-height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.button-row form:first-child button {
+    background-color: #0ff;
+    box-shadow: 0 0 10px #0ff;
+}
+
+.button-row form:first-child button:hover {
+    background-color: #5ff;
+    box-shadow: 0 0 15px #5ff;
+}
+
+.button-row form:last-child button {
+    background-color: #ff0;
+    box-shadow: 0 0 10px #ff0;
+}
+
+.button-row form:last-child button:hover {
+    background-color: #ff5;
+    box-shadow: 0 0 15px #ff5;
+}
+
+/* Style for the Leave button */
+.game-over-controls > form {
+    width: 100%;
+    margin-top: 10px;
+}
+
+.leave-button {
+    background-color: #f0f;
+    box-shadow: 0 0 10px #f0f;
+    margin-top: 10px;
+    width: 100%;
+    min-height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.leave-button:hover {
+    background-color: #f5f;
+    box-shadow: 0 0 15px #f5f;
+}
+
 /* Winning animation */
 .winner {
     animation: winner-glow 1s infinite alternate;

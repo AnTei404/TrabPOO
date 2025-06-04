@@ -133,6 +133,13 @@ fun Application.configureRouting() {
                 val gameState = blackjack.hit(deckStyle) // Pass deckStyle here
                 val chipsBet = player.lastBet ?: 0
                 var updatedChips = player.chips
+
+                // If player busts, record the bet with 0 winnings
+                if (gameState.gameOver && gameState.playerBust) {
+                    player.addBetRecord("Blackjack", chipsBet, 0)
+                    call.sessions.set(player)
+                }
+
                 val resultMessage = createResultMessage(
                     gameOver = gameState.gameOver && gameState.playerBust,
                     isWin = false,
@@ -223,7 +230,10 @@ fun Application.configureRouting() {
                 if (player.chips >= lastBet) {
                     player.chips -= lastBet
                     call.sessions.set(player)
-                    val gameState = blackjack.restartGame(deckStyle) // Pass deckStyle here
+                    val gameState = blackjack.startGame(deckStyle) // Start a new game with the selected deck style
+
+                    // The bet will be recorded when the player stands or busts
+                    // No need to record it here to avoid duplicate records
                     call.respond(
                         ThymeleafContent(
                             "blackjack",
@@ -238,7 +248,7 @@ fun Application.configureRouting() {
                         )
                     )
                 } else {
-                    val gameState = blackjack.restartGame(deckStyle) // Pass deckStyle here
+                    val gameState = blackjack.startGame(deckStyle) // Start a new game with the selected deck style
                     call.respond(
                         ThymeleafContent(
                             "blackjack",
@@ -448,6 +458,9 @@ fun Application.configureRouting() {
                 call.sessions.set(player)
                 val bingoGame = BingoGame()
                 bingoGames[player.name] = bingoGame // Store in-memory
+
+                // The bet will be recorded when the game ends
+                // No need to record it here to avoid duplicate records
                 val gameState = BingoGameState(
                     userCard = bingoGame.userCard,
                     houseCards = bingoGame.houseCards,
@@ -485,6 +498,10 @@ fun Application.configureRouting() {
             }
             player.chips -= chipsBet
             player.lastBet = chipsBet
+
+            // The bet will be recorded when the game ends
+            // No need to record it here to avoid duplicate records
+
             call.sessions.set(player)
 
             val deckStyle = call.sessions.get<DeckStyle>()?.style ?: "minimalista"
@@ -542,6 +559,7 @@ fun Application.configureRouting() {
                     call.sessions.set(player)
                 } else if (gameState.gameOver) {
                     player.addBetRecord("Higher or Lower", chipsBet, 0)
+                    call.sessions.set(player)
                 }
 
                 val resultMessage = createResultMessage(
@@ -632,12 +650,21 @@ fun Application.configureRouting() {
             if (player != null && game != null) {
                 val gameState = game.allIn(deckStyle)
 
+                // The bet will be recorded when the game ends
+                // No need to record it here to avoid duplicate records
+
                 var resultMessage = ""
                 if (gameState.gameOver) {
                     if (gameState.result == "Game over") {
+                        player.addBetRecord("Higher or Lower", chipsBet, 0)
+                        call.sessions.set(player)
                         resultMessage = "You lost $chipsBet chips and now have ${player.chips} chips."
                     } else {
-                        resultMessage = "You won ${chipsBet * gameState.multiplier} chips and now have ${player.chips} chips."
+                        val winAmount = chipsBet * gameState.multiplier
+                        player.chips += winAmount
+                        player.addBetRecord("Higher or Lower", chipsBet, winAmount)
+                        call.sessions.set(player)
+                        resultMessage = "You won $winAmount chips and now have ${player.chips} chips."
                     }
                 }
 
@@ -680,12 +707,24 @@ fun Application.configureRouting() {
                 higherOrLowerGames[player.name] = game
                 val gameState = game.getState(deckStyle)
 
+                // The bet will be recorded when the game ends
+                // No need to record it here to avoid duplicate records
+
                 var resultMessage = ""
                 if (gameState.gameOver) {
                     if (gameState.result == "Game over") {
+                        // Record the bet with 0 winnings when the player loses
+                        player.addBetRecord("Higher or Lower", lastBet, 0)
+                        call.sessions.set(player)
                         resultMessage = "You lost $lastBet chips and now have ${player.chips} chips."
                     } else {
-                        resultMessage = "You won ${lastBet * gameState.multiplier} chips and now have ${player.chips} chips."
+                        val winAmount = lastBet * gameState.multiplier
+                        // Add the winnings to the player's chips
+                        player.chips += winAmount
+                        // Update the bet record with the win amount
+                        player.addBetRecord("Higher or Lower", lastBet, winAmount)
+                        call.sessions.set(player)
+                        resultMessage = "You won $winAmount chips and now have ${player.chips} chips."
                     }
                 }
 
@@ -727,7 +766,7 @@ fun Application.configureRouting() {
                 val winnings = chipsBet * gameState.multiplier
                 player.chips += winnings
                 player.addBetRecord("Higher or Lower", chipsBet, winnings)
-                player.lastBet = null
+                // Keep the lastBet value for the "Play Again" button
                 call.sessions.set(player)
                 val resultMessage = createResultMessage(
                     gameOver = true,
@@ -842,6 +881,10 @@ fun Application.configureRouting() {
                 val game = RideTheBusGame(deckStyle)
                 rideTheBusGames[player.name] = game
                 val gameState = game.getState(deckStyle)
+
+                // The bet will be recorded when the game ends or when the player makes a choice
+                // in the guess route
+                // No need to record it here to avoid duplicate records
                 call.respond(
                     ThymeleafContent(
                         "ridethebus",
@@ -973,6 +1016,9 @@ fun Application.configureRouting() {
                 val minesGame = Mines(lastBet)
                 minesGames[player.name] = minesGame
                 val gameState = minesGame.getState()
+
+                // The bet will be recorded when the player cashes out or hits a mine
+                // No need to record it here to avoid duplicate records
 
                 call.respond(
                     ThymeleafContent(

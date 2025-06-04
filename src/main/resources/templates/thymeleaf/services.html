@@ -219,7 +219,8 @@
                         <td th:text="${bet.winAmount > 0 ? bet.winAmount : -bet.betAmount}"></td>
                         <td>
                             <span th:if="${bet.winAmount > bet.betAmount}" class="win-text">Win</span>
-                            <span th:if="${bet.winAmount == bet.betAmount}" class="tie-text">Tie</span>
+                            <span th:if="${bet.winAmount == bet.betAmount && bet.gameName != 'Slots'}" class="tie-text">Tie</span>
+                            <span th:if="${bet.winAmount == bet.betAmount && bet.gameName == 'Slots'}" class="win-text">Win</span>
                             <span th:if="${bet.winAmount < bet.betAmount}" class="loss-text">Loss</span>
                         </td>
                         <td th:text="${bet.getFormattedTime()}"></td>
