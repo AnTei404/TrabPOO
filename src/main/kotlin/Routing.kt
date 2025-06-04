@@ -30,6 +30,7 @@ import trab.casino.toCardWithImage
 import trab.casino.Mines
 import trab.casino.MinesGameState
 import kotlin.compareTo
+import trab.minesGames
 
 
 fun Application.configureRouting() {
@@ -37,7 +38,6 @@ fun Application.configureRouting() {
     val bingoGames = mutableMapOf<String, BingoGame>()
     val higherOrLowerGames = mutableMapOf<String, HigherOrLowerGame>()
     val rideTheBusGames = mutableMapOf<String, RideTheBusGame>()
-    val minesGames = mutableMapOf<String, Mines>()
 
     routing {
         staticResources("/", "static")
@@ -939,33 +939,6 @@ fun Application.configureRouting() {
                 )
             } else {
                 call.respondText("Invalid bet", status = HttpStatusCode.BadRequest)
-            }
-        }
-        get("/casino/mines/reveal") {
-            val player = call.sessions.get<Player>()
-            val minesGame = player?.name?.let { minesGames[it] }
-            val chipsBet = player?.lastBet ?: 0
-            val row = call.parameters["row"]?.toIntOrNull()
-            val col = call.parameters["col"]?.toIntOrNull()
-
-            if (player != null && minesGame != null && row != null && col != null) {
-                val gameState = minesGame.revealSquare(row, col)
-
-                call.respond(
-                    ThymeleafContent(
-                        "mines",
-                        mapOf(
-                            "name" to player.name,
-                            "chipsBet" to chipsBet,
-                            "chips" to player.chips,
-                            "money" to player.money,
-                            "gameState" to gameState,
-                            "playerPhoto" to getOrCreatePlayerPhoto(player.name)
-                        )
-                    )
-                )
-            } else {
-                call.respondRedirect("/casino/mines")
             }
         }
 

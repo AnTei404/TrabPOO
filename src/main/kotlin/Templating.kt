@@ -13,6 +13,7 @@ import trab.casino.Mines
 
 
 val blackjack = Blackjack() // Shared instance
+val minesGames = mutableMapOf<String, Mines>() // Shared instance for mines games
 
 fun Application.configureTemplating() {
     install(Thymeleaf) {
@@ -225,6 +226,34 @@ fun Application.configureTemplating() {
                 )
             } else {
                 call.respondRedirect("/")
+            }
+        }
+
+        get("/casino/mines/reveal") {
+            val player = call.sessions.get<Player>()
+            val minesGame = player?.name?.let { minesGames[it] }
+            val chipsBet = player?.lastBet ?: 0
+            val row = call.parameters["row"]?.toIntOrNull()
+            val col = call.parameters["col"]?.toIntOrNull()
+
+            if (player != null && minesGame != null && row != null && col != null) {
+                val gameState = minesGame.revealSquare(row, col)
+
+                call.respond(
+                    ThymeleafContent(
+                        "mines",
+                        mapOf(
+                            "name" to player.name,
+                            "chipsBet" to chipsBet,
+                            "chips" to player.chips,
+                            "money" to player.money,
+                            "gameState" to gameState,
+                            "playerPhoto" to getOrCreatePlayerPhoto(player.name)
+                        )
+                    )
+                )
+            } else {
+                call.respondRedirect("/casino/mines")
             }
         }
     }
