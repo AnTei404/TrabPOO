@@ -25,8 +25,8 @@
 
 /* Sidebar base styles */
 .sidebar {
-    width: 240px;
-    flex: 0 0 240px; /* Fixed width, doesn't grow or shrink */
+    width: 260px;
+    flex: 0 0 260px; /* Fixed width, doesn't grow or shrink */
     background-color: rgba(0, 0, 0, 0.7);
     padding: 12px;
     display: flex;

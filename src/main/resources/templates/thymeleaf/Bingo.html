@@ -110,15 +110,17 @@
         </form>
       </div>
 
-      <div th:if="${gameState.userHasBingo or !#lists.isEmpty(gameState.houseWinners)}">
-        <form action="/casino/bingo/new" method="post">
-          <button type="submit" th:disabled="${chips < chipsBet}">New Game</button>
-        </form>
-        <form action="/casino/bingo" method="get">
-          <button type="submit">Place another Bet</button>
-        </form>
+      <div th:if="${gameState.userHasBingo or !#lists.isEmpty(gameState.houseWinners)}" class="game-over-controls">
+        <div class="button-row">
+          <form action="/casino/bingo/new" method="post">
+            <button type="submit" th:disabled="${chips < chipsBet}">Play Again</button>
+          </form>
+          <form action="/casino/bingo" method="get">
+            <button type="submit">New Bet</button>
+          </form>
+        </div>
         <form action="/games" method="get">
-          <button type="submit">Go back to games</button>
+          <button type="submit" class="leave-button">Back to Games</button>
         </form>
       </div>
     </div>

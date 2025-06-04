@@ -2,14 +2,6 @@ package trab.casino
 
 import kotlin.random.Random
 
-/**
- * Implements a slot machine game with a 3x3 grid.
- * 
- * This class handles the game logic for a slot machine, including:
- * - Random symbol generation with weighted probabilities
- * - Win line detection (horizontal, vertical, and diagonal)
- * - Payout calculation based on symbol values and bet amount
- */
 class Slots {
     private val weightedSymbols = listOf(
         "Lemon", "Lemon", "Lemon", "Lemon", "Lemon", "Lemon",
@@ -29,30 +21,14 @@ class Slots {
         "Mine" to 0
     )
 
-    /**
-     * Represents the result of a slot machine spin.
-     * 
-     * @property grid A 3x3 grid of symbols representing the slot machine display
-     * @property winLines List of winning lines (e.g., "horizontal-0", "vertical-1", "diagonal-main")
-     * @property payout The total payout amount for this spin
-     */
+
     data class SpinResult(
         val grid: List<List<String>>,
         val winLines: List<String>,
         val payout: Int
     )
 
-    /**
-     * Performs a spin on the slot machine.
-     * 
-     * This method:
-     * 1. Generates a random 3x3 grid of symbols
-     * 2. Checks for winning lines (horizontal, vertical, diagonal)
-     * 3. Calculates the total payout based on the bet amount and symbol values
-     * 
-     * @param bet The amount of chips bet on this spin
-     * @return A SpinResult containing the grid, winning lines, and payout
-     */
+
     fun spin(bet: Int): SpinResult {
         val grid = List(3) { List(3) { weightedSymbols.random() } }
         val winLines = mutableListOf<String>()

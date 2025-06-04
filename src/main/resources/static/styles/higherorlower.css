@@ -1,20 +1,45 @@
 /* Retroesque style for Higher or Lower page */
 
-/* Dealer photo styles */
-.dealer-photo {
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    border: 3px solid #f0f;
-    box-shadow: 0 0 15px #f0f;
-    margin: 10px auto;
-    display: block;
+/* Game stats section styling */
+.game-stats {
+    width: 100%;
+    text-align: center;
+    padding: 15px;
+    background-color: rgba(0, 30, 30, 0.2);
+    border-radius: 10px;
+    border: 1px solid #0f0;
+    box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
+}
+
+.game-stats h3 {
+    color: #ff0;
+    margin-bottom: 25px;
+    text-shadow: 0 0 15px #ff0;
+    border-bottom: 2px solid #ff0;
+    padding-bottom: 15px;
+    font-size: 1.5em;
+}
+
+.stat-item {
+    background-color: rgba(0, 50, 50, 0.4);
+    padding: 15px;
+    border-radius: 10px;
+    margin: 20px 0;
+    border-left: 6px solid #ff0;
+    box-shadow: 0 0 15px rgba(255, 255, 0, 0.4);
+    text-align: left;
     transition: all 0.3s;
 }
 
-.dealer-photo:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 25px #f0f;
+.stat-item:hover {
+    transform: translateX(5px);
+    box-shadow: 0 0 20px rgba(255, 255, 0, 0.6);
+}
+
+.stat-item p {
+    margin: 0;
+    font-size: 1.2em;
+    font-weight: bold;
 }
 
 /* Base styles */
@@ -311,4 +336,75 @@ div[th\:if="${gameOver}"] h2 {
     50% {
         text-shadow: 0 0 20px #ff0, 0 0 30px #ff0, 0 0 40px #ff0;
     }
+}
+
+/* Game over controls */
+.game-over-controls {
+    width: 100%;
+}
+
+.button-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-bottom: 10px;
+    width: 100%;
+}
+
+.button-row form {
+    margin: 0;
+    width: 100%;
+}
+
+.button-row form button {
+    width: 100%;
+    min-width: 120px;
+    text-align: center;
+    height: 100%;
+    min-height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.button-row form:first-child button {
+    background-color: #0ff;
+    box-shadow: 0 0 10px #0ff;
+}
+
+.button-row form:first-child button:hover {
+    background-color: #5ff;
+    box-shadow: 0 0 15px #5ff;
+}
+
+.button-row form:last-child button {
+    background-color: #ff0;
+    box-shadow: 0 0 10px #ff0;
+}
+
+.button-row form:last-child button:hover {
+    background-color: #ff5;
+    box-shadow: 0 0 15px #ff5;
+}
+
+/* Style for the Leave button */
+.game-over-controls > form {
+    width: 100%;
+    margin-top: 10px;
+}
+
+.leave-button {
+    background-color: #f0f;
+    box-shadow: 0 0 10px #f0f;
+    margin-top: 10px;
+    width: 100%;
+    min-height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.leave-button:hover {
+    background-color: #f5f;
+    box-shadow: 0 0 15px #f5f;
 }

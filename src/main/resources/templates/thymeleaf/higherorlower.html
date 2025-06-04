@@ -93,15 +93,17 @@
                 </form>
             </div>
 
-            <div th:if="${gameOver}">
-                <form action="/casino/higherorlower/restart" method="post">
-                    <button type="submit" th:disabled="${chips < chipsBet}">Play Again</button>
-                </form>
-                <form action="/casino/higherorlower" method="get">
-                    <button type="submit">Change Bet</button>
-                </form>
+            <div th:if="${gameOver}" class="game-over-controls">
+                <div class="button-row">
+                    <form action="/casino/higherorlower/restart" method="post">
+                        <button type="submit" th:disabled="${chips < chipsBet}">Play Again</button>
+                    </form>
+                    <form action="/casino/higherorlower" method="get">
+                        <button type="submit">New Bet</button>
+                    </form>
+                </div>
                 <form action="/games" method="get">
-                    <button type="submit">Back to Games</button>
+                    <button type="submit" class="leave-button">Back to Games</button>
                 </form>
             </div>
         </div>
