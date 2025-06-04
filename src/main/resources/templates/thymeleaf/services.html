@@ -97,6 +97,7 @@
             <button onclick="selectGame('slots')">Slots</button>
             <button onclick="selectGame('higherorlower')">Higher or Lower</button>
             <button onclick="selectGame('ridethebus')">Ride the Bus</button>
+            <button onclick="selectGame('mines')">Mines</button>
         </div>
     </div>
     <div id="blackjack-rules" class="game-rules">
@@ -170,6 +171,20 @@
         <p>Each correct guess increases your multiplier. You can choose to Cash Out after each round (except the first).</p>
         <button class="back-button" onclick="backToSelection()">Back to Game Selection</button>
     </div>
+
+    <div id="mines-rules" class="game-rules">
+        <h3>Mines Rules</h3>
+        <p>Mines is a game of chance where theres one mine randomly set up and you need to avoid it:</p>
+        <ol>
+            <li>The game is played on a 5x5 grid with one hidden mine.</li>
+            <li>Click on squares to reveal them. Each revealed square increases your potential payout.</li>
+            <li>If you reveal a mine, you lose your bet.</li>
+            <li>You can cash out at any time to secure your winnings.</li>
+            <li>The more squares you reveal without hitting the mine, the higher your payout multiplier.</li>
+        </ol>
+        <p>Payout multipliers increase as you reveal more squares, from -1x up to 25x for revealing all squares except the mine.</p>
+        <button class="back-button" onclick="backToSelection()">Back to Game Selection</button>
+    </div>
 </div>
 
 <!-- Bet History Popup -->
@@ -220,7 +235,7 @@
 
 <script>
     // Game rules functions
-    const games = ['blackjack', 'bingo', 'slots', 'higherorlower', 'ridethebus'];
+    const games = ['blackjack', 'bingo', 'slots', 'higherorlower', 'ridethebus', 'mines'];
     function showRules() {
         hidePopups(); // Hide any open popups first
         document.getElementById('overlay').style.display = 'block';

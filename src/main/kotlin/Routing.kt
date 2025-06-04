@@ -31,36 +31,16 @@ import trab.casino.Mines
 import trab.casino.MinesGameState
 import kotlin.compareTo
 
-/**
- * Configures all routing for the casino application.
- * 
- * This function sets up all HTTP routes for the application, including:
- * - Static resources serving
- * - Player management (login, registration, profile)
- * - Money and chips exchange
- * - Casino games (Blackjack, Bingo, Higher or Lower, Ride The Bus, Card Match, Mines)
- * 
- * Each route handles specific user interactions and game logic, maintaining
- * game state through session variables and in-memory storage.
- * 
- * @param Application The Ktor application instance to configure
- */
-fun Application.configureRouting() {
-    // Initialize game logic components
-    val exchangeLogic = ExchangeLogic()
 
-    // In-memory storage for game instances per player
+fun Application.configureRouting() {
+    val exchangeLogic = ExchangeLogic()
     val bingoGames = mutableMapOf<String, BingoGame>()
     val higherOrLowerGames = mutableMapOf<String, HigherOrLowerGame>()
     val rideTheBusGames = mutableMapOf<String, RideTheBusGame>()
     val minesGames = mutableMapOf<String, Mines>()
 
     routing {
-        // Serve static resources (CSS, JavaScript, images)
         staticResources("/", "static")
-
-        // ===== PLAYER PREFERENCES =====
-        // Route to handle deck selection for card games
         post("/select-deck") {
             val player = call.sessions.get<Player>()
             val selectedDeck = call.receiveParameters()["deck"] ?: "minimalista" // Default to "minimalista"
@@ -86,8 +66,6 @@ fun Application.configureRouting() {
             }
         }
 
-        // ===== CURRENCY EXCHANGE =====
-        // Route to exchange real money for casino chips
         post("/exchange-money-for-chips") {
             val player = call.sessions.get<Player>()
             val moneyToExchange = call.receiveParameters()["money"]?.toIntOrNull()
@@ -104,7 +82,6 @@ fun Application.configureRouting() {
             }
         }
 
-        // Route to exchange casino chips back to real money
         post("/exchange-chips-for-money") {
             val player = call.sessions.get<Player>()
             val chipsToExchange = call.receiveParameters()["chips"]?.toIntOrNull()
@@ -121,8 +98,6 @@ fun Application.configureRouting() {
             }
         }
 
-        // ===== BLACKJACK GAME =====
-        // Route to place a bet in Blackjack
         post("/casino/blackjack/bet") {
             val player = call.sessions.get<Player>()
             val chipsBet = call.receiveParameters()["chipsBet"]?.toIntOrNull()
@@ -550,7 +525,6 @@ fun Application.configureRouting() {
             )
         }
 
-        // GUESS: Player makes a guess (higher/lower)
         post("/casino/higherorlower/guess") {
             val player = call.sessions.get<Player>()
             val deckStyle = call.sessions.get<DeckStyle>()?.style ?: "minimalista"
@@ -561,14 +535,12 @@ fun Application.configureRouting() {
                 val higher = guess == "higher"
                 val gameState = game.guess(higher, deckStyle)
 
-                // Pay out if player won and the game is over
                 if (gameState.gameOver && gameState.result != "Game over") {
                     val payout = chipsBet * gameState.multiplier
                     player.chips += payout
                     player.addBetRecord("Higher or Lower", chipsBet, payout)
                     call.sessions.set(player)
                 } else if (gameState.gameOver) {
-                    // Player lost
                     player.addBetRecord("Higher or Lower", chipsBet, 0)
                 }
 
@@ -586,6 +558,7 @@ fun Application.configureRouting() {
                         mapOfNonNull(
                             "name" to player.name,
                             "chips" to player.chips,
+                            "money" to player.money,
                             "chipsBet" to chipsBet,
                             "playerCard" to gameState.playerCard,
                             "dealerCard" to gameState.dealerCard,
@@ -607,7 +580,6 @@ fun Application.configureRouting() {
             }
         }
 
-// CONTINUE: Next round after a win (not all-in/leave)
         post("/casino/higherorlower/next") {
             val player = call.sessions.get<Player>()
             val deckStyle = call.sessions.get<DeckStyle>()?.style ?: "minimalista"
@@ -630,6 +602,7 @@ fun Application.configureRouting() {
                         mapOfNonNull(
                             "name" to player.name,
                             "chips" to player.chips,
+                            "money" to player.money,
                             "chipsBet" to chipsBet,
                             "playerCard" to gameState.playerCard,
                             "dealerCard" to gameState.dealerCard,
@@ -651,7 +624,6 @@ fun Application.configureRouting() {
             }
         }
 
-// ALL IN: Player chooses to go all in (increase rounds/multiplier)
         post("/casino/higherorlower/allin") {
             val player = call.sessions.get<Player>()
             val deckStyle = call.sessions.get<DeckStyle>()?.style ?: "minimalista"
@@ -675,6 +647,7 @@ fun Application.configureRouting() {
                         mapOfNonNull(
                             "name" to player.name,
                             "chips" to player.chips,
+                            "money" to player.money,
                             "chipsBet" to chipsBet,
                             "playerCard" to gameState.playerCard,
                             "dealerCard" to gameState.dealerCard,
@@ -722,6 +695,7 @@ fun Application.configureRouting() {
                         mapOfNonNull(
                             "name" to player.name,
                             "chips" to player.chips,
+                            "money" to player.money,
                             "chipsBet" to lastBet,
                             "playerCard" to gameState.playerCard,
                             "dealerCard" to gameState.dealerCard,
@@ -743,7 +717,6 @@ fun Application.configureRouting() {
             }
         }
 
-    // LEAVE: Player chooses to Cash Out
         post("/casino/higherorlower/leave") {
             val player = call.sessions.get<Player>()
             val deckStyle = call.sessions.get<DeckStyle>()?.style ?: "minimalista"
@@ -751,14 +724,11 @@ fun Application.configureRouting() {
             val chipsBet = player?.lastBet ?: 0
             if (player != null && game != null) {
                 val gameState = game.leave(deckStyle)
-                // Calculate winnings
                 val winnings = chipsBet * gameState.multiplier
                 player.chips += winnings
                 player.addBetRecord("Higher or Lower", chipsBet, winnings)
                 player.lastBet = null
                 call.sessions.set(player)
-
-                // Set a success message for cashing out
                 val resultMessage = createResultMessage(
                     gameOver = true,
                     isWin = true,
@@ -766,13 +736,13 @@ fun Application.configureRouting() {
                     currentChips = player.chips,
                     multiplier = gameState.multiplier
                 )
-
                 call.respond(
                     ThymeleafContent(
                         "higherorlower",
                         mapOfNonNull(
                             "name" to player.name,
                             "chips" to player.chips,
+                            "money" to player.money,
                             "chipsBet" to chipsBet,
                             "playerCard" to gameState.playerCard,
                             "dealerCard" to gameState.dealerCard,
@@ -832,7 +802,6 @@ fun Application.configureRouting() {
             val choice = call.receiveParameters()["choice"] ?: ""
             if (player != null && game != null) {
                 val gameState = if (choice == "leave") game.leave(deckStyle) else game.guess(choice, deckStyle)
-                // Pay out if player pressed "leave" and game is over OR if player won by completing all rounds
                 val payout = when {
                     choice == "leave" && gameState.gameOver && gameState.multiplier >= 1 -> chipsBet * gameState.multiplier
                     gameState.gameOver && gameState.result?.contains("won") == true -> chipsBet * gameState.multiplier
@@ -894,10 +863,8 @@ fun Application.configureRouting() {
         post("/casino/ridethebus/newbet") {
             val player = call.sessions.get<Player>()
             if (player != null) {
-                // Reset the last bet
                 player.lastBet = null
                 call.sessions.set(player)
-                // Redirect to the bet placement page
                 call.respondRedirect("/casino/ridethebus")
             } else {
                 call.respondRedirect("/")
@@ -911,11 +878,9 @@ fun Application.configureRouting() {
                 player.chips -= chipsBet
                 player.lastBet = chipsBet
                 call.sessions.set(player)
-
                 val minesGame = Mines(chipsBet)
                 minesGames[player.name] = minesGame
                 val gameState = minesGame.getState()
-
                 call.respond(
                     ThymeleafContent(
                         "mines",
@@ -933,13 +898,10 @@ fun Application.configureRouting() {
                 call.respondText("Invalid bet", status = HttpStatusCode.BadRequest)
             }
         }
-
         get("/casino/mines/reveal") {
             val player = call.sessions.get<Player>()
             val minesGame = player?.name?.let { minesGames[it] }
             val chipsBet = player?.lastBet ?: 0
-
-            // Access URL parameters
             val row = call.parameters["row"]?.toIntOrNull()
             val col = call.parameters["col"]?.toIntOrNull()
 

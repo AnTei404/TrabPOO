@@ -1,7 +1,6 @@
 package trab
 
 import io.ktor.server.application.*
-import io.ktor.server.http.content.* // Import for static and resources
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
@@ -10,8 +9,8 @@ import io.ktor.server.thymeleaf.ThymeleafContent
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver
 import trab.casino.Blackjack
 import trab.casino.generatePreviewCards
-import trab.removePlayerPhoto
-import trab.selectPhoto
+import trab.casino.Mines
+
 
 val blackjack = Blackjack() // Shared instance
 
@@ -25,7 +24,6 @@ fun Application.configureTemplating() {
     }
 
     routing {
-        // Serve the index page as a Thymeleaf template
         get("/") {
             val defaultPhoto = "/Player/Spongebob.jpg"
             val photoGrid = selectPhoto(defaultPhoto)
@@ -96,13 +94,10 @@ fun Application.configureTemplating() {
         get("/leave") {
             val player = call.sessions.get<Player>()
             if (player != null) {
-                // Store the name before clearing the session
                 val playerName = player.name
 
-                // Remove the player's photo from the map
-                removePlayerPhoto(playerName)
 
-                // Clear the session when the user leaves
+                removePlayerPhoto(playerName)
                 call.sessions.clear<Player>()
                 call.sessions.clear<DeckStyle>()
 
@@ -183,6 +178,7 @@ fun Application.configureTemplating() {
                         mapOf(
                             "name" to player.name,
                             "chips" to player.chips,
+                            "money" to player.money,
                             "title" to "Higher or Lower - Place Your Bet",
                             "formAction" to "/casino/higherorlower/bet"
                         )
@@ -212,7 +208,7 @@ fun Application.configureTemplating() {
             }
         }
 
-        // Mines Game Routes
+
         get("/casino/mines") {
             val player = call.sessions.get<Player>()
             if (player != null) {
