@@ -10,6 +10,8 @@ import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver
 import trab.casino.Blackjack
 import trab.casino.generatePreviewCards
 import trab.casino.Mines
+import kotlin.collections.plusAssign
+import kotlin.text.set
 
 
 val blackjack = Blackjack() // Shared instance
@@ -238,7 +240,11 @@ fun Application.configureTemplating() {
 
             if (player != null && minesGame != null && row != null && col != null) {
                 val gameState = minesGame.revealSquare(row, col)
-
+                if (gameState.gameOver && !gameState.mineRevealed) {
+                    player.chips += gameState.payout
+                    player.addBetRecord("Mines", chipsBet, gameState.payout)
+                    call.sessions.set(player)
+                }
                 call.respond(
                     ThymeleafContent(
                         "mines",
