@@ -15,7 +15,7 @@ import kotlin.text.set
 
 
 val blackjack = Blackjack() // Shared instance
-val minesGames = mutableMapOf<String, Mines>() // Shared instance for mines games
+val minesGames = mutableMapOf<String, Mines>()
 
 fun Application.configureTemplating() {
     install(Thymeleaf) {
@@ -65,9 +65,7 @@ fun Application.configureTemplating() {
             val deckStyle = call.sessions.get<DeckStyle>()?.style ?: "minimalista"
             if (player != null) {
                 val previewCards = generatePreviewCards(deckStyle)
-
-                // Get the player's bet history and total win/loss
-                val betHistory = player.betHistory.sortedByDescending { it.timestamp }.take(20) // Show last 20 bets
+                val betHistory = player.betHistory.sortedByDescending { it.timestamp }.take(20)
                 val totalWinLoss = player.getTotalWinLoss()
 
                 call.respond(
