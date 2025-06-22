@@ -3,7 +3,7 @@ package trab.casino
 
 data class HigherOrLowerGameState(
     val playerCard: Map<String, String>?,
-    val dealerCard: Map<String, String>?, // Hidden until after guess
+    val dealerCard: Map<String, String>?,
     val showDealerCard: Boolean = false,
     val result: String? = null,
     val sideMenuResult: String? = null,

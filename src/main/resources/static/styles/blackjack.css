@@ -1,6 +1,3 @@
-/* Retroesque style for Blackjack page */
-
-/* Game stats section styling */
 .game-stats {
     width: 100%;
     text-align: center;
@@ -42,12 +39,11 @@
     font-weight: bold;
 }
 
-/* Base styles */
 body {
     background-color: #000;
     color: #0f0;
     font-family: 'Courier New', monospace;
-    padding: 20px; /* Equal padding on all sides */
+    padding: 20px;
     background-image: linear-gradient(to bottom, #000, #111);
     background-attachment: fixed;
     background-size: 100% 100vh;
@@ -97,7 +93,6 @@ p {
     margin: 10px 0;
 }
 
-/* Total display styling */
 .total-display {
     font-size: 1.3em;
     color: #f0f;
@@ -107,18 +102,16 @@ p {
     font-weight: bold;
 }
 
-/* Span elements (for dynamic content) */
 span {
     color: #ff0;
     font-weight: bold;
     text-shadow: 0 0 5px #ff0;
 }
 
-/* Card container styles */
 .card-container {
     display: flex;
     gap: 12px;
-    justify-content: center; /* Center cards in the container */
+    justify-content: center;
     flex-wrap: wrap;
     margin: 15px auto;
     background-color: rgba(0, 50, 0, 0.3);
@@ -165,7 +158,6 @@ span {
     font-size: 0.8em;
 }
 
-/* Form styles */
 form {
     display: inline;
     margin: 0 5px;
@@ -199,7 +191,6 @@ button[disabled] {
     cursor: not-allowed;
 }
 
-/* Help button styles */
 .help-button {
     position: fixed;
     top: 10px;
@@ -224,7 +215,6 @@ button[disabled] {
     box-shadow: 0 0 15px #ff0;
 }
 
-/* Popup styles */
 .rules-popup {
     display: none;
     position: fixed;
@@ -264,7 +254,6 @@ button[disabled] {
     z-index: 100;
 }
 
-/* Rules content styling */
 .rules-popup h2 {
     color: #ff0;
     text-shadow: 0 0 10px #ff0;
@@ -283,7 +272,6 @@ button[disabled] {
     font-size: 1.1em;
 }
 
-/* Game state styling */
 div[th\:if="${gameState.gameOver}"] h2 {
     color: #f00;
     text-shadow: 0 0 10px #f00;
@@ -299,7 +287,6 @@ div[th\:if="${gameState.gameOver}"] h2 {
     }
 }
 
-/* Game over controls */
 .game-over-controls {
     width: 100%;
 }
@@ -348,7 +335,6 @@ div[th\:if="${gameState.gameOver}"] h2 {
     box-shadow: 0 0 15px #ff5;
 }
 
-/* Style for the Leave button */
 .game-over-controls > form {
     width: 100%;
     margin-top: 10px;
@@ -370,7 +356,6 @@ div[th\:if="${gameState.gameOver}"] h2 {
     box-shadow: 0 0 15px #f5f;
 }
 
-/* CRT screen effect */
 body::before {
     content: "";
     position: fixed;
@@ -385,7 +370,6 @@ body::before {
     opacity: 0.15;
 }
 
-/* Green felt table effect */
 body::after {
     content: "";
     position: fixed;
@@ -398,7 +382,6 @@ body::after {
     z-index: 999;
 }
 
-/* Card dealing animation */
 @keyframes deal-card {
     0% {
         transform: translateY(-50px) rotate(-10deg);

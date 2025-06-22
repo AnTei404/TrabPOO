@@ -1,6 +1,3 @@
-/* Retroesque style for Bingo page */
-
-/* Dealer photo styles */
 .dealer-photo {
     width: 150px;
     height: 150px;
@@ -17,7 +14,6 @@
     box-shadow: 0 0 25px #f0f;
 }
 
-/* Base styles */
 body {
     background-color: #000;
     color: #0f0;
@@ -61,14 +57,12 @@ p {
     margin: 15px 0;
 }
 
-/* Span elements (for dynamic content) */
 span {
     color: #0ff;
     font-weight: bold;
     text-shadow: 0 0 5px #0ff;
 }
 
-/* Bingo card styles */
 .bingo-card {
     border-collapse: collapse;
     margin-bottom: 1em;
@@ -182,7 +176,6 @@ span {
     box-shadow: 0 0 20px #f00;
 }
 
-/* Specific styling for dealer's bingo cards */
 .house-card-wrapper .bingo-card {
     border: 4px solid #f00;
     box-shadow: 0 0 20px #f00;
@@ -205,7 +198,6 @@ span {
     font-size: 1.3em;
 }
 
-/* Form styles */
 form {
     margin: 10px 0;
 }
@@ -238,7 +230,6 @@ button[disabled] {
     cursor: not-allowed;
 }
 
-/* Help button styles */
 .help-button {
     position: fixed;
     top: 10px;
@@ -263,7 +254,6 @@ button[disabled] {
     box-shadow: 0 0 15px #ff0;
 }
 
-/* Popup styles */
 .rules-popup {
     display: none;
     position: fixed;
@@ -303,7 +293,6 @@ button[disabled] {
     z-index: 100;
 }
 
-/* Rules content styling */
 .rules-popup h2 {
     color: #ff0;
     text-shadow: 0 0 10px #ff0;
@@ -319,7 +308,6 @@ button[disabled] {
     margin: 10px 0;
 }
 
-/* CRT screen effect */
 body::before {
     content: "";
     position: fixed;
@@ -334,7 +322,6 @@ body::before {
     opacity: 0.15;
 }
 
-/* Bingo ball animation */
 @keyframes bingo-ball {
     0% {
         transform: translateY(-20px) rotate(0deg);
@@ -361,7 +348,6 @@ body::before {
     animation: bingo-ball 2s ease-out;
 }
 
-/* Game result styling */
 .result-message {
     font-size: 1.5em;
     font-weight: bold;
@@ -382,7 +368,6 @@ body::before {
     }
 }
 
-/* Game over controls */
 .game-over-controls {
     width: 100%;
 }
@@ -431,7 +416,6 @@ body::before {
     box-shadow: 0 0 15px #ff5;
 }
 
-/* Style for the Leave button */
 .game-over-controls > form {
     width: 100%;
     margin-top: 10px;
@@ -453,7 +437,6 @@ body::before {
     box-shadow: 0 0 15px #f5f;
 }
 
-/* Winning animation */
 .winner {
     animation: winner-glow 1s infinite alternate;
 }

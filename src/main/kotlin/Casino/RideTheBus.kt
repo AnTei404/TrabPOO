@@ -88,7 +88,7 @@ class RideTheBusGame(deckStyle: String) {
     fun reset(deckStyle: String): RideTheBusGameState {
 
         deck = Deck().apply { 
-            createRankOnlyDeck() // Use only 13 cards (one of each rank)
+            createRankOnlyDeck()
         }
         cards = List(4) { deck.cards.removeFirst() }
         revealed = MutableList(4) { false }

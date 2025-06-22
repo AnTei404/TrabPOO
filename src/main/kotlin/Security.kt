@@ -18,7 +18,6 @@ import kotlin.random.Random
 import trab.getOrCreatePlayerPhoto
 
 fun Application.configureSecurity() {
-    // Configure session cookies for player data and deck style preferences
     install(Sessions) {
         cookie<Player>("PLAYER_SESSION") {
             cookie.extensions["SameSite"] = "lax"
@@ -41,7 +40,6 @@ fun Application.configureSecurity() {
             val player = Player(name = name)
             player.photoPath = photoPath
 
-            // Set session cookies
             call.sessions.set(player)
             call.sessions.set(DeckStyle("minimalista"))
             call.respondRedirect("/lobby")
